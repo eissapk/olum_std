@@ -1,0 +1,1 @@
+# A simple light weight library for providing single page application experience via vanilla JS
