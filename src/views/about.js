@@ -1,11 +1,5 @@
-import {
-  spk
-} from '../../lib/spk.js';
-import { Header } from "../components/header.js";
-
-const components = {
-  'Header': Header
-};
+import { spk, debug } from "../../lib/spk.js";
+import Header from "../components/header.js";
 
 let template = `
 <div id="about">
@@ -15,28 +9,18 @@ let template = `
 </div>`;
 
 export default class About {
-  init() {
-    const ob = spk.methods.scoped(template, style);
-    ob.cb = {};
+  components = {
+    Header,
+  };
 
-    for (let key in components) {
-      let num = 1;
-      let pattern = new RegExp(`<${key}+(>|.*?[^?]>)`, 'gi')
-      let instance = new components[key]().init();
-
-      ob.template = ob.template.replace(pattern, instance.template); //* merge html
-      ob.style += instance.style; //* merge css
-      ob.cb[num++] = instance.cb[1]; //* merge js
-    }
-
-    ob.cb[99] = this.render;
+  init(ob = spk.methods.scoped(template, style)) {
+    eval(spk.data.init);
     return ob;
   }
 
   render() {
-    console.log('about: render()');
+    debug("About component logic ran!");
   }
-
 }
 
 let style = `

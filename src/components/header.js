@@ -1,7 +1,4 @@
-import {
-  spk,
-  $
-} from '../../lib/spk.js';
+import { spk, debug } from "../../lib/spk.js";
 
 let template = `
 <header id="header">
@@ -11,23 +8,15 @@ let template = `
   </ul>
 </header>`;
 
-export class Header {
-  init() {
-    const ob = spk.methods.scoped(template, style);
-    ob.cb = {};
-    ob.cb[1] = this.render;
+export default class Header {
+  init(ob = spk.methods.scoped(template, style)) {
+    eval(spk.data.init);
     return ob;
   }
 
   render() {
-    const el = $('#header');
-
-    setTimeout(() => {
-      el.style.height = "100px";
-    }, 2000);
-    console.log('Header: render()', el);
+    debug("Header component logic ran!");
   }
-
 }
 
 let style = `
@@ -44,6 +33,7 @@ header ul{
 header ul li{
   display: inline-block;
   color: white;
+  margin: 0 5px;
 }
 header ul li a{
   text-decoration: none;
