@@ -1,30 +1,33 @@
-import { spk, debug } from "../../lib/spk.js";
+import { spk, html, css } from "../../lib/spk.js";
 import Header from "../components/header.js";
 
-let template = `
-<div id="about">
-  <Header/>
-  <h1>about page</h1>
-  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam consectetur ducimus provident facere architecto labore facilis temporibus. Vitae cumque atque placeat. Ipsam ea sit, totam nam veritatis quasi distinctio voluptate.</p>
-</div>`;
+let template = html`
+  <Header />
+  <div id="about">
+    <p>
+      The app stores the tasks @ the user's browser localstorage. made by spk
+    </p>
+  </div>
+`;
 
 export default class About {
   components = {
-    Header,
-  };
+    Header
+  }
 
   init(ob = spk.methods.scoped(template, style)) {
     eval(spk.data.init);
     return ob;
   }
 
-  render() {
-    debug("About component logic ran!");
-  }
+  render() {}
 }
 
-let style = `
-#about{
-  background-color: blue;
-  color: white;
-}`;
+let style = css`
+  #about p {
+    line-height: 26px;
+    color: #666;
+    text-align: center;
+    margin: 50px 0;
+  }
+`;

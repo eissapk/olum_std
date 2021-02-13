@@ -1,12 +1,13 @@
-import { spk, debug } from "../../lib/spk.js";
+import { spk, html, css } from "../../lib/spk.js";
 
-let template = `
-<header id="header">
-  <ul>
-    <li><a to="/">Home</a></li>
-    <li><a to="/about">About</a></li>
-  </ul>
-</header>`;
+let template = html`
+  <header id="header">
+    <ul>
+      <li><a to="/">Home</a></li>
+      <li><a to="/about">About</a></li>
+    </ul>
+  </header>
+`;
 
 export default class Header {
   init(ob = spk.methods.scoped(template, style)) {
@@ -14,31 +15,31 @@ export default class Header {
     return ob;
   }
 
-  render() {
-    debug("Header component logic ran!");
-  }
+  render() {}
 }
 
-let style = `
-header{
-height: 50px;
-line-height: 50px;
-background-color: #333;
-}
-header ul{
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-header ul li{
-  display: inline-block;
-  color: white;
-  margin: 0 5px;
-}
-header ul li a{
-  text-decoration: none;
-  color: white;
-}
-header ul li a:hover{
-  color: green;
-}`;
+let style = css`
+  header {
+    height: 50px;
+    line-height: 50px;
+    background-color: #666;
+  }
+  header ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+  }
+  header ul li {
+    display: inline-block;
+    color: white;
+    margin: 0 10px;
+  }
+  header ul li a {
+    text-decoration: none;
+    color: white;
+  }
+  header ul li a.active {
+    color: royalblue;
+  }
+`;

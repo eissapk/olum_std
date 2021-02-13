@@ -1,22 +1,21 @@
-import { spk, debug } from "../../lib/spk.js";
+import { spk, debug, html, css } from "../../lib/spk.js";
 import Header from "../components/header.js";
+import AddTodo from "../components/addtodo.js";
+import Todos from "../components/todos.js";
 
-let template = `
+let template = html`
+  <Header />
   <div id="home">
-    <header />
-    <h1>home page</h1>
-    <p>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam
-      consectetur ducimus provident facere architecto labore facilis temporibus.
-      Vitae cumque atque placeat. Ipsam ea sit, totam nam veritatis quasi
-      distinctio voluptate.
-    </p>
+    <AddTodo />
+    <Todos />
   </div>
 `;
 
 export default class Home {
   components = {
     Header,
+    AddTodo,
+    Todos
   };
 
   init(ob = spk.methods.scoped(template, style)) {
@@ -24,14 +23,10 @@ export default class Home {
     return ob;
   }
 
-  render() {
-    debug("Home component logic ran!");
-  }
+  render() {}
 }
 
-let style = `
+let style = css`
   #home {
-    background-color: red;
-    color: white;
   }
 `;
