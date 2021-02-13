@@ -1,5 +1,5 @@
 import { spk, html, css, $, debug } from "../../lib/spk.js";
-import API from "../services/api.js";
+import {api} from "../services/api.js";
 
 let template = html`
   <div id="addtodo">
@@ -16,7 +16,7 @@ export default class AddTodo {
     return ob;
   }
 
-  render(api = new API()) {
+  render() {
     const form = $("#addtodo form");
     const input = $("#addtodo input");
 
@@ -26,6 +26,7 @@ export default class AddTodo {
       if (value != "") {
         const todo = { title: value, id: new Date().getTime() };
         api.add(todo);
+        form.reset();
       }
     });
   }

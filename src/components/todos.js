@@ -1,5 +1,5 @@
 import { spk, html, css, $, debug } from "../../lib/spk.js";
-import API from "../services/api.js";
+import { api } from "../services/api.js";
 
 let template = html`
   <div id="todos">
@@ -13,23 +13,38 @@ export default class Todos {
     return ob;
   }
 
-  render(api = new API()) {
-    const ul = $("#todos ul");
+  render() {
+    setTimeout(() => api.trigger(), 0); // dispatchEvent
 
-    const todos = api.get();
+    this.onChange();
+    this.onDelete();
+  }
 
-    ul.innerHTML = todos
-      .map((todo) => {
-        return html`
-          <li>
-            <p>${todo.title}</p>
-            <span class="editBtn" data-id="${todo.id}">&#9998;</span>
-            <span class="deleteBtn" data-id="${todo.id}">&#10006;</span>
-          </li>
-        `;
-      })
-      .join("");
-      
+  onChange() {
+    addEventListener(api.event, () => { // todo make on() as addEventListener
+      const todos = api.get();
+      const ul = $("#todos ul");
+      ul.innerHTML = todos
+        .map((todo) => {
+          return html`
+            <li>
+              <p>${todo.title}</p>
+              <span class="editBtn" data-id="${todo.id}">&#9998;</span>
+              <span class="deleteBtn" data-id="${todo.id}">&#10006;</span>
+            </li>
+          `;
+        })
+        .join("");
+    });
+  }
+
+  onDelete() {
+    document.on("click", (e) => { 
+      if (e.target.classList.contains("deleteBtn")) {
+        const id = +e.target.getAttribute("data-id");
+        api.remove(id);
+      }
+    });
   }
 }
 
