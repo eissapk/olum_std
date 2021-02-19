@@ -1,5 +1,6 @@
 class Service {
   todos = [];
+  id = null;
 
   constructor() {
     this.stateUpdated = new Event(`${new Date().getTime()}`);
@@ -19,10 +20,9 @@ class Service {
   }
 
   edit(id, title) {
-    this.todos = this.todos.forEach((todo) => {
-      if (todo.id == id) {
-        todo.title = title;
-      }
+    this.todos = this.todos.filter((todo) => {
+      if (todo.id == id) todo.title = title;
+      return todo;
     });
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.trigger();
@@ -41,7 +41,6 @@ class Service {
   trigger() {
     dispatchEvent(this.stateUpdated);
   }
-
 }
 
 export const api = new Service();

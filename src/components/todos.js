@@ -18,15 +18,17 @@ export default class Todos {
 
     this.onChange();
     this.onDelete();
+    this.onEdit();
   }
 
   onChange() {
-    addEventListener(api.event, () => { // todo make on() as addEventListener
+    addEventListener(api.event, () => {
+      // todo make on() as addEventListener
       const todos = api.get();
       const ul = $("#todos ul");
       ul.innerHTML = todos
         .map((todo) => {
-          return html`
+          return `
             <li>
               <p>${todo.title}</p>
               <span class="editBtn" data-id="${todo.id}">&#9998;</span>
@@ -39,10 +41,26 @@ export default class Todos {
   }
 
   onDelete() {
-    document.on("click", (e) => { 
+    document.on("click", (e) => {
       if (e.target.classList.contains("deleteBtn")) {
         const id = +e.target.getAttribute("data-id");
         api.remove(id);
+      }
+    });
+  }
+
+  onEdit() {
+    document.on("click", (e) => {
+      if (e.target.classList.contains("editBtn")) {
+        const id = e.target.getAttribute("data-id");
+        const todo = api.get().find((item) => item.id == id);
+
+        const edittodo = $("#edittodo");
+        const input = $("#edittodo textarea");
+        api.id = id;
+        input.value = todo.title;
+        edittodo.style.display = "block";
+        input.focus();
       }
     });
   }
@@ -56,18 +74,17 @@ let style = css`
   }
 
   #todos ul li {
-    height: 30px;
-    line-height: 30px;
-    padding-left: 10px;
+    overflow: hidden;
     background-color: #eee;
     margin-top: 5px;
   }
   #todos ul li p {
     margin: 0;
     width: calc(100% - 80px);
-    height: 30px;
-    line-height: 30px;
+    line-height: 25px;
     float: left;
+    word-break:break-word;
+    padding:0 10px;
   }
   #todos ul li span {
     width: 40px;

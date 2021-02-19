@@ -2,12 +2,12 @@ import { spk, html, css } from "../../lib/spk.js";
 import Header from "../components/header.js";
 
 let template = html`
+<div id="about">
   <Header />
-  <div id="about">
-    <p>
-      The app stores the tasks @ the user's browser localstorage. made by spk
-    </p>
-  </div>
+  <p>
+    The app stores the tasks @ the user's browser localstorage. made by spk.js
+  </p>
+</div>
 `;
 
 export default class About {
