@@ -120,3 +120,7 @@ export const service = new Service();
 
 ### Project Structure
 ![project sctrucure](./structure.png)
+
+
+# Getting Started
+*clone the project and open index.html via a live server*
