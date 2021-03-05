@@ -17,26 +17,27 @@
 
 ### Router
 ```javascript
-import { Router, spk } from "../lib/spk.js";
-// views 
+import { Router } from "spk";
+// views
 import Home from "./views/home.js";
 import About from "./views/about.js";
 
 const router = new Router({
   mode: "history",
   root: "/",
+  el: "#app",
 });
 
 router
-  .add("/", () => spk.methods.component(Home))
-  .add("/about", () => spk.methods.component(About));
+  .add("/", () => router.inject(Home))
+  .add("/about", () => router.inject(About));
 ```
 
 ---
 
 ### Component Structure
 ```javascript
-import { spk, debug, html, css } from "../../lib/spk.js";
+import { html, css, OnInit } from "spk.js";
 import Header from "../components/header.js";
 
 let template = html`
@@ -45,24 +46,34 @@ let template = html`
   </div>
 `;
 
-export default class Home {
-  components = { Header };
-
-  init(ob = spk.methods.scoped(template, style)) {
-    eval(spk.data.init);
-    return ob;
+export default class Home extends OnInit {
+  data = {
+    components: {
+      Header,
+    },
+    template,
+    style,
+    render: () => this.render(),
+    scoped: true,
   }
+
+  constructor() {
+    super();
+  }
+
+  init = () => super.init(this.data);
 
   render() {
-    debug("Home Component Works!");
+    console.log("Home component works!");
   }
+
 }
 
 let style = css`
   #home {
-
   }
 `;
+
 ```
 
 ---
@@ -99,21 +110,15 @@ export const service = new Service();
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Name</title>
-    <!-- include global style -->
+    <title>Spk</title>
     <link rel="stylesheet" href="src/app.css">
-    <!-- include library -->
-    <script defer src="lib/spk.js"></script>
-    <!-- include app.js -->
     <script defer type="module" src="src/app.js"></script>
   </head>
 
   <body>
-    <!-- inject components here -->
-    <div id="root"></div>
+    <div id="app"></div>
   </body>
 </html>
-
 ```
 
 ---
