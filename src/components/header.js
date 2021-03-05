@@ -1,4 +1,4 @@
-import { spk, html, css } from "../../lib/spk.js";
+import { html, css, OnInit } from "../../lib/spk.js";
 
 let template = html`
   <header id="header">
@@ -9,11 +9,19 @@ let template = html`
   </header>
 `;
 
-export default class Header {
-  init(ob = spk.methods.scoped(template, style)) {
-    eval(spk.data.init);
-    return ob;
+export default class Header extends OnInit{
+  data = {
+    template,
+    style,
+    render: () => this.render(),
+    scoped: true,
   }
+
+  constructor() {
+    super();
+  }
+
+  init = () => super.init(this.data);
 
   render() {}
 }

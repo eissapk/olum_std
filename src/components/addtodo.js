@@ -1,4 +1,4 @@
-import { spk, html, css, $, debug } from "../../lib/spk.js";
+import { html, css, $, OnInit } from "../../lib/spk.js";
 import {api} from "../services/api.js";
 
 let template = html`
@@ -10,11 +10,18 @@ let template = html`
   </div>
 `;
 
-export default class AddTodo {
-  init(ob = spk.methods.scoped(template, style)) {
-    eval(spk.data.init);
-    return ob;
+export default class AddTodo extends OnInit{
+  data = {
+    template,
+    style,
+    render: () => this.render(),
+    scoped: true,
   }
+  constructor() {
+    super();
+  }
+
+  init = () => super.init(this.data);
 
   render() {
     const form = $("#addtodo form");

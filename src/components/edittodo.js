@@ -1,4 +1,4 @@
-import { spk, html, css, $, debug } from "../../lib/spk.js";
+import { html, css, $, OnInit } from "../../lib/spk.js";
 import { api } from "../services/api.js";
 import Header from "./header.js";
 
@@ -13,15 +13,21 @@ let template = html`
   </div>
 `;
 
-export default class EditTodo {
-  components = {
-    Header,
+export default class EditTodo extends OnInit {
+  data = {
+    components: {
+      Header,
+    },
+    template,
+    style,
+    render: () => this.render(),
+    scoped: true,
   };
-
-  init(ob = spk.methods.scoped(template, style)) {
-    eval(spk.data.init);
-    return ob;
+  constructor() {
+    super();
   }
+
+  init = () => super.init(this.data);
 
   render() {
     this.onSave();
@@ -29,7 +35,7 @@ export default class EditTodo {
   }
 
   onCancel() {
-    document.on("click", (e) => {
+    document.on("click", e => {
       if (e.target.classList.contains("cancelBtn")) {
         const edittodo = $("#edittodo");
         edittodo.style.display = "none";
@@ -40,7 +46,7 @@ export default class EditTodo {
   onSave() {
     const form = $("#edittodo form");
 
-    form.on("submit", (e) => {
+    form.on("submit", e => {
       e.preventDefault();
       const input = $("#edittodo textarea");
       const edittodo = $("#edittodo");

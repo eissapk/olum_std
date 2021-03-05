@@ -1,4 +1,4 @@
-import { spk, html, css, $, debug } from "../../lib/spk.js";
+import { html, css, $, OnInit } from "../../lib/spk.js";
 import { api } from "../services/api.js";
 
 let template = html`
@@ -7,11 +7,19 @@ let template = html`
   </div>
 `;
 
-export default class Todos {
-  init(ob = spk.methods.nonScoped(template, style)) {
-    eval(spk.data.init);
-    return ob;
+export default class Todos extends OnInit{
+  data = {
+    template,
+    style,
+    render: () => this.render(),
+    scoped: false,
   }
+
+  constructor() {
+    super();
+  }
+
+  init = () => super.init(this.data);
 
   render() {
     setTimeout(() => api.trigger(), 0); // dispatchEvent
