@@ -12,6 +12,7 @@ let template = html`
 
 export default class AddTodo extends OnInit{
   data = {
+    name: "AddTodo",
     template,
     style,
     render: () => this.render(),

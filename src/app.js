@@ -10,5 +10,5 @@ const router = new Router({
 });
 
 router
-  .add("/", () => router.inject(Home))
-  .add("/about", () => router.inject(About));
+  .add("/", Home)
+  .add("/about", About);

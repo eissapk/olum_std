@@ -11,6 +11,7 @@ let template = html`
 
 export default class Header extends OnInit{
   data = {
+    name: "Header",
     template,
     style,
     render: () => this.render(),

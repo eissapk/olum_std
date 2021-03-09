@@ -15,6 +15,7 @@ let template = html`
 
 export default class EditTodo extends OnInit {
   data = {
+    name: "EditTodo",
     components: {
       Header,
     },

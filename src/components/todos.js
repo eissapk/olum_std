@@ -9,6 +9,7 @@ let template = html`
 
 export default class Todos extends OnInit{
   data = {
+    name: "Todos",
     template,
     style,
     render: () => this.render(),

@@ -1,4 +1,8 @@
-import { html, css, OnInit } from "../../lib/spk.js";
+import {
+  html,
+  css,
+  OnInit
+} from "../../lib/spk.js";
 import Header from "../components/header.js";
 import AddTodo from "../components/addtodo.js";
 import Todos from "../components/todos.js";
@@ -6,7 +10,7 @@ import EditTodo from "../components/edittodo.js";
 
 let template = html`
   <div id="home">
-    <header />
+    <Header />
     <AddTodo />
     <Todos />
     <EditTodo />
@@ -15,6 +19,7 @@ let template = html`
 
 export default class Home extends OnInit {
   data = {
+    name: "Home",
     components: {
       Header,
       AddTodo,

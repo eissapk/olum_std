@@ -12,6 +12,7 @@ let template = html`
 
 export default class About extends OnInit{
   data = {
+    name: "About",
     components: {
       Header,
     },
