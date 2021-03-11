@@ -24,7 +24,10 @@ export default class Header extends OnInit{
 
   init = () => super.init(this.data);
 
-  render() {}
+  render() {
+    console.warn("test from header component");
+
+  }
 }
 
 let style = css`

@@ -31,6 +31,8 @@ export default class EditTodo extends OnInit {
   init = () => super.init(this.data);
 
   render() {
+    console.warn("test from edittodo component");
+
     this.onSave();
     this.onCancel();
   }

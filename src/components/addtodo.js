@@ -25,6 +25,7 @@ export default class AddTodo extends OnInit{
   init = () => super.init(this.data);
 
   render() {
+    console.warn("test from addtodo component");
     const form = $("#addtodo form");
     const input = $("#addtodo input");
 

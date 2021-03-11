@@ -23,6 +23,8 @@ export default class Todos extends OnInit{
   init = () => super.init(this.data);
 
   render() {
+    console.warn("test from todos component");
+
     setTimeout(() => api.trigger(), 0); // dispatchEvent
 
     this.onChange();
