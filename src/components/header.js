@@ -15,7 +15,7 @@ export default class Header extends OnInit{
     template,
     style,
     render: () => this.render(),
-    scoped: false,
+    scoped: true,
   }
 
   constructor() {
