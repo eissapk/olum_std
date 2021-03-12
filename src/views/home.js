@@ -45,7 +45,6 @@ export default class Home extends OnInit {
 
 let style = css`
   #home {
-    background: #eee;
     height:100vh;
   }
 `;

@@ -28,7 +28,9 @@ export default class About extends OnInit{
 
   init = () => super.init(this.data);
 
-  render() {}
+  render() {
+    console.log("test from about component");
+  }
 }
 
 let style = css`

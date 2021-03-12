@@ -4,7 +4,7 @@ import Header from "./header.js";
 
 let template = html`
   <div id="edittodo">
-    <header />
+    <Header />
     <form>
       <textarea></textarea>
       <button type="submit" class="saveBtn">save</button>
@@ -31,7 +31,7 @@ export default class EditTodo extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.warn("test from edittodo component");
+    console.log("test from edittodo component");
 
     this.onSave();
     this.onCancel();

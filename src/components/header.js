@@ -15,7 +15,7 @@ export default class Header extends OnInit{
     template,
     style,
     render: () => this.render(),
-    scoped: true,
+    scoped: false,
   }
 
   constructor() {
@@ -25,8 +25,7 @@ export default class Header extends OnInit{
   init = () => super.init(this.data);
 
   render() {
-    console.warn("test from header component");
-
+    console.log("test from header component");
   }
 }
 
