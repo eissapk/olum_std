@@ -7,6 +7,7 @@
 * Routing
 * Reusable Components
 * State Management System
+* Coding via Vanilla
 
 # Ecosystem
 * Extensions
@@ -14,10 +15,17 @@
   * CSS syntax highlighter [Market Place](https://marketplace.visualstudio.com/items?itemName=jpoissonnier.vscode-styled-components)
 
 ---
+* SOON
+  * vscode extension with syntax highlighter and code snippets
+  * chrome devtools showing the app tree
+
+---
+### INSTRUCTIONS
+1. If there is a component that will be manipulated for example via (innerHTML, append(), prepend() and insertAdjacentHTML and so on) then you gotta disable component scoping
 
 ### Router
 ```javascript
-import { Router } from "spk";
+import { Router } from "spk.js";
 // views
 import Home from "./views/home.js";
 import About from "./views/about.js";
@@ -29,15 +37,15 @@ const router = new Router({
 });
 
 router
-  .add("/", () => router.inject(Home))
-  .add("/about", () => router.inject(About));
+  .add("/", Home)
+  .add("/about", About);
 ```
 
 ---
 
 ### Component Structure
 ```javascript
-import { html, css, OnInit } from "spk.js";
+import { html, css, OnInit } from "../../lib/spk.js";
 import Header from "../components/header.js";
 
 let template = html`
@@ -48,34 +56,29 @@ let template = html`
 
 export default class Home extends OnInit {
   data = {
+    name: "Home",
     components: {
-      Header,
+      Header
     },
     template,
     style,
     render: () => this.render(),
     scoped: true,
-  }
+  };
 
-  constructor() {
-    super();
-  }
-
+  constructor() { super(); }
   init = () => super.init(this.data);
 
   render() {
-    console.log("Home component works!");
+    console.log("test from home component");    
   }
 
 }
 
 let style = css`
-  #home {
-  }
+  #home {}
 `;
-
 ```
-
 ---
 
 ### Shared Service (State Management System)
@@ -100,8 +103,76 @@ class Service {
 
 export const service = new Service();
 ```
+---
+
+### A Component Stores Data in the Shared Service
+```javascript
+import { html, css, OnInit } from "spk.js";
+import { api } from "../services/api.js";
+
+let template = html`
+  <div id="addtodo"></div>
+`;
+
+export default class AddTodo extends OnInit{
+  data = {
+    name: "AddTodo",
+    template,
+    style,
+    render: () => this.render(),
+    scoped: true,
+  }
+  constructor() { super(); }
+  init = () => super.init(this.data);
+
+  render() {
+    api.add({ title: "test title", id: 1});
+  }
+
+}
+
+let style = css`
+  #addtodo {}
+`;
+```
+---
+
+### A Component Receives Data from the Shared Service
+```javascript
+import { html, css, OnInit } from "spk.js";
+import { api } from "../services/api.js";
+
+let template = html`
+  <div id="todos"></div>
+`;
+
+export default class Todos extends OnInit {
+  data = {
+    name: "Todos",
+    template,
+    style,
+    render: () => this.render(),
+    scoped: false,
+  };
+
+  constructor() { super(); }
+  init = () => super.init(this.data);
+
+  render() {
+    on(api.event, () => console.log(api.get()));
+    api.trigger();
+  }
+
+}
+
+let style = css`
+  #todos {}
+`;
+
+```
 
 ---
+
 ### index.html 
 
 ```html
@@ -125,7 +196,6 @@ export const service = new Service();
 
 ### Project Structure
 ![project sctrucure](./structure.png)
-
 
 # Getting Started
 *clone the project and open index.html via a live server*

@@ -7,14 +7,14 @@ let template = html`
   </div>
 `;
 
-export default class Todos extends OnInit{
+export default class Todos extends OnInit {
   data = {
     name: "Todos",
     template,
     style,
     render: () => this.render(),
     scoped: false,
-  }
+  };
 
   constructor() {
     super();
@@ -25,20 +25,18 @@ export default class Todos extends OnInit{
   render() {
     console.log("test from todos component");
 
-    setTimeout(() => api.trigger(), 0); // dispatchEvent
-
     this.onChange();
+    api.trigger(); // todo optimize service triggers
     this.onDelete();
     this.onEdit();
   }
 
   onChange() {
     addEventListener(api.event, () => {
-      // todo make on() as addEventListener
       const todos = api.get();
       const ul = $("#todos ul");
       ul.innerHTML = todos
-        .map((todo) => {
+        .map(todo => {
           return `
             <li>
               <p>${todo.title}</p>
@@ -52,7 +50,7 @@ export default class Todos extends OnInit{
   }
 
   onDelete() {
-    document.on("click", (e) => {
+    document.on("click", e => {
       if (e.target.classList.contains("deleteBtn")) {
         const id = +e.target.getAttribute("data-id");
         api.remove(id);
@@ -61,10 +59,10 @@ export default class Todos extends OnInit{
   }
 
   onEdit() {
-    document.on("click", (e) => {
+    document.on("click", e => {
       if (e.target.classList.contains("editBtn")) {
         const id = e.target.getAttribute("data-id");
-        const todo = api.get().find((item) => item.id == id);
+        const todo = api.get().find(item => item.id == id);
 
         const edittodo = $("#edittodo");
         const input = $("#edittodo textarea");
@@ -94,8 +92,8 @@ let style = css`
     width: calc(100% - 80px);
     line-height: 25px;
     float: left;
-    word-break:break-word;
-    padding:0 10px;
+    word-break: break-word;
+    padding: 0 10px;
   }
   #todos ul li span {
     width: 40px;

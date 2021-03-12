@@ -1,8 +1,4 @@
-import {
-  html,
-  css,
-  OnInit
-} from "../../lib/spk.js";
+import { html, css, OnInit } from "../../lib/spk.js";
 import Header from "../components/header.js";
 import AddTodo from "../components/addtodo.js";
 import Todos from "../components/todos.js";
@@ -10,7 +6,7 @@ import EditTodo from "../components/edittodo.js";
 
 let template = html`
   <div id="home">
-    <Header />
+    <header />
     <AddTodo />
     <Todos />
     <EditTodo />
@@ -30,7 +26,7 @@ export default class Home extends OnInit {
     style,
     render: () => this.render(),
     scoped: true,
-  }
+  };
 
   constructor() {
     super();
@@ -45,6 +41,6 @@ export default class Home extends OnInit {
 
 let style = css`
   #home {
-    height:100vh;
+    height: 100vh;
   }
 `;
