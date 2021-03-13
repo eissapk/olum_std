@@ -14,13 +14,12 @@
   * HTML syntax highlighter [Market Place](https://marketplace.visualstudio.com/items?itemName=Tobermory.es6-string-html)
   * CSS syntax highlighter [Market Place](https://marketplace.visualstudio.com/items?itemName=jpoissonnier.vscode-styled-components)
 
----
 * SOON
   * vscode extension with syntax highlighter and code snippets
   * chrome devtools showing the app tree
 
 ---
-### INSTRUCTIONS
+# INSTRUCTIONS
 1. If there is a component that will be manipulated for example via (innerHTML, append(), prepend() and insertAdjacentHTML and so on) then you gotta disable component scoping
 
 ### Router
