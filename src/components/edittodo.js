@@ -1,6 +1,6 @@
 import { html, css, $, OnInit } from "../../lib/spk.js";
 import { api } from "../services/api.js";
-import Header from "./header.js";
+import Header from "./header/header.js";
 
 let template = html`
   <div id="edittodo">

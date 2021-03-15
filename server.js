@@ -9,5 +9,5 @@ server.use(express.static(path.join(__dirname, "dest")));
 server.get("/*", async (req, res) => res.sendFile(path.resolve(__dirname, "dest", "index.html")));
 
 // listen 
-const port = 3000;
+const port = process.env.PORT || 8080;
 server.listen(port, () => console.log("http://localhost:" + port));
