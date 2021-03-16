@@ -1,13 +1,18 @@
-# Spk.js
-> A simple light weight library for providing spa experience.
+<p align="center"><img width="200" height="200" src="./pk-logo.png" alt="PKjs logo"></p>
 
-*If you know vanilla js then this library is for you*
+# PKjs
+
+A simple lightweight library for providing SPA experience.
+
+Do you want to build web apps with just knowing vanilla javascript and get almost the same results as SPA frameworks!
+
+* PKjs is built for ignoring anything but vanilla javascript.
 
 # Features
 * Routing
 * Reusable Components
 * State Management System
-* Coding via Vanilla
+* Coding via Vanilla Javascript
 
 # Ecosystem
 * Extensions
