@@ -1,23 +1,28 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require("path");
 
 module.exports = {
-  mode: "production",
-
+  mode: "development",
   entry: {
     main: ["babel-polyfill", "./src/app.js"],
   },
   output: {
-    filename: "bundled.js",
-    path: path.resolve(__dirname, "dest/js"),
+    filename: "app[hash:8].js",
+    path: path.resolve(__dirname, "dest"),
   },
   devtool: "source-map",
   plugins: [
     new CleanWebpackPlugin({
-      cleanAfterEveryBuildPatterns: ["./dest/js/**/*.*", "!./dest/js/bundled.js"],
+      cleanAfterEveryBuildPatterns: ["./dest/**/*.*", "!./dest/*.ico"],
     }),
+    new HtmlWebpackPlugin({
+      title: 'PKjs',
+      template: './public/index.html',
+    })
   ],
-  watch: true,
+  
+  watch: false,
   module: {
     rules: [
       {

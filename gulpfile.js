@@ -66,7 +66,7 @@ gulp.task("js", () => {
     .on("error", function handleError() {
       this.emit("end"); // Recover from errors
     })
-    .pipe(gulp.dest("./dest/js"));
+    .pipe(gulp.dest("./dest"));
 });
 
 // SERVER
@@ -80,10 +80,11 @@ gulp.task("server", () => {
 
 // WATCH
 gulp.task("watch", async () => {
-  gulp.watch("./src/index.html", gulp.series("html"));
-  gulp.watch("./src/**/*.scss", gulp.series("scss"));
-  gulp.watch("./src/**/*.scss", gulp.series("css"));
+  // gulp.watch("./src/index.html", gulp.series("html"));
+  // gulp.watch("./src/**/*.scss", gulp.series("scss"));
+  // gulp.watch("./src/**/*.scss", gulp.series("css"));
   gulp.watch("./src/**/*.js", gulp.series("js"));
 });
 
-gulp.task("default", gulp.series(["html", "css", "scss", "watch", "server", "js"]));
+// gulp.task("default", gulp.series(["html", "css", "scss", "watch", "server", "js"]));
+gulp.task("default", gulp.series(["watch", "server", "js"]));
