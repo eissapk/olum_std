@@ -1,28 +1,37 @@
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const { mode, devtool, title, dest, hash, comments } = require("./settings");
 
 module.exports = {
-  mode: "development",
+  mode,
+  devtool, // uncomment for dev mode
   entry: {
-    main: ["babel-polyfill", "./src/app.js"],
+    main: ["babel-polyfill", "./src/app.js", "./src/app.scss"],
   },
   output: {
-    filename: "app[hash:8].js",
-    path: path.resolve(__dirname, "dest"),
+    path: path.resolve(__dirname, dest),
+    filename: `app[fullhash:${hash}].js`,
   },
-  devtool: "source-map",
   plugins: [
     new CleanWebpackPlugin({
-      cleanAfterEveryBuildPatterns: ["./dest/**/*.*", "!./dest/*.ico"],
+      cleanAfterEveryBuildPatterns: [`./${dest}/**/*.*`],
     }),
     new HtmlWebpackPlugin({
-      title: 'PKjs',
-      template: './public/index.html',
-    })
+      title: title || "PKjs",
+      template: "./public/index.html",
+      favicon: "./public/favicon.ico",
+    }),
   ],
-  
-  watch: false,
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: comments,
+      }),
+    ],
+  },
   module: {
     rules: [
       {
@@ -32,7 +41,11 @@ module.exports = {
           loader: "babel-loader",
         },
       },
-      { test: /\.css$/, use: "css-loader" },
+      {
+        test: /\.s[ac]ss|css$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      // { test: /\.css$/,  use: ["css-loader"] },
     ],
   },
 };

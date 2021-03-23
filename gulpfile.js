@@ -13,6 +13,10 @@ const gulp = require("gulp"),
   notify = require("gulp-notify"),
   openurl = require("openurl"),
   nodemon = require("gulp-nodemon");
+const {
+  dest
+} = require("./settings");
+
 
 // HTML
 gulp.task("html", () => {
@@ -23,24 +27,23 @@ gulp.task("html", () => {
         collapseWhitespace: true,
       })
     )
-    .pipe(gulp.dest("./dest"));
+    .pipe(gulp.dest(`./${dest}`));
 });
 
 // scss
 gulp.task("scss", () => {
-  return (
-    gulp
-      .src("./src/**/*.scss")
-      .pipe(sassGlob())
-      .pipe(sass())
-      .pipe(
-        prefix({
-          cascade: false,
-        })
-      )
-      // .pipe(cssmin())
-      .pipe(gulp.dest("./src"))
-  );
+  return gulp
+    .src(["./src/**/*.scss", "!./src/app.scss"])
+    .pipe(sassGlob())
+    .pipe(sass())
+    .pipe(
+      prefix({
+        cascade: false,
+      })
+    )
+    // .pipe(cssmin())
+    .pipe(gulp.dest("./src"))
+
 });
 
 // global css
@@ -55,7 +58,7 @@ gulp.task("css", () => {
       })
     )
     .pipe(cssmin())
-    .pipe(gulp.dest("./dest/style"));
+    .pipe(gulp.dest(`./${dest}`));
 });
 
 // JS
@@ -66,7 +69,7 @@ gulp.task("js", () => {
     .on("error", function handleError() {
       this.emit("end"); // Recover from errors
     })
-    .pipe(gulp.dest("./dest"));
+    .pipe(gulp.dest(`./${dest}`));
 });
 
 // SERVER
@@ -81,10 +84,10 @@ gulp.task("server", () => {
 // WATCH
 gulp.task("watch", async () => {
   // gulp.watch("./src/index.html", gulp.series("html"));
-  // gulp.watch("./src/**/*.scss", gulp.series("scss"));
-  // gulp.watch("./src/**/*.scss", gulp.series("css"));
+  gulp.watch("./src/**/*.scss", gulp.series("scss"));
+  gulp.watch("./src/**/*.scss", gulp.series("css"));
   gulp.watch("./src/**/*.js", gulp.series("js"));
 });
 
 // gulp.task("default", gulp.series(["html", "css", "scss", "watch", "server", "js"]));
-gulp.task("default", gulp.series(["watch", "server", "js"]));
+gulp.task("default", gulp.series(["css", "scss","watch", "server", "js"]));

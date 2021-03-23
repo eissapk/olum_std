@@ -1,4 +1,5 @@
-import { html, css, $, OnInit } from "../../lib/spk.js";
+import { html, css, $, OnInit, debug } from "../../lib/pk.js";
+import { router } from "../app.js";
 import { api } from "../services/api.js";
 
 let template = html`
@@ -26,7 +27,6 @@ export default class Todos extends OnInit {
     console.log("test from todos component");
 
     this.onChange();
-    api.trigger(); // todo optimize service triggers
     this.onDelete();
     this.onEdit();
   }
@@ -35,18 +35,21 @@ export default class Todos extends OnInit {
     addEventListener(api.event, () => {
       const todos = api.get();
       const ul = $("#todos ul");
-      ul.innerHTML = todos
-        .map(todo => {
-          return `
+      if (ul) {
+        ul.innerHTML = todos
+          .map(todo => {
+            return `
             <li>
               <p>${todo.title}</p>
               <span class="editBtn" data-id="${todo.id}">&#9998;</span>
               <span class="deleteBtn" data-id="${todo.id}">&#10006;</span>
             </li>
-          `;
-        })
-        .join("");
+            `;
+          })
+          .join("");
+      }
     });
+    api.trigger(); // todo optimize service triggers
   }
 
   onDelete() {
@@ -63,13 +66,8 @@ export default class Todos extends OnInit {
       if (e.target.classList.contains("editBtn")) {
         const id = e.target.getAttribute("data-id");
         const todo = api.get().find(item => item.id == id);
-
-        const edittodo = $("#edittodo");
-        const input = $("#edittodo textarea");
-        api.id = id;
-        input.value = todo.title;
-        edittodo.style.display = "block";
-        input.focus();
+        api.temp = todo;
+        router.navigate("/edit");
       }
     });
   }

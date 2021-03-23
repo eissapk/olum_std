@@ -1,10 +1,11 @@
-import { Router } from "../lib/spk.js";
+import { Router } from "../lib/pk.js";
 // views
 import Home from "./views/home.js";
 import About from "./views/about.js";
+import Edit from "./views/edit.js";
 import NotFound from "./views/notfound";
 
-const router = new Router({
+export const router = new Router({
   mode: "history",
   root: "/",
   el: "#app",
@@ -13,4 +14,5 @@ const router = new Router({
 router
   .add("/", Home)
   .add("/about", About)
-  .add("/404", NotFound)
+  .add("/edit", Edit)
+  .add("/404", NotFound);

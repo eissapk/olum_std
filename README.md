@@ -1,4 +1,4 @@
-<p align="center"><img width="200" height="200" src="./pk-logo.png" alt="PKjs logo"></p>
+<p align="center"><img width="200" height="200" src="./public/logo.svg" alt="logo"></p>
 
 # PKjs
 
@@ -29,12 +29,13 @@ Do you want to build web apps with just knowing vanilla javascript and get almos
 
 ### Router
 ```javascript
-import { Router } from "spk.js";
+import { Router } from "pk.js";
 // views
 import Home from "./views/home.js";
 import About from "./views/about.js";
+import NotFound from "./views/notfound";
 
-const router = new Router({
+export const router = new Router({
   mode: "history",
   root: "/",
   el: "#app",
@@ -42,14 +43,15 @@ const router = new Router({
 
 router
   .add("/", Home)
-  .add("/about", About);
+  .add("/about", About)
+  .add("/404", NotFound);
 ```
 
 ---
 
 ### Component Structure
 ```javascript
-import { html, css, OnInit } from "../../lib/spk.js";
+import { html, css, OnInit } from "pk.js";
 import Header from "../components/header.js";
 
 let template = html`
@@ -70,25 +72,29 @@ export default class Home extends OnInit {
     scoped: true,
   };
 
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
+
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from home component");    
+    console.log("test from home component");
   }
-
 }
 
 let style = css`
   #home {}
 `;
+
 ```
 ---
 
 ### Shared Service (State Management System)
 ```javascript
-class Service {
+class Service { 
   todos = [];
+  temp = null
 
   constructor() {
     this.stateUpdated = new Event(`${new Date().getTime()}`);
@@ -105,20 +111,25 @@ class Service {
   }
 }
 
-export const service = new Service();
+export const api = new Service();
 ```
 ---
 
 ### A Component Stores Data in the Shared Service
 ```javascript
-import { html, css, OnInit } from "spk.js";
-import { api } from "../services/api.js";
+import { html, css, $, OnInit } from "pk.js";
+import {api} from "../services/api.js";
 
 let template = html`
-  <div id="addtodo"></div>
+  <div id="addtodo">
+    <form>
+      <input type="text" placeholder="Enter Todo..." />
+      <button type="submit">add</button>
+    </form>
+  </div>
 `;
 
-export default class AddTodo extends OnInit{
+export default class AddTodo extends OnInit {
   data = {
     name: "AddTodo",
     template,
@@ -126,13 +137,24 @@ export default class AddTodo extends OnInit{
     render: () => this.render(),
     scoped: true,
   }
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
+
   init = () => super.init(this.data);
 
   render() {
-    api.add({ title: "test title", id: 1});
-  }
+    console.log("test from addtodo component");
+    const form = $("#addtodo form");
+    const input = $("#addtodo input");
 
+    form.on("submit", (e) => {
+      e.preventDefault();
+      const value = input.value.trim();
+      const todo = { title: value, id: new Date().getTime() };
+      api.add(todo);
+    });
+  }
 }
 
 let style = css`
@@ -143,11 +165,13 @@ let style = css`
 
 ### A Component Receives Data from the Shared Service
 ```javascript
-import { html, css, OnInit } from "spk.js";
+import { html, css, $, OnInit, debug } from "pk.js";
 import { api } from "../services/api.js";
 
 let template = html`
-  <div id="todos"></div>
+  <div id="todos">
+    <ul></ul>
+  </div>
 `;
 
 export default class Todos extends OnInit {
@@ -159,11 +183,38 @@ export default class Todos extends OnInit {
     scoped: false,
   };
 
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
+
   init = () => super.init(this.data);
 
   render() {
-    on(api.event, () => console.log(api.get()));
+    console.log("test from todos component");
+
+    this.onChange();
+  }
+
+  onChange() {
+
+    addEventListener(api.event, () => {
+      const todos = api.get();
+      const ul = $("#todos ul");
+      if (ul) {
+        ul.innerHTML = todos
+          .map(todo => {
+            return `
+              <li>
+                <p>${todo.title}</p>
+                <span class="editBtn" data-id="${todo.id}">&#9998;</span>
+                <span class="deleteBtn" data-id="${todo.id}">&#10006;</span>
+              </li>
+              `;
+          })
+          .join("");
+      }
+    });
+
     api.trigger();
   }
 
@@ -183,14 +234,24 @@ let style = css`
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spk</title>
-    <link rel="stylesheet" href="src/app.css">
-    <script defer type="module" src="src/app.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
 
   <body>
+    <noscript>
+      We're sorry but
+      <strong><%= htmlWebpackPlugin.options.title %></strong>
+      doesn't work properly without JavaScript enabled. Please enable it to continue.
+      <br />
+      <strong>
+        Here are the
+        <a href="https://www.enablejavascript.io/" target="_blank">instructions, how to enable JavaScript in your web browser</a>
+      </strong>
+    </noscript>
+
     <div id="app"></div>
   </body>
 </html>
@@ -199,4 +260,16 @@ let style = css`
 ---
 
 ### Project Structure
-![project sctrucure](./structure.png)
+![project sctrucure](./public/structure.png)
+
+# Get Started
+
+### Dev Server
+```bash
+npm run dev
+```
+
+### Build for pProduction
+```bash
+npm run build
+```

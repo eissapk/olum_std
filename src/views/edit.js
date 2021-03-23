@@ -1,21 +1,22 @@
-import { html, css, $, OnInit } from "../../lib/spk.js";
+import { html, css, $, OnInit, debug } from "../../lib/pk.js";
+import { router } from "../app.js";
 import { api } from "../services/api.js";
-import Header from "./header/header.js";
+import Header from "../components/header.js";
 
 let template = html`
-  <div id="edittodo">
+  <div id="edit">
     <Header />
     <form>
       <textarea></textarea>
       <button type="submit" class="saveBtn">save</button>
-      <button type="button" class="cancelBtn">cancel</button>
+      <button to="/" type="button" class="cancelBtn">cancel</button>
     </form>
   </div>
 `;
 
-export default class EditTodo extends OnInit {
+export default class Edit extends OnInit {
   data = {
-    name: "EditTodo",
+    name: "edit",
     components: {
       Header,
     },
@@ -31,53 +32,47 @@ export default class EditTodo extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from edittodo component");
+    console.log("test from edit component");
 
+    this.onMount();
     this.onSave();
-    this.onCancel();
   }
 
-  onCancel() {
-    document.on("click", e => {
-      if (e.target.classList.contains("cancelBtn")) {
-        const edittodo = $("#edittodo");
-        edittodo.style.display = "none";
-      }
-    });
+  onMount() {
+    const input = $("#edit textarea");
+    if (api.temp != null) input.value = api.temp.title;
+    input.focus();
   }
 
   onSave() {
-    const form = $("#edittodo form");
-
+    const form = $("#edit form");
     form.on("submit", e => {
       e.preventDefault();
-      const input = $("#edittodo textarea");
-      const edittodo = $("#edittodo");
-
-      api.edit(api.id, input.value);
-      edittodo.style.display = "none";
+      const input = $("#edit textarea");
+      api.edit(api.temp.id, input.value);
+      router.navigate("/");
     });
   }
 }
 
 let style = css`
-  #edittodo {
+  #edit {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: white;
-    display: none;
+    /* display: none; */
   }
 
-  #edittodo form {
+  #edit form {
     width: 100%;
     overflow: hidden;
     margin: 10px auto;
   }
 
-  #edittodo form textarea {
+  #edit form textarea {
     width: 100%;
     min-height: 80px;
     resize: vertical;

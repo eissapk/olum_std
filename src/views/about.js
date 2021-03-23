@@ -1,5 +1,5 @@
-import { html, css, OnInit } from "../../lib/spk.js";
-import Header from "../components/header/header.js";
+import { html, css, OnInit } from "../../lib/pk.js";
+import Header from "../components/header.js";
 
 let template = html`
 <div id="about">

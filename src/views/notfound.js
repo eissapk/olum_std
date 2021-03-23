@@ -1,4 +1,4 @@
-import { html, css, OnInit } from "../../lib/spk.js";
+import { html, css, OnInit } from "../../lib/pk.js";
 
 let template = html`
   <div id="notfound">

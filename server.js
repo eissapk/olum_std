@@ -1,13 +1,23 @@
-const express = require("express");
-const path = require("path");
-const server = express();
+const { dest, port, hot, catchAll } = require("./settings");
+const webpackDevServer = require("webpack-dev-server");
+const webpack = require("webpack");
+const openurl = require("openurl");
+const colors = require("colors");
+const config = require("./webpack.config.js");
 
-// middleware
-server.use(express.static(path.join(__dirname, "dist")));
+const options = {
+  contentBase: `./${dest}`,
+  hot,
+  host:"localhost",
+  historyApiFallback: catchAll,
+};
 
-// catch all routes
-server.get("/*", async (req, res) => res.sendFile(path.resolve(__dirname, "dist", "index.html")));
+webpackDevServer.addDevServerEntrypoints(config, options);
+const compiler = webpack(config);
+const server = new webpackDevServer(compiler, options);
 
-// listen 
-const port = process.env.PORT || 8080;
-server.listen(port, () => console.log("http://localhost:" + port));
+server.listen(port, "localhost", () => {
+  const domain = `http://localhost:${port}`;
+  openurl.open(domain);
+  console.log(colors.green.bold("DevServer @ " + domain));
+});

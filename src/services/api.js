@@ -1,6 +1,6 @@
 class Service { // todo optimize services
   todos = [];
-  id = null;
+  temp = null
 
   constructor() {
     this.stateUpdated = new Event(`${new Date().getTime()}`);
