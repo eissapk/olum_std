@@ -28,9 +28,11 @@ export default class NotFound extends OnInit {
 }
 
 let style = css`
-  #notfound h1 {
-    text-align: center;
-    color: royalblue;
-    font-size: 60px;
+  #notfound {
+    h1 {
+      text-align: center;
+      color: royalblue;
+      font-size: 60px;
+    }
   }
 `;

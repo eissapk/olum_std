@@ -25,7 +25,7 @@ export default class Header extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from header component", style);
+    console.log("test from header component");
   }
 }
 
@@ -34,23 +34,25 @@ let style = css`
     height: 50px;
     line-height: 50px;
     background-color: #666;
-  }
-  header ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    text-align: center;
-  }
-  header ul li {
-    display: inline-block;
-    color: white;
-    margin: 0 10px;
-  }
-  header ul li a {
-    text-decoration: none;
-    color: white;
-  }
-  header ul li a.active {
-    color: royalblue;
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      li {
+        display: inline-block;
+        color: white;
+        margin: 0 10px;
+
+        a {
+          text-decoration: none;
+          color: white;
+          &.active {
+            color: royalblue;
+          }
+        }
+      }
+    }
   }
 `;

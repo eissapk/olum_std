@@ -5,7 +5,7 @@ import Header from "../components/header.js";
 
 let template = html`
   <div id="edit">
-    <Header />
+    <header />
     <form>
       <textarea></textarea>
       <button type="submit" class="saveBtn">save</button>
@@ -63,27 +63,26 @@ let style = css`
     width: 100%;
     height: 100%;
     background: white;
-    /* display: none; */
-  }
 
-  #edit form {
-    width: 100%;
-    overflow: hidden;
-    margin: 10px auto;
-  }
+    form {
+      width: 100%;
+      overflow: hidden;
+      margin: 10px auto;
+      
+      textarea {
+        width: 100%;
+        min-height: 80px;
+        resize: vertical;
+        outline: none;
+      }
 
-  #edit form textarea {
-    width: 100%;
-    min-height: 80px;
-    resize: vertical;
-    outline: none;
-  }
+      .saveBtn {
+        float: right;
+      }
 
-  .saveBtn {
-    float: right;
-  }
-
-  .cancelBtn {
-    float: left;
+      .cancelBtn {
+        float: left;
+      }
+    }
   }
 `;

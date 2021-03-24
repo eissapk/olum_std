@@ -74,39 +74,45 @@ export default class Todos extends OnInit {
 }
 
 let style = css`
-  #todos ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+  #todos {
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
 
-  #todos ul li {
-    overflow: hidden;
-    background-color: #eee;
-    margin-top: 5px;
-  }
-  #todos ul li p {
-    margin: 0;
-    width: calc(100% - 80px);
-    line-height: 25px;
-    float: left;
-    word-break: break-word;
-    padding: 0 10px;
-  }
-  #todos ul li span {
-    width: 40px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 30px;
-    text-align: center;
-    color: white;
-    cursor: pointer;
-    float: left;
-  }
-  #todos ul li span.editBtn {
-    background: #ffeb3b;
-  }
-  #todos ul li span.deleteBtn {
-    background: #ff5722;
+      li {
+        overflow: hidden;
+        background-color: #eee;
+        margin-top: 5px;
+
+        p {
+          margin: 0;
+          width: calc(100% - 80px);
+          line-height: 25px;
+          float: left;
+          word-break: break-word;
+          padding: 0 10px;
+        }
+
+        span {
+          width: 40px;
+          height: 30px;
+          line-height: 30px;
+          font-size: 30px;
+          text-align: center;
+          color: white;
+          cursor: pointer;
+          float: left;
+
+          &.editBtn {
+            background: #ffeb3b;
+          }
+
+          &.deleteBtn {
+            background: #ff5722;
+          }
+        }
+      }
+    }
   }
 `;

@@ -2,15 +2,13 @@ import { html, css, OnInit } from "../../lib/pk.js";
 import Header from "../components/header.js";
 
 let template = html`
-<div id="about">
-  <Header />
-  <p>
-    The app stores the tasks @ the user's browser localstorage. made by spk.js
-  </p>
-</div>
+  <div id="about">
+    <header />
+    <p>The app stores the tasks @ the user's browser localstorage. made by spk.js</p>
+  </div>
 `;
 
-export default class About extends OnInit{
+export default class About extends OnInit {
   data = {
     name: "About",
     components: {
@@ -20,8 +18,8 @@ export default class About extends OnInit{
     style,
     render: () => this.render(),
     scoped: true,
-  }
-  
+  };
+
   constructor() {
     super();
   }
@@ -34,10 +32,12 @@ export default class About extends OnInit{
 }
 
 let style = css`
-  #about p {
-    line-height: 26px;
-    color: #666;
-    text-align: center;
-    margin: 50px 0;
+  #about {
+    p {
+      line-height: 26px;
+      color: #666;
+      text-align: center;
+      margin: 50px 0;
+    }
   }
 `;

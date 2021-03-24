@@ -1,14 +1,15 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const TerserPlugin = require("terser-webpack-plugin");
-const { mode, devtool, title, dest, hash, comments } = require("./settings");
+const { mode, devtool, title, dest, src, hash, comments } = require("./settings");
 
 module.exports = {
   mode,
-  devtool, // uncomment for dev mode
+  // devtool, // uncomment for dev mode
   entry: {
-    main: ["babel-polyfill", "./src/app.js", "./src/app.scss"],
+    main: ["babel-polyfill", `./${src}/app.js`, `./${src}/app.scss`],
   },
   output: {
     path: path.resolve(__dirname, dest),
@@ -23,6 +24,15 @@ module.exports = {
       template: "./public/index.html",
       favicon: "./public/favicon.ico",
     }),
+    // new WebpackShellPluginNext({
+    //   onBuildStart:{
+    //     scripts: ['echo "Webpack Start"'],
+    //   }, 
+    //   onBuildEnd:{
+    //     scripts: ['echo "Webpack End"'],
+    //   },
+    //   onWatchRun:['echo "webpack watch"'],
+    // })
   ],
   optimization: {
     minimize: true,
