@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev":"concurrently \"node compiler.js && node server.js\" \"gulp\"",
-    "build": "node compiler.js && webpack && node clean.js"
+    "build": "node compiler.js && webpack --mode=production && node clean.js"
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,4 @@
-import { html, css, OnInit,$,debug } from "../../lib/pk.js";
+import { html, css, OnInit, $, debug } from "../../lib/pk.js";
 import logo from "../assets/logo.svg";
 
 let template = html`
@@ -36,12 +36,13 @@ let style = css`
     height: 50px;
     line-height: 50px;
     background-color: #666;
+
     a {
       width: 50px;
       height: 50px;
       float: left;
       img {
-        pointer-events:none;
+        pointer-events: none;
         width: 100%;
       }
     }
