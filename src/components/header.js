@@ -1,7 +1,9 @@
-import { html, css, OnInit } from "../../lib/pk.js";
+import { html, css, OnInit,$,debug } from "../../lib/pk.js";
+import logo from "../assets/logo.svg";
 
 let template = html`
   <header id="header">
+    <a to="/"><img src=${logo} /></a>
     <ul>
       <li><a to="/">Home</a></li>
       <li><a to="/about">About</a></li>
@@ -34,8 +36,19 @@ let style = css`
     height: 50px;
     line-height: 50px;
     background-color: #666;
-
+    a {
+      width: 50px;
+      height: 50px;
+      float: left;
+      img {
+        pointer-events:none;
+        width: 100%;
+      }
+    }
     ul {
+      width: calc(100% - 50px);
+      height: 50px;
+      float: left;
       list-style-type: none;
       padding: 0;
       margin: 0;

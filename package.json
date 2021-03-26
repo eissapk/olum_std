@@ -4,8 +4,8 @@
   "description": "A simple lightweight library for providing SPA experience.",
   "main": "server.js",
   "scripts": {
-    "dev":"concurrently \"node compiler.js && node server.js --mode development\" \"gulp\"",
-    "build": "node compiler.js && webpack --mode production && node clean.js"
+    "dev":"concurrently \"node compiler.js && node server.js\" \"gulp\"",
+    "build": "node compiler.js && webpack && node clean.js"
   },
   "keywords": [],
   "author": "",
