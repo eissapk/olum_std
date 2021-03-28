@@ -5,14 +5,16 @@ import About from "./views/about.js";
 import Edit from "./views/edit.js";
 import NotFound from "./views/notfound";
 
+const routes = [
+  { path: "/", comp: Home },
+  { path: "/about", comp: About },
+  { path: "/edit", comp: Edit },
+  { path: "/404", comp: NotFound },
+];
+
 export const router = new Router({
   mode: "history",
   root: "/",
   el: "#app",
+  routes,
 });
-
-router
-  .add("/", Home)
-  .add("/about", About)
-  .add("/edit", Edit)
-  .add("/404", NotFound);
