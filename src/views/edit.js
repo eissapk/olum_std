@@ -23,7 +23,6 @@ export default class Edit extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   };
   constructor() {
     super();
@@ -32,7 +31,7 @@ export default class Edit extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from edit component");
+    debug("test edit component");
 
     this.onMount();
     this.onSave();

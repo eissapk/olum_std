@@ -24,7 +24,7 @@ export default class Todos extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from todos component");
+    debug("test todos component");
 
     this.onChange();
     this.onDelete();
@@ -49,7 +49,7 @@ export default class Todos extends OnInit {
           .join("");
       }
     });
-    api.trigger(); // todo optimize service triggers
+    api.trigger();
   }
 
   onDelete() {

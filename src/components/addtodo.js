@@ -1,4 +1,4 @@
-import { html, css, $, OnInit } from "../../lib/pk.js";
+import { html, css, $, OnInit, debug } from "../../lib/pk.js";
 import { api } from "../services/api.js";
 
 let template = html`
@@ -16,7 +16,6 @@ export default class AddTodo extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   };
   constructor() {
     super();
@@ -25,7 +24,7 @@ export default class AddTodo extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from addtodo component");
+    debug("test addtodo component");
     const form = $("#addtodo form");
     const input = $("#addtodo input");
 

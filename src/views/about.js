@@ -1,4 +1,4 @@
-import { html, css, OnInit } from "../../lib/pk.js";
+import { html, css, OnInit, debug } from "../../lib/pk.js";
 import Header from "../components/header.js";
 
 let template = html`
@@ -17,7 +17,6 @@ export default class About extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   };
 
   constructor() {
@@ -27,7 +26,7 @@ export default class About extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from about component");
+    debug("test about component");
   }
 }
 

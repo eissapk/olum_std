@@ -1,10 +1,10 @@
-class Service { // todo optimize services
+import { Service } from "../../lib/pk.js";
+class API extends Service {
   todos = [];
-  temp = null
+  temp = null;
 
   constructor() {
-    this.stateUpdated = new Event(`${new Date().getTime()}`);
-    this.event = this.stateUpdated.type;
+    super("api_1");
   }
 
   add(todo) {
@@ -14,13 +14,13 @@ class Service { // todo optimize services
   }
 
   remove(id) {
-    this.todos = this.todos.filter((todo) => todo.id != id);
+    this.todos = this.todos.filter(todo => todo.id != id);
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.trigger();
   }
 
   edit(id, title) {
-    this.todos = this.todos.filter((todo) => {
+    this.todos = this.todos.filter(todo => {
       if (todo.id == id) todo.title = title;
       return todo;
     });
@@ -37,10 +37,6 @@ class Service { // todo optimize services
 
     return this.todos;
   }
-
-  trigger() {
-    dispatchEvent(this.stateUpdated);
-  }
 }
 
-export const api = new Service();
+export const api = new API();

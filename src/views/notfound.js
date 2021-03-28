@@ -1,4 +1,4 @@
-import { html, css, OnInit } from "../../lib/pk.js";
+import { html, css, OnInit, debug } from "../../lib/pk.js";
 
 let template = html`
   <div id="notfound">
@@ -13,7 +13,6 @@ export default class NotFound extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   };
 
   constructor() {
@@ -23,7 +22,7 @@ export default class NotFound extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from not found component");
+    debug("test not found component");
   }
 }
 
