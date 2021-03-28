@@ -25,7 +25,6 @@ export default class Todos extends OnInit {
 
   render() {
     debug("test todos component");
-
     this.onChange();
     this.onDelete();
     this.onEdit();
@@ -53,7 +52,7 @@ export default class Todos extends OnInit {
   }
 
   onDelete() {
-    document.on("click", e => {
+    this.app.on("click", e => {
       if (e.target.classList.contains("deleteBtn")) {
         const id = +e.target.getAttribute("data-id");
         api.remove(id);
@@ -62,7 +61,7 @@ export default class Todos extends OnInit {
   }
 
   onEdit() {
-    document.on("click", e => {
+    this.app.on("click", e => {
       if (e.target.classList.contains("editBtn")) {
         const id = e.target.getAttribute("data-id");
         const todo = api.get().find(item => item.id == id);

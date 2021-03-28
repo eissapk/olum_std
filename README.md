@@ -35,23 +35,25 @@ import Home from "./views/home.js";
 import About from "./views/about.js";
 import NotFound from "./views/notfound";
 
+const routes = [
+  { path: "/", comp: Home },
+  { path: "/about", comp: About },
+  { path: "/404", comp: NotFound },
+];
+
 export const router = new Router({
   mode: "history",
   root: "/",
   el: "#app",
+  routes,
 });
-
-router
-  .add("/", Home)
-  .add("/about", About)
-  .add("/404", NotFound);
 ```
 
 ---
 
 ### Component Structure
 ```javascript
-import { html, css, OnInit } from "pk.js";
+import { html, css, OnInit, debug } from "pk.js";
 import Header from "../components/header.js";
 
 let template = html`
@@ -69,7 +71,6 @@ export default class Home extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   };
 
   constructor() {
@@ -79,7 +80,7 @@ export default class Home extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from home component");
+    debug("test home component");
   }
 }
 
@@ -92,13 +93,13 @@ let style = css`
 
 ### Shared Service (State Management System)
 ```javascript
-class Service { 
+import { Service } from "pk.js";
+class API extends Service { 
   todos = [];
-  temp = null
+  temp = null;
 
   constructor() {
-    this.stateUpdated = new Event(`${new Date().getTime()}`);
-    this.event = this.stateUpdated.type;
+    super("api_1"); // pass service event name
   }
 
   add(todo) {
@@ -106,18 +107,15 @@ class Service {
     this.trigger();
   }
 
-  trigger() {
-    dispatchEvent(this.stateUpdated);
-  }
 }
 
-export const api = new Service();
+export const api = new API();
 ```
 ---
 
 ### A Component Stores Data in the Shared Service
 ```javascript
-import { html, css, $, OnInit } from "pk.js";
+import { html, css, $, OnInit, debug } from "pk.js";
 import {api} from "../services/api.js";
 
 let template = html`
@@ -135,7 +133,6 @@ export default class AddTodo extends OnInit {
     template,
     style,
     render: () => this.render(),
-    scoped: true,
   }
   constructor() {
     super();
@@ -144,7 +141,7 @@ export default class AddTodo extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from addtodo component");
+    debug("test addtodo component");
     const form = $("#addtodo form");
     const input = $("#addtodo input");
 
@@ -190,7 +187,7 @@ export default class Todos extends OnInit {
   init = () => super.init(this.data);
 
   render() {
-    console.log("test from todos component");
+    debug("test todos component");
 
     this.onChange();
   }
@@ -269,7 +266,7 @@ let style = css`
 npm run dev
 ```
 
-### Build for pProduction
+### Build for production
 ```bash
 npm run build
 ```
