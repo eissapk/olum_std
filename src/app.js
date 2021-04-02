@@ -1,8 +1,8 @@
 import { Router } from "../lib/pk.js";
 // views
-import Home from "./views/home.js";
-import About from "./views/about.js";
-import Edit from "./views/edit.js";
+import Home from "./views/home";
+import About from "./views/about";
+import Edit from "./views/edit";
 import NotFound from "./views/notfound";
 
 const routes = [

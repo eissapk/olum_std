@@ -1,19 +1,24 @@
 <template>
-  <div id="about">
+  <div id="home">
     <header />
-    <p>The app stores the tasks @ the user's browser localstorage. made by spk.js</p>
+    <AddTodo />
+    <Todos />
   </div>
 </template>
 
 <script>
   import { OnInit, debug } from "../../lib/pk.js";
-  import Header from "../components/header.js";
+  import Header from "../components/header";
+  import AddTodo from "../components/addtodo";
+  import Todos from "../components/todos";
 
-  export default class About extends OnInit {
+  export default class Home extends OnInit {
     data = {
-      name: "About",
+      name: "Home",
       components: {
         Header,
+        AddTodo,
+        Todos,
       },
       template,
       style,
@@ -27,18 +32,13 @@
     init = () => super.init(this.data);
 
     render() {
-      debug("test about component");
+      debug("test home component");
     }
   }
 </script>
 
 <style lang="scss">
-  #about {
-    p {
-      line-height: 26px;
-      color: #666;
-      text-align: center;
-      margin: 50px 0;
-    }
+  #home {
+    height: 100vh;
   }
 </style>

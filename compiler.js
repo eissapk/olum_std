@@ -24,42 +24,14 @@ const [base, sub] = ["src", "pre-build"];
 const dirs = [`${sub}/components`, `${sub}/views`];
 const settings = require("./settings");
 
-const updateFiles = (dir, file) => {
-  fs.readFile(path.join(__dirname, dir, file), "utf8", (err, data) => {
-    if (err) return console.error(colors.red.bold(err));
-
-    // extract pug & scss
-    const html = settings.pug && data.match(htmlVarRegex).length ? data.match(htmlVarRegex)[0] : null;
-    const style = settings.sass && data.match(styleVarRegex).length ? data.match(styleVarRegex)[0] : null;
-
-    // complied pug & scss
-    const compiledHTML = html != null ? pug.render(html) : html;
-    const compiledStyle = style != null ? sass.renderSync({ data: style }).css.toString() : style;
-
-    // console.log("original style => ", style);
-    // console.log("compiled style => ", compiledStyle);
-    // console.log("original html => ", html);
-    // console.log("compiled html => ", compiledHTML);
-
-    let newFile = data.replace(html, "\n" + compiledHTML + "\n");
-    newFile = newFile.replace(style, "\n" + compiledStyle + "\n");
-
-    // update file
-    fs.writeFile(path.join(__dirname, dir, file), newFile, err => {
-      if (err) return console.error(colors.red.bold(err));
-      console.log(colors.blue.bold(`updated => ${dir}/${file}`));
-    });
-  });
-};
-
 const compiler = (dir, file) => {
   fs.readFile(path.join(__dirname, dir, file), "utf8", (err, data) => {
     if (err) return console.error(colors.red.bold(err));
 
     let sourceFile = data;
-    let template = sourceFile.match(newRegex.template.all).length ? sourceFile.match(newRegex.template.all)[0] : null;
-    let script = sourceFile.match(newRegex.script.all).length ? sourceFile.match(newRegex.script.all)[0] : null;
-    let style = sourceFile.match(newRegex.style.all).length ? sourceFile.match(newRegex.style.all)[0] : null;
+    let template = Array.isArray(sourceFile.match(newRegex.template.all)) && sourceFile.match(newRegex.template.all).length ? sourceFile.match(newRegex.template.all)[0] : null;
+    let script = Array.isArray(sourceFile.match(newRegex.script.all)) && sourceFile.match(newRegex.script.all).length ? sourceFile.match(newRegex.script.all)[0] : null;
+    let style = Array.isArray(sourceFile.match(newRegex.style.all)) && sourceFile.match(newRegex.style.all).length ? sourceFile.match(newRegex.style.all)[0] : null;
 
     if (template != null) {
       const markup = template.replace(newRegex.template.tag, "");
