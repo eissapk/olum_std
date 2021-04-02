@@ -4,7 +4,7 @@
   "description": "A simple lightweight library for providing SPA experience.",
   "main": "server.js",
   "scripts": {
-    "dev":"concurrently \"node compiler.js && node server.js\" \"gulp\"",
+    "dev": "concurrently \"node compiler.js && node server.js\" \"gulp\"",
     "build": "node compiler.js && webpack --mode=production && node clean.js"
   },
   "keywords": [],
@@ -35,6 +35,5 @@
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.0",
     "webpack-shell-plugin-next": "^2.2.2"
-  },
-  "dependencies": {}
+  }
 }

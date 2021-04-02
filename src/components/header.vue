@@ -1,40 +1,42 @@
-import { html, css, OnInit, $, debug } from "../../lib/pk.js";
-import logo from "../assets/logo.svg";
-
-let template = html`
+<template>
   <header id="header">
-    <a to="/"><img src=${logo} /></a>
+    <a to="/"><img src="${logo}" /></a>
     <ul>
       <li><a to="/">Home</a></li>
       <li><a to="/about">About</a></li>
     </ul>
   </header>
-`;
+</template>
 
-export default class Header extends OnInit {
-  data = {
-    name: "Header",
-    template,
-    style,
-    render: () => this.render(),
-  };
+<script>
+  import { OnInit, $, debug } from "../../lib/pk.js";
+  import logo from "../assets/logo.svg";
+  export default class Header extends OnInit {
+    data = {
+      name: "Header",
+      template,
+      style,
+      render: () => this.render(),
+    };
 
-  constructor() {
-    super();
+    constructor() {
+      super();
+    }
+
+    init = () => super.init(this.data);
+
+    render() {
+      debug("test header component");
+    }
+
   }
+</script>
 
-  init = () => super.init(this.data);
-
-  render() {
-    debug("test header component");
-  }
-}
-
-let style = css`
+<style lang="scss">
   header {
     height: 50px;
     line-height: 50px;
-    background-color: #666;
+    background-color: #333;
 
     a {
       width: 50px;
@@ -67,4 +69,4 @@ let style = css`
       }
     }
   }
-`;
+</style>
