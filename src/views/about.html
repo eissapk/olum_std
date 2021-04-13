@@ -6,25 +6,20 @@
 </template>
 
 <script>
-  import { OnInit, debug } from "../../lib/pk.js";
+  import { debug } from "../../lib/pk.js";
   import Header from "../components/header";
 
-  export default class About extends OnInit {
-    data = {
-      name: "About",
-      components: {
-        Header,
-      },
-      template,
-      style,
-      render: () => this.render(),
-    };
-
-    constructor() {
-      super();
+  export default class About {
+    constructor() {}
+    data() {
+      return {
+        name: "About",
+        components: {Header},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
     }
-
-    init = () => super.init(this.data);
 
     render() {
       debug("test about component");

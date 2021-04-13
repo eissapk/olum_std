@@ -19,5 +19,5 @@ const server = new webpackDevServer(compiler, options);
 server.listen(port, "localhost", () => {
   const domain = `http://localhost:${port}`;
   openurl.open(domain);
-  console.log(colors.green.bold("DevServer @ " + domain));
+  console.log(colors.green.bold("Serving: " + domain));
 });

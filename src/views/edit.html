@@ -10,26 +10,22 @@
 </template>
 
 <script>
-  import { $, OnInit, debug } from "../../lib/pk.js";
+  import { $, debug } from "../../lib/pk.js";
   import { router } from "../app.js";
   import { api } from "../services/api.js";
   import Header from "../components/header";
 
-  export default class Edit extends OnInit {
-    data = {
-      name: "edit",
-      components: {
-        Header,
-      },
-      template,
-      style,
-      render: () => this.render(),
-    };
-    constructor() {
-      super();
+  export default class Edit {
+    constructor() {}
+    data() {
+      return {
+        name: "Edit",
+        components: {Header},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
     }
-
-    init = () => super.init(this.data);
 
     render() {
       debug("test edit component");

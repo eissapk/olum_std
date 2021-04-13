@@ -1,0 +1,1 @@
+node compiler.js compile && webpack --mode=production && node compiler.js clean

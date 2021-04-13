@@ -9,21 +9,19 @@
 </template>
 
 <script>
-  import { OnInit, $, debug } from "../../lib/pk.js";
+  import { $, debug } from "../../lib/pk.js";
   import logo from "../assets/logo.svg";
-  export default class Header extends OnInit {
-    data = {
-      name: "Header",
-      template,
-      style,
-      render: () => this.render(),
-    };
-
-    constructor() {
-      super();
+  export default class Header {
+    constructor() {}
+    data() {
+      return {
+        name: "Header",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
     }
-
-    init = () => super.init(this.data);
 
     render() {
       debug("test header component");

@@ -7,29 +7,26 @@
 </template>
 
 <script>
-  import { OnInit, debug } from "../../lib/pk.js";
+  import { debug } from "../../lib/pk.js";
   import Header from "../components/header";
   import AddTodo from "../components/addtodo";
   import Todos from "../components/todos";
 
-  export default class Home extends OnInit {
-    data = {
-      name: "Home",
-      components: {
+  export default class Home {
+    constructor() {}
+    data() {
+      return {
+        name: "Home",
+        components: {
         Header,
         AddTodo,
         Todos,
       },
-      template,
-      style,
-      render: () => this.render(),
-    };
-
-    constructor() {
-      super();
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
     }
-
-    init = () => super.init(this.data);
 
     render() {
       debug("test home component");

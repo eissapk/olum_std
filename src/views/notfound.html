@@ -5,22 +5,19 @@
 </template>
 
 <script>
-  import { OnInit, debug } from "../../lib/pk.js";
+  import { debug } from "../../lib/pk.js";
 
-  export default class NotFound extends OnInit {
-    data = {
-      name: "NotFound",
-      components: {},
-      template,
-      style,
-      render: () => this.render(),
-    };
-
-    constructor() {
-      super();
+  export default class NotFound {
+    constructor() {}
+    data() {
+      return {
+        name: "NotFound",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
     }
-
-    init = () => super.init(this.data);
 
     render() {
       debug("test not found component");
