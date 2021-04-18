@@ -1,208 +1,240 @@
 export default class DevTool {
   template() {
     return `
-      <div class="DevTool">
-        <div class="DevTool__header">
-          <button type="button" class="DevTool__header--closeBtn">&#10005;</button>
-          <span class="DevTool__header__logo">${this.logo}</span>
-        </div>
-        <div class="DevTool__body">${this.root()}</div>
-        <style>
-          ${this.style()}
-        </style>
-      </div>
-      <div class="DevTool__layer"><span></span></div>
-    `;
+  <div class="DevTool">
+    <div class="DevTool__header">
+      <button type="button" class="DevTool__header--closeBtn">&#10005;</button>
+      <span class="DevTool__header__logo">${this.logo}</span>
+    </div>
+    <div class="DevTool__body">${this.root()}</div>
+    <style>
+      ${this.style()}
+    </style>
+  </div>
+  <div class="DevTool__layer"><span></span></div>
+`;
   }
 
   style() {
     return `.DevTool {
-      box-sizing: border-box;
-      font-family: Helvetica, Arial, sans-serif;
-      user-select: none;
-      color: #333;
-      position: fixed;
-      min-width: 200px;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
-      z-index: 999;
-    }
-    .DevTool__header {
-      width: 100%;
-      height: 40px;
-      border-bottom: 1px solid #dfdfe0;
-    }
-    .DevTool__header:active {
-      cursor: grab;
-    }
-    .DevTool__header__logo {
-      float: left;
-      height: 25px;
-      width: 25px;
-      vertical-align: bottom;
-      margin: 7.5px;
-      pointer-events: none;
-    }
-    .DevTool__header__logo svg {
-      width: 100%;
-      height: 100%;
-    }
-    .DevTool__header--closeBtn {
-      float: right;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      text-align: center;
-      font-size: 1.2rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      outline: none;
-    }
-    .DevTool__body {
-      overflow: auto;
-      max-height: 200px;
-      margin: 5px 0 5px 5px;
-      padding-right: 5px;
-    }
-    .DevTool__body::-webkit-scrollbar {
-      width: 4px;
-    }
-    .DevTool__body::-webkit-scrollbar-thumb {
-      box-shadow: none;
-      background: #61cd4b;
-      border-radius: 5px;
-    }
-    .DevTool__body::-webkit-scrollbar-track {
-      box-shadow: none;
-      background: #eee;
-      border-radius: 5px;
-    }
-    .DevTool__body__root {
-      overflow: hidden;
-    }
-    .DevTool__body__root [pk-component] {
-      padding-left: 20px;
-      padding-top: 5px;
-    }
-    .DevTool__body__root > [pk-component] {
-      padding: 0;
-    }
-    .DevTool__body__root .line {
-      cursor: pointer;
-      position: relative;
-      padding: 3px 20px;
-      padding-right: 56px;
-    }
-    .DevTool__body__root .line span {
-      pointer-events: none;
-    }
-    .DevTool__body__root .line .chars {
-      color: #c1c1c1;
-      font-weight: bold;
-    }
-    .DevTool__body__root .line .name {
-      color: #61cd4b;
-      margin: 0 0.5px;
-      letter-spacing: 0.5px;
-    }
-    .DevTool__body__root .line .scroll {
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      text-align: center;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      outline: none;
-      position: absolute;
-      right: 16px;
-      top: 0;
-    }
-    .DevTool__body__root .line:after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: -500px;
-      background: #61cd4b;
-      z-index: -1;
-      padding: 0 500px;
-      border-radius: 5px;
-      opacity: 0;
-      transition: 0.1s all ease;
-    }
-    .DevTool__body__root .line:hover:after {
-      opacity: 1;
-    }
-    .DevTool__body__root .line:hover .name, .DevTool__body__root .line:hover .chars {
-      color: white;
-    }
-    .DevTool__body__root .caret [pk-component] {
-      display: none;
-    }
-    .DevTool__body__root .caret.active > [pk-component] {
-      display: block;
-    }
-    .DevTool__body__root .caret > .line::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: "";
-      border: 5px solid transparent;
-      border-left-color: #666;
-      border-left-width: 8px;
-      transform-origin: top;
-      margin: 7px 0px 0px 7px;
-      transition: 0.1s all ease;
-      pointer-events: none;
-    }
-    .DevTool__body__root .caret.active > .line::before {
-      transform: rotate(90deg);
-      margin: 15px 0px 0px 9px;
-    }
-    .DevTool__layer {
-      background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5) 10px, rgba(198, 228, 255, 0.5) 10px, rgba(198, 228, 255, 0.5) 20px);
-      border: 1px dashed #2196f3;
-      position: fixed;
-      z-index: 1;
-      justify-content: center;
-      align-items: center;
-      display: none;
-      box-sizing: border-box;
-      font-family: Helvetica, Arial, sans-serif;
-      user-select: none;
-      flex-flow: column nowrap;
-      place-content: center;
-      align-items: center;
-    }
-    .DevTool__layer span {
-      position: relative;
-      background: #66b8ff;
-      padding: 3px 15px;
-      border-radius: 5px;
-      color: white;
-      letter-spacing: 0.5px;
-    }
-    .DevTool__layer span::before,
-    .DevTool__layer span::after {
-      position: absolute;
-      top: 50%;
-      font-weight: bold;
-      color: white;
-      transform: translateY(-50%);
-    }
-    .DevTool__layer span::before {
-      content: "\\003C";
-      left: 3px;
-    }
-    .DevTool__layer span::after {
-      content: "\\003E";
-      right: 3px;
-    }
-  `;
+  box-sizing: border-box;
+  font-family: Helvetica, Arial, sans-serif;
+  user-select: none;
+  color: #333;
+  position: fixed;
+  min-width: 200px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+.DevTool button {
+  padding: 0;
+}
+.DevTool__header {
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid #dfdfe0;
+  background: #f5f5f5;
+  border-radius: 5px 5px 0 0;
+}
+.DevTool__header:active {
+  cursor: grab;
+}
+.DevTool__header__logo {
+  float: left;
+  height: 25px;
+  width: 25px;
+  vertical-align: bottom;
+  margin: 7.5px;
+  pointer-events: none;
+}
+.DevTool__header__logo svg {
+  width: 100%;
+  height: 100%;
+}
+.DevTool__header--closeBtn {
+  float: right;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+.DevTool__body {
+  overflow: auto;
+  max-height: 200px;
+  margin: 5px 0 5px 5px;
+  padding-right: 5px;
+}
+.DevTool__body::-webkit-scrollbar {
+  width: 4px;
+}
+.DevTool__body::-webkit-scrollbar-thumb {
+  box-shadow: none;
+  background: #61cd4b;
+  border-radius: 5px;
+}
+.DevTool__body::-webkit-scrollbar-track {
+  box-shadow: none;
+  background: #eee;
+  border-radius: 5px;
+}
+.DevTool__body__root {
+  overflow: hidden;
+}
+.DevTool__body__root [pk-component] {
+  padding-left: 20px;
+  padding-top: 5px;
+  /* reset */
+  display: block;
+  height: auto !important;
+  background: transparent !important;
+}
+.DevTool__body__root [pk-component]:first-of-type {
+  padding: 0;
+}
+.DevTool__body__root .line {
+  cursor: pointer;
+  position: relative;
+  padding: 0 30px;
+  padding-right: 56px;
+  overflow: hidden;
+}
+.DevTool__body__root .line span {
+  pointer-events: none;
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  font-weight: bold;
+}
+.DevTool__body__root .line .chars {
+  color: #c1c1c1;
+}
+.DevTool__body__root .line .name {
+  color: #61cd4b;
+  margin: 0 1px;
+  letter-spacing: 0.4px;
+}
+.DevTool__body__root .line .view {
+  background: #ff853e;
+  padding: 0 5px;
+  border-radius: 5px;
+  color: white;
+  height: 22px;
+  line-height: 22px;
+  margin: 4px 0 4px 10px;
+  font-size: 15px;
+}
+.DevTool__body__root .line .scroll {
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  position: absolute;
+  right: 17px;
+  top: 2.5px;
+}
+.DevTool__body__root .line .scroll svg {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  fill: #8a898b;
+}
+.DevTool__body__root .line:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #61cd4b;
+  z-index: -1;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.1s all ease;
+}
+.DevTool__body__root .line:hover:after {
+  opacity: 1;
+}
+.DevTool__body__root .line:hover .name,
+.DevTool__body__root .line:hover .chars {
+  color: white;
+}
+.DevTool__body__root .line:hover .scroll svg {
+  fill: white;
+}
+.DevTool__body__root .caret [pk-component] {
+  display: none;
+}
+.DevTool__body__root .caret.active > [pk-component] {
+  display: block;
+}
+.DevTool__body__root .caret > .line::before {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  content: "";
+  border: 5px solid transparent;
+  border-left-color: #666;
+  border-left-width: 8px;
+  transition: 0.1s all ease-in-out;
+  transform-origin: top left;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.DevTool__body__root .caret.active > .line::before {
+  transform: rotate(90deg) translateY(-50%);
+  left: 15px;
+  margin-top: -4px;
+}
+.DevTool__layer {
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5) 10px, rgba(198, 228, 255, 0.5) 10px, rgba(198, 228, 255, 0.5) 20px);
+  border: 1px dashed #2196f3;
+  position: fixed;
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  box-sizing: border-box;
+  font-family: Helvetica, Arial, sans-serif;
+  user-select: none;
+  flex-flow: column nowrap;
+  place-content: center;
+  align-items: center;
+}
+.DevTool__layer span {
+  position: relative;
+  background: #66b8ff;
+  padding: 5px 20px;
+  border-radius: 5px;
+  color: white;
+  letter-spacing: 0.4px;
+  font-weight: bold;
+}
+.DevTool__layer span::before,
+.DevTool__layer span::after {
+  position: absolute;
+  top: 50%;
+  color: white;
+  transform: translateY(-50%);
+}
+.DevTool__layer span::before {
+  content: "\\003C";
+  left: 8px;
+}
+.DevTool__layer span::after {
+  content: "\\003E";
+  right: 8px;
+}`;
   }
 
   isDown = false;
@@ -214,6 +246,7 @@ export default class DevTool {
   walkX;
   walkY;
   logo = `<svg viewBox="0 0 475 475" xmlns="http://www.w3.org/2000/svg" fill="none"><path d="M472.937 20.788c.567-3.067-1.807-5.788-4.925-5.788H89.647a5 5 0 0 0-4.914 4.076l-82.152 436.7c-.868 4.613 4.538 7.931 8.23 5.033C44.009 434.746 147.29 358.32 231 346.5c41.376-5.842 68.432 16.082 107 0 47.399-19.765 64-60 83-102 17.01-37.601 46.042-191.818 51.937-223.712z" fill="#6bc045"/><g fill="#303030"><path d="M259 223.5L233.5 170l39-10.5 32.5 14 12.5 25 71 109s-3.453 7.862-23 23.5C343 349 339 346 339 346l-80-122.5zm-96-132h67.5l-33 177.5-80.5 41.5 46-219z"/><path d="M262.5 160.5h-47L203 222h64l-4.5-61.5z"/><path d="M303 92h78.5l-69 100-40 7.5-13.5-40L303 92z"/></g></svg>`;
+  eye = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"/></svg>`;
 
   constructor(appMarkup) {
     this.appMarkup = appMarkup;
@@ -256,8 +289,9 @@ export default class DevTool {
       const lt = `<span class="chars">&lt;</span>`;
       const gt = `<span class="chars">&gt;</span>`;
       const name = `<span class="name">${comp.getAttribute("pk-component")}</span>`;
-      const scroll = `<button type="button" class="scroll" data-name="${comp.getAttribute("pk-component")}">👁️</button>`;
-      const line = `<div class="line">${lt + name + gt + scroll}</div>`;
+      const view = comp.getAttribute("router-view") ? `<span class="view">router-view</span>` : "";
+      const scroll = `<button type="button" class="scroll" data-name="${comp.getAttribute("pk-component")}">${this.eye}</button>`;
+      const line = `<div class="line">${lt + name + gt + view + scroll}</div>`;
       comp.insertAdjacentHTML("afterbegin", line);
     });
 
