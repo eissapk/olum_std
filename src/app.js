@@ -16,5 +16,6 @@ export const router = new Router({
   mode: "history",
   root: "/",
   el: "#app",
+  prefix: "app",
   routes,
 });
