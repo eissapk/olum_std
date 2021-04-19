@@ -1,0 +1,59 @@
+<template>
+  <div class="Browser">
+    <App-Tabs />
+    <App-Search />
+    <App-Notes />
+    <App-Addnote />
+  </div>
+</template>
+
+<script>
+  import { $ } from "../../lib/pk.js";
+  import AddNote from "../components/addnote";
+  import Search from "../components/search";
+  import Tabs from "../components/tabs";
+  import Notes from "../components/notes";
+
+  export default class Browser {
+    margin = 10;
+    constructor() {}
+
+    data() {
+      return {
+        name: "Browser",
+        components: { Tabs, Search, Notes, AddNote },
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {
+      this.setDimensions();
+      window.on("resize", () => this.setDimensions());
+    }
+
+    setDimensions() {
+      const h = window.innerHeight;
+      const w = window.innerWidth;
+      const container = $(".Browser");
+      if (container) {
+        const nav = $(".Nav").clientHeight;
+        const header = $(".Header").clientHeight;
+        const height = h - (nav + header + this.margin) + "px";
+        const width = w - this.margin * 2 + "px";
+        container.style.height = height;
+        container.style.width = width;
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  .Browser {
+    position: relative;
+    background: white;
+    margin: 0 auto;
+    border-radius: $radius;
+  }
+</style>

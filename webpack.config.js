@@ -20,7 +20,7 @@ const config = {
     new HtmlWebpackPlugin({
       title: title || "PKjs",
       template: "./public/index.html",
-      favicon: "./public/favicon.ico",
+      favicon: "./public/favicon.png",
     }),
   ],
   optimization: {

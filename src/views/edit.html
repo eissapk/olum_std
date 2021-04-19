@@ -1,84 +1,42 @@
 <template>
-  <div id="edit">
+  <div class="Edit">
+    <App-Nav />
     <App-Header />
-    <form>
-      <textarea></textarea>
-      <button type="submit" class="saveBtn">save</button>
-      <button to="/" type="button" class="cancelBtn">cancel</button>
-    </form>
+    <App-Form />
   </div>
 </template>
 
 <script>
-  import { $, debug } from "../../lib/pk.js";
-  import { router } from "../app.js";
-  import { api } from "../services/api.js";
-  import Header from "../components/header";
-
+  import Nav from "../components/layout/nav";
+  import Header from "../components/layout/header";
+  import Form from "../components/form";
+  import bg from "../assets/bg.webp";
   export default class Edit {
     constructor() {}
     data() {
       return {
         name: "Edit",
-        components: {Header},
+        components: { Nav, Header, Form },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
       };
     }
 
-    render() {
-      debug("test edit component");
-
-      this.onMount();
-      this.onSave();
-    }
-
-    onMount() {
-      const input = $("#edit textarea");
-      if (api.temp != null) input.value = api.temp.title;
-      input.focus();
-    }
-
-    onSave() {
-      const form = $("#edit form");
-      form.on("submit", e => {
-        e.preventDefault();
-        const input = $("#edit textarea");
-        api.edit(api.temp.id, input.value);
-        router.navigate("/");
-      });
-    }
+    render() {}
   }
 </script>
 
 <style lang="scss">
-  #edit {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-
-    form {
-      width: 100%;
-      overflow: hidden;
-      margin: 10px auto;
-
-      textarea {
-        width: 100%;
-        min-height: 80px;
-        resize: vertical;
-        outline: none;
-      }
-
-      .saveBtn {
-        float: right;
-      }
-
-      .cancelBtn {
-        float: left;
+  .Edit {
+    background-image: url("${bg}");
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    .Form{
+      .saveBtn{
+        display: none;
       }
     }
   }

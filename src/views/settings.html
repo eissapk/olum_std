@@ -1,35 +1,35 @@
 <template>
-  <div class="Home">
+  <div class="Settings">
     <App-Nav />
     <App-Header />
-    <App-Browser />
+    <h1>settings page</h1>
   </div>
 </template>
 
 <script>
-  import bg from "../assets/bg.webp";
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
-  import Browser from "../components/browser";
-  export default class Home {
+  import bg from "../assets/bg.webp";
+  export default class Settings {
     constructor() {}
+
     data() {
       return {
-        name: "Home",
-        components: { Nav, Header, Browser },
+        name: "Settings",
+        components: { Nav, Header },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
       };
     }
-
-    render() {}
+    
+    render() { }
   }
 </script>
 
-<style lang="scss">
-  .Home {
-    background-image: linear-gradient(rgba(65, 127, 245, 0.5), rgba(65, 127, 245, 0.5)), url("${bg}");
+<style>
+  .Settings {
+    background-image: url("${bg}");
     background-repeat: no-repeat;
     min-height: 100vh;
     background-size: cover;

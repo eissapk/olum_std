@@ -1,0 +1,81 @@
+<template>
+  <div class="AddNote">
+    <!-- add button -->
+    <button to="/add" type="button" class="addBtn">
+      <img src="${add}" alt="addBtn" />
+      <span>add note</span>
+    </button>
+    <!-- settings button -->
+    <a to="/settings" class="settingsBtn">settings</a>
+  </div>
+</template>
+
+<script>
+  import { OnInit, debug } from "../../lib/pk.js";
+  import add from "../assets/add.svg";
+
+  export default class AddNote {
+    constructor() {}
+
+    data() {
+      return {
+        name: "AddNote",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {
+      debug("test AddNote component");
+    }
+  }
+</script>
+
+<style lang="scss">
+  .AddNote {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    border-radius: 0 0 $radius $radius;
+    font-size: 17px;
+    border-top: 1px solid #dfdfe0;
+    .addBtn {
+      height: 50px;
+      padding: 0 10px;
+      float: left;
+      img {
+        pointer-events: none;
+        float: left;
+        vertical-align: bottom;
+        height: 30px;
+        margin: 10px 10px 10px 0;
+      }
+      span {
+        pointer-events: none;
+        float: left;
+        height: 50px;
+        line-height: 50px;
+        text-transform: capitalize;
+        font-weight: bold;
+        color: $blue;
+      }
+    }
+    .settingsBtn {
+      float: right;
+      display: inline-block;
+      background: $blue;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 15px;
+      border-radius: $radius;
+      margin: 10px;
+      color: white;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+  }
+</style>

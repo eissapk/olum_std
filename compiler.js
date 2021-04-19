@@ -9,8 +9,9 @@ const colors = require("colors");
 const settings = require("./settings");
 
 class Compiler {
-  sub = settings.src
-  dirs = [`${this.sub}/components`, `${this.sub}/views`];
+  sub = settings.src;
+  mainDirs = ["components", "views"];
+  dirs = [];
   regex = {
     template: {
       all: /<template[\s\S]*?>[\s\S]*?<\/template>/gi,
@@ -28,15 +29,45 @@ class Compiler {
     },
   };
 
-  constructor() {
-    cmd
-      .command("clean")
-      .action(this.clean.bind(this));
+  dirsRegex(arr) {
+    const pattern = arr
+      .map(dir => `${dir.toLowerCase().trim()}|`)
+      .join("")
+      .slice(0, -1);
+    const regex = new RegExp(pattern, "gi");
+    return regex;
+  }
 
-      cmd
-      .command("compile")
-      .action(this.init.bind(this));
-      
+  compsDirs() {
+    const dirs = src => {
+      return fs
+        .readdirSync(src)
+        .map(item => path.join(src, item))
+        .filter(item => fs.statSync(item).isDirectory());
+    };
+    const recursive = src => [src, ...this.flatten(dirs(src).map(recursive))];
+    let arr = recursive("src");
+
+    arr = arr
+      .filter(item => {
+        const regex = this.dirsRegex(this.mainDirs);
+        const result = regex.test(item);
+        if (result) return item;
+      })
+      .map(item => item.replace(/^src/, this.sub));
+
+    this.dirs = arr; // update
+  }
+
+  flatten(lists) {
+    return lists.reduce((a, b) => a.concat(b), []);
+  }
+
+  constructor() {
+    this.compsDirs(); // get all directories paths in components & views
+
+    cmd.command("clean").action(this.clean.bind(this));
+    cmd.command("compile").action(this.init.bind(this));
     cmd.parse(process.argv);
   }
 
@@ -56,14 +87,10 @@ class Compiler {
 
   css(file, shared) {
     const styleArr = file.match(this.regex.style.all);
-    let style = Array.isArray(styleArr) && styleArr.length ? styleArr[0] : "";
+    let style = Array.isArray(styleArr) && styleArr.length ? styleArr[styleArr.length - 1] : ""; // get last style tag as the order of the component file cause you may have style tag inside the class "script tag"
     const scss = style.replace(this.regex.style.tag, "");
-    const compiledShared = sass.renderSync({
-      data: shared
-    }).css.toString();
-    const css = this.hasSASS(style) ? sass.renderSync({
-      data: shared + scss
-    }).css.toString() : compiledShared + scss;
+    const compiledShared = sass.renderSync({ data: shared }).css.toString();
+    const css = this.hasSASS(style) ? sass.renderSync({ data: shared + scss }).css.toString() : compiledShared + scss;
     return "\n style() { \n return `" + css + "`;\n}\n";
   }
 
@@ -122,7 +149,7 @@ class Compiler {
     return new Promise((resolve, reject) => {
       extra.copy(path.resolve(__dirname, "src"), path.resolve(__dirname, this.sub), err => {
         if (err) reject(err);
-        console.log(colors.green.bold("Cloned \"src\" directory"));
+        console.log(colors.green.bold('Cloned "src" directory'));
         resolve();
       });
     });
@@ -146,7 +173,12 @@ class Compiler {
     this.dirs.forEach(dir => {
       fs.readdir(path.resolve(__dirname, dir), (err, files) => {
         if (err) return console.error(colors.red.bold(err));
-        files.forEach(file => this.compile(dir, file, shared));
+
+        files.forEach(file => {
+          const item = path.join(dir, file);
+          // get files only and exclude directories
+          if (!fs.statSync(item).isDirectory()) this.compile(dir, file, shared);
+        });
       });
     });
   }
@@ -161,7 +193,6 @@ class Compiler {
       console.error(colors.red.bold(err));
     }
   }
-
 }
 
 new Compiler();

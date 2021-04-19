@@ -1,0 +1,195 @@
+<template>
+  <div class="Search">
+    <!-- navigation -->
+    <div class="navigation">
+      <!-- back -->
+      <button type="button" class="prevBtn">
+        <img src="${prev}" alt="prevBtn" />
+      </button>
+      <!-- next -->
+      <button type="button" class="nextBtn">
+        <img src="${next}" alt="nextBtn" />
+      </button>
+    </div>
+
+    <!-- select all -->
+    <div class="selectAll">
+      <label>
+        <input type="checkbox" />
+        <span class="check"></span>
+      </label>
+    </div>
+
+    <!-- delete button -->
+    <button type="button" class="delBtn">
+      <img src="${trash}" alt="delBtn" />
+    </button>
+    <!-- search input -->
+    <input type="text" class="searchInput" placeholder="Search Your Notes..." />
+  </div>
+</template>
+
+<script>
+  import { OnInit, debug, $ } from "../../lib/pk.js";
+  import trash from "../assets/trash.svg";
+  import prev from "../assets/prev.svg";
+  import next from "../assets/next.svg";
+
+  export default class Search {
+    constructor() {}
+
+    data() {
+      return {
+        name: "Search",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+        scoped: false,
+      };
+    }
+
+    render() {
+      setTimeout(() => this.calcWidth(), 200);
+      window.on("resize", () => this.calcWidth());
+    }
+
+    calcWidth() {
+      const container = $(".Search");
+      if (container) {
+        const margin = 10;
+        const navigation = $(container).get(".navigation").clientWidth;
+        const selectAll = $(container).get(".selectAll").clientWidth;
+        const delBtn = $(container).get(".delBtn").clientWidth;
+        $(".searchInput").style.width = container.clientWidth - (navigation + selectAll + delBtn + margin) + "px";
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  .Search {
+    position: absolute;
+    left: 0;
+    top: 50px;
+    height: 50px;
+    width: 100%;
+    background: $border;
+
+    .navigation {
+      padding: 0 10px;
+      float: left;
+
+      .prevBtn,
+      .nextBtn {
+        height: 30px;
+        float: left;
+        margin: 5px 0;
+        padding: 5px;
+        box-sizing: content-box;
+        border-radius: 50%;
+        transition: 0.1s background ease;
+
+        &:hover {
+          background: $hoverColor;
+        }
+
+        img {
+          pointer-events: none;
+          height: 100%;
+          vertical-align: bottom;
+        }
+      }
+    }
+
+    .selectAll {
+      height: 30px;
+      width: 30px;
+      float: left;
+      padding: 10px;
+      box-sizing: content-box;
+
+      label {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        float: left;
+
+        &:hover .check {
+          background: $hoverColor;
+        }
+
+        input {
+          position: absolute;
+          opacity: 0;
+          width: 0;
+          height: 0;
+
+          &:checked ~ .check {
+            background: $green;
+            border: 1px solid $green;
+
+            &:after {
+              opacity: 1;
+            }
+          }
+        }
+
+        .check {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          background: #fff;
+          border: 1px solid $border;
+          transition: all 0.1s ease-in-out;
+          float: left;
+          border-radius: 50%;
+
+          &:after {
+            content: "";
+            position: absolute;
+            top: 6px;
+            right: 9px;
+            width: 9px;
+            height: 15px;
+            border: solid #fff;
+            border-width: 0 4px 4px 0;
+            transform: rotate(45deg);
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+          }
+        }
+      }
+    }
+
+    .delBtn {
+      height: 30px;
+      float: left;
+      padding: 10px;
+      box-sizing: content-box;
+
+      img {
+        pointer-events: none;
+        height: 100%;
+        vertical-align: bottom;
+      }
+    }
+
+    .searchInput {
+      float: left;
+      height: 40px;
+      margin: 5px 0;
+      border: 0;
+      padding: 0 20px;
+      border-radius: 20px;
+      color: #384258;
+      transition: background 0.3s ease-in-out;
+      outline: none;
+
+      &:hover {
+        background-color: $border;
+      }
+    }
+  }
+</style>

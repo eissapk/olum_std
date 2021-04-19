@@ -1,14 +1,15 @@
 import { Router } from "../lib/pk.js";
-// views
 import Home from "./views/home";
-import About from "./views/about";
-import Edit from "./views/edit";
+import Settings from "./views/settings";
 import NotFound from "./views/notfound";
+import Add from "./views/add";
+import Edit from "./views/edit";
 
 const routes = [
   { path: "/", comp: Home },
-  { path: "/about", comp: About },
+  { path: "/add", comp: Add },
   { path: "/edit", comp: Edit },
+  { path: "/settings", comp: Settings },
   { path: "/404", comp: NotFound },
 ];
 

@@ -1,0 +1,97 @@
+<template>
+  <div class="Header">
+    <section>
+      <h1>
+        00 : 00
+        <span>PM</span>
+      </h1>
+      <p>Apr 3</p>
+    </section>
+  </div>
+</template>
+
+<script>
+  import { debug, $ } from "../../../lib/pk.js";
+  export default class Header {
+    hArr = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    mArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    timeout = 1;
+    constructor() {}
+    data() {
+      return {
+        name: "Header",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+        scoped: false,
+      };
+    }
+    
+    render() {
+      this.syncTime();
+      setInterval(() => this.syncTime(), this.timeout * 60 * 1000);
+    }
+
+    syncTime() {
+      const container = $(".Header");
+      const date = new Date();
+
+      // hours
+      const hours = date.getHours();
+      const hours_12 = this.hArr[hours];
+
+      let hL = String(hours_12).length;
+      let h = "";
+      if (hL == 1) h = `0${hours_12}`;
+      else h = `${hours_12}`;
+
+      // detect am, pm
+      let am_pm = "";
+      if (hours >= 12) am_pm = "PM";
+      else am_pm = "AM";
+
+      // minutes
+      const minutes = date.getMinutes();
+      let mL = String(minutes).length;
+      let m = "";
+      if (mL == 1) m = `0${minutes}`;
+      else m = `${minutes}`;
+
+      container.innerHTML = `
+        <section>
+          <h1>
+            ${h} : ${m}
+            <span>${am_pm}</span>
+          </h1>
+          <p>${this.mArr[date.getMonth()]} ${date.getDate()}</p>
+        </section>
+      `;
+    }
+  }
+</script>
+
+<style lang="scss">
+  .Header {
+    user-select: none;
+    padding: 20px 0;
+    section {
+      overflow: hidden;
+      text-align: center;
+      color: white;
+      h1 {
+        font-size: 50px;
+        span {
+          text-transform: uppercase;
+          font-size: 20px;
+          font-weight: normal;
+        }
+      }
+      p {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: normal;
+      }
+    }
+  }
+</style>

@@ -1,22 +1,22 @@
 <template>
-  <div class="Home">
+  <div class="Add">
     <App-Nav />
     <App-Header />
-    <App-Browser />
+    <App-Form />
   </div>
 </template>
 
 <script>
-  import bg from "../assets/bg.webp";
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
-  import Browser from "../components/browser";
-  export default class Home {
+  import Form from "../components/form";
+  import bg from "../assets/bg.webp";
+  export default class Add {
     constructor() {}
     data() {
       return {
-        name: "Home",
-        components: { Nav, Header, Browser },
+        name: "Add",
+        components: { Nav, Header, Form },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
@@ -28,11 +28,16 @@
 </script>
 
 <style lang="scss">
-  .Home {
-    background-image: linear-gradient(rgba(65, 127, 245, 0.5), rgba(65, 127, 245, 0.5)), url("${bg}");
+  .Add {
+    background-image: url("${bg}");
     background-repeat: no-repeat;
     min-height: 100vh;
     background-size: cover;
     background-position: center;
+    .Form{
+      .updateBtn{
+        display: none;
+      }
+    }
   }
 </style>

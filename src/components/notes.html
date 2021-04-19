@@ -1,31 +1,35 @@
 <template>
-  <div class="NotFound">
-    <h1>404</h1>
-  </div>
+  <div class="Notes"></div>
 </template>
 
 <script>
   import { OnInit, debug } from "../../lib/pk.js";
-  export default class NotFound {
+  export default class Notes {
     constructor() {}
 
     data() {
       return {
-        name: "NotFound",
+        name: "Notes",
         components: {},
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
+        scoped: false,
       };
     }
-    
+
     render() {
-      debug("test NotFound component");
+      debug("test Notes component");
     }
   }
 </script>
 
-<style>
-  .NotFound {
+<style lang="scss">
+  .Notes {
+    position: absolute;
+    left: 0;
+    top: 100px;
+    height: calc(100% - 150px);
+    width: 100%;
   }
 </style>

@@ -1,0 +1,104 @@
+<template>
+  <div class="Tabs">
+    <div class="innerTabs">
+      <!-- dots -->
+      <div class="dots"><span></span></div>
+      <!-- add tab -->
+      <button type="button" class="addTab"><img src="${plus}" alt="add" /></button>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { debug } from "../../lib/pk.js";
+  import plus from "../assets/plus.svg";
+  export default class Tabs {
+    constructor() {}
+
+    data() {
+      return {
+        name: "Tabs",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Tabs {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 50px;
+    width: 100%;
+    background: $border;
+    border-radius: $radius $radius 0 0;
+    border-bottom: 1px solid #dfdfe0;
+
+    .innerTabs {
+      height: 40px;
+      margin-top: 10px;
+    }
+
+    .dots {
+      position: relative;
+      width: 80px;
+      height: 100%;
+      float: left;
+      margin-left: 10px;
+      span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: $yellow;
+        &:before {
+          content: "";
+          position: absolute;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: $red;
+          left: -24px;
+          top: 0;
+        }
+        &:after {
+          content: "";
+          position: absolute;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: $green;
+          right: -24px;
+          top: 0;
+        }
+      }
+    }
+    .addTab {
+      width: 30px;
+      height: 30px;
+      float: right;
+      border-radius: 50%;
+      margin: 5px 10px;
+      &:hover {
+        background: $hoverColor;
+        transition: all 0.1s ease-in-out;
+      }
+
+      img {
+        vertical-align: bottom;
+        width: 20px;
+        height: 20px;
+        margin: 5px;
+      }
+    }
+  }
+</style>
