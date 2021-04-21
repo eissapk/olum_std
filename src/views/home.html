@@ -3,6 +3,7 @@
     <App-Nav />
     <App-Header />
     <App-Browser />
+    <App-Footer />
   </div>
 </template>
 
@@ -10,13 +11,14 @@
   import bg from "../assets/bg.webp";
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
+  import Footer from "../components/layout/footer";
   import Browser from "../components/browser";
   export default class Home {
     constructor() {}
     data() {
       return {
         name: "Home",
-        components: { Nav, Header, Browser },
+        components: { Nav, Header, Browser, Footer },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),

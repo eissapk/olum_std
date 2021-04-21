@@ -1,0 +1,41 @@
+<template>
+  <div class="Footer">
+    <p>
+      © 2021 All Rights Reserved.
+      <a href="https://eissa.xyz" target="_blank">Eissa Stock</a>
+    </p>
+  </div>
+</template>
+
+<script>
+  export default class Footer {
+    constructor() {}
+    data() {
+      return {
+        name: "Footer",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Footer {
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    text-align: center;
+    margin-top: 10px;
+    p {
+      a {
+        text-decoration: none;
+        color: #417ff5;
+      }
+    }
+  }
+</style>

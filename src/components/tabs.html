@@ -3,6 +3,17 @@
     <div class="innerTabs">
       <!-- dots -->
       <div class="dots"><span></span></div>
+
+      <div class="sliderWrapper">
+        <div class="slider">
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+        </div>
+      </div>
+
       <!-- add tab -->
       <button type="button" class="addTab"><img src="${plus}" alt="add" /></button>
     </div>
@@ -10,9 +21,17 @@
 </template>
 
 <script>
-  import { debug } from "../../lib/pk.js";
+  import { $, debug } from "../../lib/pk.js";
   import plus from "../assets/plus.svg";
   export default class Tabs {
+    startX = 0;
+    currentX = 0;
+    isDown = false;
+    isActive = false;
+    walk = 0;
+    padding = 15;
+    totalWidth;
+
     constructor() {}
 
     data() {
@@ -25,7 +44,67 @@
       };
     }
 
-    render() {}
+    render() {
+      this.slider = $(".slider");
+      this.setDimensions();
+      window.on("resize", () => this.setDimensions());
+      this.slider.on("mousedown", e => this.dragStart(e));
+      this.slider.on("mouseup", e => this.dragEnd(e));
+      this.slider.on("mousemove", e => this.dragMove(e));
+      this.slider.on("mouseleave", () => (this.isActive = false));
+    }
+
+    setDimensions() {
+      const container = $(".innerTabs");
+      if (container) {
+        const w = container.offsetWidth;
+
+        const dots = $(".dots").clientWidth;
+        const addTab = $(".addTab").clientWidth;
+
+        const width = w - (dots + addTab + 20);
+        $(".sliderWrapper").style.width = width + "px";
+
+        const tabs = $(this.slider).get("span", true);
+        const tabWidth = tabs[0].offsetWidth;
+        this.totalWidth = tabs.length * tabWidth - width + this.padding * 2;
+      }
+    }
+
+    dragStart(e) {
+      e = e || window.event;
+      this.isDown = true;
+      this.isActive = true;
+      this.startX = e.pageX - this.slider.offsetLeft - this.padding;
+    }
+
+    dragEnd(e) {
+      e = e || window.event;
+      this.isDown = false;
+      this.isActive = false;
+    }
+
+    dragMove(e) {
+      e = e || window.event;
+
+      if (this.isDown && this.isActive) {
+        let currentLeft = +getComputedStyle(this.slider).left.replace(/\D/gi, "");
+        this.currentX = e.pageX - this.slider.offsetLeft - this.padding;
+        this.walk = this.currentX - this.startX;
+        const walk = this.walk > 0 ? this.walk : this.walk * -1; // get positive num
+        if (this.walk < 0) {
+          // next
+          currentLeft += walk;
+          if (currentLeft > this.totalWidth) currentLeft = this.totalWidth;
+        } else {
+          // prev
+          currentLeft -= walk;
+          if (currentLeft < 0) currentLeft = 0;
+        }
+
+        this.slider.style.left = `-${currentLeft}px`;
+      }
+    }
   }
 </script>
 
@@ -39,65 +118,95 @@
     background: $border;
     border-radius: $radius $radius 0 0;
     border-bottom: 1px solid #dfdfe0;
+    user-select: none;
 
     .innerTabs {
       height: 40px;
       margin-top: 10px;
-    }
+      padding: 0 10px;
 
-    .dots {
-      position: relative;
-      width: 80px;
-      height: 100%;
-      float: left;
-      margin-left: 10px;
-      span {
-        width: 12px;
-        height: 12px;
+      .dots {
+        position: relative;
+        width: 80px;
+        height: 100%;
+        float: left;
+        span {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: $yellow;
+          &:before {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: $red;
+            left: -24px;
+            top: 0;
+          }
+          &:after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: $green;
+            right: -24px;
+            top: 0;
+          }
+        }
+      }
+
+      .addTab {
+        width: 30px;
+        height: 30px;
+        float: left;
         border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: $yellow;
-        &:before {
-          content: "";
-          position: absolute;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: $red;
-          left: -24px;
-          top: 0;
+        margin: 5px 0;
+        &:hover {
+          background: $hoverColor;
+          transition: all 0.1s ease-in-out;
         }
-        &:after {
-          content: "";
-          position: absolute;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: $green;
-          right: -24px;
-          top: 0;
+
+        img {
+          vertical-align: bottom;
+          width: 20px;
+          height: 20px;
+          margin: 5px;
         }
-      }
-    }
-    .addTab {
-      width: 30px;
-      height: 30px;
-      float: right;
-      border-radius: 50%;
-      margin: 5px 10px;
-      &:hover {
-        background: $hoverColor;
-        transition: all 0.1s ease-in-out;
       }
 
-      img {
-        vertical-align: bottom;
-        width: 20px;
-        height: 20px;
-        margin: 5px;
+      .sliderWrapper {
+        padding: 0 10px;
+        float: left;
+        overflow: hidden;
+        .slider {
+          min-width: 2000px;
+          display: flex;
+          flex-wrap: nowrap;
+          flex-direction: row;
+          position: relative;
+          left: 0;
+
+          &:active {
+            cursor: grab;
+          }
+          span {
+            width: 250px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            background: white;
+            border: 1px solid whitesmoke;
+            border-bottom-color: #dfdfe0;
+            border-radius: 10px 10px 0 0;
+          }
+        }
       }
     }
   }

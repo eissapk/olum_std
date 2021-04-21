@@ -2,13 +2,14 @@
   <div class="Settings">
     <App-Nav />
     <App-Header />
-    <h1>settings page</h1>
+    <App-Footer />
   </div>
 </template>
 
 <script>
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
+  import Footer from "../components/layout/footer";
   import bg from "../assets/bg.webp";
   export default class Settings {
     constructor() {}
@@ -16,7 +17,7 @@
     data() {
       return {
         name: "Settings",
-        components: { Nav, Header },
+        components: { Nav, Header, Footer },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
