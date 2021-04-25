@@ -1,9 +1,9 @@
-import { Router } from "../lib/pk.js";
-import Home from "./views/home";
-import Settings from "./views/settings";
-import NotFound from "./views/notfound";
-import Add from "./views/add";
-import Edit from "./views/edit";
+import { Pk }  from "../lib/pk.js";
+import Home from "./views/home.js";
+import Settings from "./views/settings.js";
+import NotFound from "./views/notfound.js";
+import Add from "./views/add.js";
+import Edit from "./views/edit.js";
 
 const routes = [
   { path: "/", comp: Home },
@@ -13,7 +13,7 @@ const routes = [
   { path: "/404", comp: NotFound },
 ];
 
-export const router = new Router({
+export const pk = new Pk({
   mode: "history",
   root: "/",
   el: "#app",

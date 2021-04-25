@@ -8,6 +8,7 @@
 </template>
 
 <script>
+  import { debug } from "../../lib/pk.js";
   import bg from "../assets/bg.webp";
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
@@ -25,7 +26,9 @@
       };
     }
 
-    render() {}
+    render() {
+      debug("home view works")
+    }
   }
 </script>
 

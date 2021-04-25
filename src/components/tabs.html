@@ -6,11 +6,11 @@
 
       <div class="sliderWrapper">
         <div class="slider">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
+          <span class="tab">1</span>
+          <span class="tab">2</span>
+          <span class="tab">3</span>
+          <span class="tab">4</span>
+          <span class="tab">5</span>
         </div>
       </div>
 
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { $, debug } from "../../lib/pk.js";
+  import { $ } from "../../lib/pk.js";
   import plus from "../assets/plus.svg";
   export default class Tabs {
     startX = 0;
@@ -29,8 +29,8 @@
     isDown = false;
     isActive = false;
     walk = 0;
-    padding = 15;
     totalWidth;
+    tabWidth = 250;
 
     constructor() {}
 
@@ -46,36 +46,44 @@
 
     render() {
       this.slider = $(".slider");
-      this.setDimensions();
-      window.on("resize", () => this.setDimensions());
+      this.slider.on("touchstart", e => this.dragStart(e));
       this.slider.on("mousedown", e => this.dragStart(e));
+      this.slider.on("touchend", e => this.dragEnd(e));
       this.slider.on("mouseup", e => this.dragEnd(e));
+      this.slider.on("touchmove", e => this.dragMove(e));
       this.slider.on("mousemove", e => this.dragMove(e));
-      this.slider.on("mouseleave", () => (this.isActive = false));
+      this.slider.on("wheel", e => this.scroll(e));
+      this.slider.on("mouseleave", () => ((this.isActive = false), (document.body.style.overflow = "")));
+      this.slider.on("mouseenter", () => (document.body.style.overflow = "hidden"));
     }
 
-    setDimensions() {
-      const container = $(".innerTabs");
-      if (container) {
-        const w = container.offsetWidth;
-
-        const dots = $(".dots").clientWidth;
-        const addTab = $(".addTab").clientWidth;
-
-        const width = w - (dots + addTab + 20);
-        $(".sliderWrapper").style.width = width + "px";
-
-        const tabs = $(this.slider).get("span", true);
-        const tabWidth = tabs[0].offsetWidth;
-        this.totalWidth = tabs.length * tabWidth - width + this.padding * 2;
+    scroll(e) {
+      e = e || window.event;
+      const wrapper = $(".sliderWrapper");
+      const tabs = $(wrapper).get(".tab", true);
+      this.totalWidth = tabs.length ? tabs.length * tabs[0].offsetWidth - wrapper.offsetWidth : 0;
+      let currentLeft = +getComputedStyle(this.slider).left.replace(/\D/gi, "");
+      if (e.deltaY < 0) {
+        // next
+        currentLeft -= this.tabWidth;
+        if (currentLeft < 0) currentLeft = 0;
+      } else {
+        // prev
+        currentLeft += this.tabWidth;
+        if (currentLeft > this.totalWidth) currentLeft = this.totalWidth;
       }
+      this.slider.style.left = `-${currentLeft}px`;
     }
 
     dragStart(e) {
       e = e || window.event;
       this.isDown = true;
       this.isActive = true;
-      this.startX = e.pageX - this.slider.offsetLeft - this.padding;
+      if (e.type == "mousedown") {
+        this.startX = e.pageX - this.slider.offsetLeft;
+      } else {
+        this.startX = e.touches[0].pageX - this.slider.offsetLeft;
+      }
     }
 
     dragEnd(e) {
@@ -88,10 +96,20 @@
       e = e || window.event;
 
       if (this.isDown && this.isActive) {
+        const wrapper = $(".sliderWrapper");
+        const tabs = $(wrapper).get(".tab", true);
+        this.totalWidth = tabs.length ? tabs.length * tabs[0].offsetWidth - wrapper.offsetWidth : 0;
         let currentLeft = +getComputedStyle(this.slider).left.replace(/\D/gi, "");
-        this.currentX = e.pageX - this.slider.offsetLeft - this.padding;
+
+        if (e.type == "mousemove") {
+          this.currentX = e.pageX - this.slider.offsetLeft;
+        } else {
+          this.currentX = e.touches[0].pageX - this.slider.offsetLeft;
+        }
+
         this.walk = this.currentX - this.startX;
-        const walk = this.walk > 0 ? this.walk : this.walk * -1; // get positive num
+        const walk = this.walk > 0 ? this.walk : this.walk * -1; // +ve num
+
         if (this.walk < 0) {
           // next
           currentLeft += walk;
@@ -130,6 +148,8 @@
         width: 80px;
         height: 100%;
         float: left;
+        margin-right: 10px;
+
         span {
           width: 12px;
           height: 12px;
@@ -139,6 +159,7 @@
           left: 50%;
           transform: translate(-50%, -50%);
           background: $yellow;
+
           &:before {
             content: "";
             position: absolute;
@@ -149,6 +170,7 @@
             left: -24px;
             top: 0;
           }
+
           &:after {
             content: "";
             position: absolute;
@@ -167,7 +189,8 @@
         height: 30px;
         float: left;
         border-radius: 50%;
-        margin: 5px 0;
+        margin: 5px 0 5px 10px;
+
         &:hover {
           background: $hoverColor;
           transition: all 0.1s ease-in-out;
@@ -182,9 +205,10 @@
       }
 
       .sliderWrapper {
-        padding: 0 10px;
         float: left;
+        width: calc(100% - (90px + 40px));
         overflow: hidden;
+
         .slider {
           min-width: 2000px;
           display: flex;
@@ -196,8 +220,9 @@
           &:active {
             cursor: grab;
           }
-          span {
-            width: 250px;
+
+          .tab {
+            width: unquote("${this.tabWidth}px");
             height: 40px;
             text-align: center;
             line-height: 40px;

@@ -7,7 +7,7 @@ const { mode, title, dest, src, hash, comments, asyncAwait } = require("./settin
 const config = {
   mode,
   entry: {
-    main: [`./${src}/app.js`, `./${src}/app.scss`],
+    main: [`./${src}/app.mjs`, `./${src}/app.scss`],
   },
   output: {
     path: path.resolve(__dirname, dest),
@@ -49,6 +49,14 @@ const config = {
         type: "asset/resource",
       },
     ],
+  },
+  externals: {
+    lodash: {
+      commonjs: "lodash",
+      commonjs2: "lodash",
+      amd: "lodash",
+      root: "_",
+    },
   },
 };
 
