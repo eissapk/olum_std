@@ -1,4 +1,8 @@
 const path = require("path");
+const WebpackBeforeBuildPlugin = require('before-build-webpack');
+const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+const shell = require('shelljs');
+const colors = require("colors");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -14,6 +18,15 @@ const config = {
     filename: `app[fullhash:${hash}].js`,
   },
   plugins: [
+    // new ExtraWatchWebpackPlugin({
+    //   files: ["*.*"],
+    //   dirs: [ path.resolve(__dirname, "src") ],
+    // }),
+    // new WebpackBeforeBuildPlugin(function(stats, cb) {
+    //   console.log(colors.red("before build"));
+    //   shell.exec('node compiler.js compile')
+    //   cb(); 
+    // }), 
     new CleanWebpackPlugin({
       cleanAfterEveryBuildPatterns: [`./${dest}/**/*.*`],
     }),

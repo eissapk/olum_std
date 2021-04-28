@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "concurrently \"node compiler.js compile && node server.js\" \"gulp\"",
-    "build": "./build.sh"
+    "build": "node compiler.js compile && webpack --mode=production && node compiler.js clean"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +18,13 @@
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
+    "before-build-webpack": "^0.2.11",
     "clean-webpack-plugin": "^3.0.0",
     "colors": "^1.4.0",
     "commander": "^7.2.0",
     "concurrently": "^6.0.0",
     "css-loader": "^5.0.1",
+    "extra-watch-webpack-plugin": "^1.0.3",
     "fs-extra": "^9.1.0",
     "gulp": "^4.0.2",
     "gulp-shell": "^0.8.0",
@@ -32,6 +34,7 @@
     "openurl": "^1.1.1",
     "sass": "^1.32.8",
     "sass-loader": "^10.1.0",
+    "shelljs": "^0.8.4",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "webpack": "^5.11.0",
