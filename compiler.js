@@ -7,6 +7,8 @@ const extra = require("fs-extra");
 const path = require("path");
 const colors = require("colors");
 const settings = require("./settings");
+const isDebugging = true;
+const debugLib = arg => isDebugging ? console.log(arg) : "";
 
 class Compiler {
   sub = settings.src;
@@ -109,14 +111,14 @@ class Compiler {
   createFile(dir, fileName, compiledFile) {
     fs.writeFile(path.resolve(__dirname, dir, fileName), compiledFile, err => {
       if (err) return console.error(colors.red.bold(err));
-      console.log(colors.blue.bold(`Created: "${fileName}"`));
+      debugLib(colors.blue.bold(`Created: "${fileName}"`));
     });
   }
 
   removeFile(dir, file) {
     extra.remove(path.resolve(__dirname, dir, file), err => {
       if (err) return console.error(colors.red.bold(err));
-      console.log(colors.yellow.bold(`Removed "${file}"`));
+      debugLib(colors.yellow.bold(`Removed "${file}"`));
     });
   }
 
@@ -139,7 +141,7 @@ class Compiler {
     return new Promise((resolve, reject) => {
       extra.remove(path.resolve(__dirname, this.sub), err => {
         if (err) reject(err);
-        console.log(colors.yellow.bold(`Removed "${this.sub}" directory`));
+        debugLib(colors.yellow.bold(`Removed "${this.sub}" directory`));
         resolve();
       });
     });
@@ -149,7 +151,7 @@ class Compiler {
     return new Promise((resolve, reject) => {
       extra.copy(path.resolve(__dirname, "src"), path.resolve(__dirname, this.sub), err => {
         if (err) reject(err);
-        console.log(colors.green.bold('Cloned "src" directory'));
+        debugLib(colors.green.bold('Cloned "src" directory'));
         resolve();
       });
     });
