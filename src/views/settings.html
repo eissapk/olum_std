@@ -2,6 +2,7 @@
   <div class="Settings">
     <App-Nav />
     <App-Header />
+    <App-Config />
     <App-Footer />
   </div>
 </template>
@@ -9,6 +10,7 @@
 <script>
   import Nav from "../components/layout/nav";
   import Header from "../components/layout/header";
+  import Config from "../components/config";
   import Footer from "../components/layout/footer";
   import bg from "../assets/bg.webp";
   export default class Settings {
@@ -17,14 +19,14 @@
     data() {
       return {
         name: "Settings",
-        components: { Nav, Header, Footer },
+        components: { Nav, Header, Config, Footer },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
       };
     }
-    
-    render() { }
+
+    render() {}
   }
 </script>
 

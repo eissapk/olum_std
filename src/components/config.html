@@ -1,0 +1,35 @@
+<template>
+  <div class="Config">test config</div>
+</template>
+
+<script>
+  import { setDimensions } from "../services/setWH.js";
+  export default class Config {
+    constructor() {}
+    margin = 15;
+    data() {
+      return {
+        name: "Config",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {
+      setDimensions(".Config", this.margin);
+      window.on("resize", () => setDimensions(".Config", this.margin));
+    }
+  }
+</script>
+
+<style lang="scss">
+
+  .Config {
+    position: relative;
+    background: white;
+    margin: 0 auto;
+    border-radius: $radius;
+  }
+</style>
