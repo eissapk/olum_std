@@ -1,15 +1,10 @@
 const path = require("path");
-const WebpackBeforeBuildPlugin = require('before-build-webpack');
-const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
-const shell = require('shelljs');
-const colors = require("colors");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const { mode, title, dest, src, hash, comments, asyncAwait } = require("./settings");
+const { title, dest, favicon, template, src, hash, comments, asyncAwait } = require("./settings");
 
 const config = {
-  mode,
   entry: {
     main: [`./${src}/app.mjs`, `./${src}/app.scss`],
   },
@@ -17,33 +12,8 @@ const config = {
     path: path.resolve(__dirname, dest),
     filename: `app[fullhash:${hash}].js`,
   },
-  plugins: [
-    // new ExtraWatchWebpackPlugin({
-    //   files: ["*.*"],
-    //   dirs: [ path.resolve(__dirname, "src") ],
-    // }),
-    // new WebpackBeforeBuildPlugin(function(stats, cb) {
-    //   console.log(colors.red("before build"));
-    //   shell.exec('node compiler.js compile')
-    //   cb(); 
-    // }), 
-    new CleanWebpackPlugin({
-      cleanAfterEveryBuildPatterns: [`./${dest}/**/*.*`],
-    }),
-    new HtmlWebpackPlugin({
-      title: title || "PKjs",
-      template: "./public/index.html",
-      favicon: "./public/favicon.png",
-    }),
-  ],
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        extractComments: comments,
-      }),
-    ],
-  },
+  plugins: [new CleanWebpackPlugin({ cleanAfterEveryBuildPatterns: [`./${dest}/**/*.*`] }), new HtmlWebpackPlugin({ title, template, favicon })],
+  optimization: { minimize: true, minimizer: [new TerserPlugin({ extractComments: comments })] },
   module: {
     rules: [
       {
@@ -72,7 +42,5 @@ const config = {
     },
   },
 };
-
-if (mode === "development") config.devtool = "source-map";
 if (asyncAwait) config.entry.main.unshift("babel-polyfill");
 module.exports = config;
