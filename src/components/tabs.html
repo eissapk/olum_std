@@ -6,11 +6,26 @@
 
       <div class="sliderWrapper">
         <div class="slider">
-          <span class="tab">1</span>
-          <span class="tab">2</span>
-          <span class="tab">3</span>
-          <span class="tab">4</span>
-          <span class="tab">5</span>
+          <span class="tab">
+            <span class="tab__num">(1)</span>
+            <input type="text" class="tab__title" placeholder="New Tab" />
+            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
+          </span>
+          <span class="tab">
+            <span class="tab__num">(2)</span>
+            <input type="text" class="tab__title" placeholder="New Tab" />
+            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
+          </span>
+          <span class="tab">
+            <span class="tab__num">(3)</span>
+            <input type="text" class="tab__title" placeholder="New Tab" />
+            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
+          </span>
+          <span class="tab">
+            <span class="tab__num">(4)</span>
+            <input type="text" class="tab__title" placeholder="New Tab" />
+            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
+          </span>
         </div>
       </div>
 
@@ -23,6 +38,7 @@
 <script>
   import { $ } from "../../lib/pk.js";
   import plus from "../assets/plus.svg";
+  import close from "../assets/close.svg";
   export default class Tabs {
     startX = 0;
     currentX = 0;
@@ -53,8 +69,7 @@
       this.slider.on("touchmove", e => this.dragMove(e));
       this.slider.on("mousemove", e => this.dragMove(e));
       this.slider.on("wheel", e => this.scroll(e));
-      this.slider.on("mouseleave", () => ((this.isActive = false), (document.body.style.overflow = "")));
-      this.slider.on("mouseenter", () => (document.body.style.overflow = "hidden"));
+      this.slider.on("mouseleave", () => (this.isActive = false));
     }
 
     scroll(e) {
@@ -224,12 +239,55 @@
           .tab {
             width: unquote("${this.tabWidth}px");
             height: 40px;
-            text-align: center;
             line-height: 40px;
             background: white;
             border: 1px solid whitesmoke;
             border-bottom-color: #dfdfe0;
             border-radius: 10px 10px 0 0;
+            padding: 0 5px;
+
+            &__num {
+              float: left;
+              height: 30px;
+              margin: 5px 0;
+              margin-right: 5px;
+              line-height: 30px;
+              width: 40px;
+              text-align: center;
+            }
+
+            &__title {
+              float: left;
+              height: 30px;
+              margin: 5px 0;
+              outline: none;
+              border: 1px solid white;
+              text-indent: 10px;
+              border-radius: 3px;
+              width: calc(100% - 75px);
+              &:hover {
+                border-color: #dee1e6;
+              }
+            }
+
+            &--closeBtn {
+              float: left;
+              width: 25px;
+              height: 25px;
+              margin: 7.5px 0;
+              margin-left: 5px;
+              border-radius: 50%;
+              &:hover {
+                background: #eee;
+              }
+              img {
+                display: block;
+                margin: 0 auto;
+                pointer-events: none;
+                width: 15px;
+                height: 15px;
+              }
+            }
           }
         }
       }
