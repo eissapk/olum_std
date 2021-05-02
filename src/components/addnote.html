@@ -1,7 +1,7 @@
 <template>
   <div class="AddNote">
     <!-- add button -->
-    <button to="/add" type="button" class="addBtn">
+    <button type="button" class="addBtn">
       <img src="${add}" alt="addBtn" />
       <span>add note</span>
     </button>
@@ -11,9 +11,11 @@
 </template>
 
 <script>
+  import { pk } from "../app.mjs";
+  import { $, debug } from "../../lib/pk.js";
   import add from "../assets/add.svg";
-
   export default class AddNote {
+    currentTabsNum = 0;
     constructor() {}
 
     data() {
@@ -26,12 +28,27 @@
       };
     }
 
-    render() {}
+    render() {
+      this.currentTabsNum = $(".Tabs .tab", true).length;
+
+      const addBtn = $(".addBtn");
+      addBtn.on("click", () => this.addNewNote());
+    }
+
+    addNewNote() {
+      this.currentTabsNum = $(".Tabs .tab", true).length;
+      if (this.currentTabsNum <= 0) {
+        alert("add tab first");
+      } else {
+        pk.navigate("/add");
+      }
+    }
   }
 </script>
 
 <style lang="scss">
   .AddNote {
+    background-color: white;
     position: absolute;
     left: 0;
     bottom: 0;

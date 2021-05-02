@@ -1,13 +1,5 @@
 <template>
-  <div class="Header">
-    <section>
-      <h1>
-        00 : 00
-        <span>PM</span>
-      </h1>
-      <p>Apr 3</p>
-    </section>
-  </div>
+  <div class="Header"></div>
 </template>
 
 <script>
@@ -15,6 +7,7 @@
   export default class Header {
     hArr = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     mArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    dArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     timeout = 1;
     constructor() {}
     data() {
@@ -27,7 +20,7 @@
         scoped: false,
       };
     }
-    
+
     render() {
       this.syncTime();
       setInterval(() => this.syncTime(), this.timeout * 60 * 1000);
@@ -58,13 +51,16 @@
       if (mL == 1) m = `0${minutes}`;
       else m = `${minutes}`;
 
+      // week days
+      const day = date.getDay();
+
       container.innerHTML = `
         <section>
+          <p>${this.dArr[day]} ${this.mArr[date.getMonth()]} ${date.getDate()},</p>
           <h1>
             ${h} : ${m}
             <span>${am_pm}</span>
           </h1>
-          <p>${this.mArr[date.getMonth()]} ${date.getDate()}</p>
         </section>
       `;
     }
@@ -79,18 +75,22 @@
       overflow: hidden;
       text-align: center;
       color: white;
+
+      p {
+        font-size: 18px;
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 10px;
+        text-transform: capitalize;
+      }
       h1 {
-        font-size: 50px;
+        font-size: 18px;
+        font-weight: bold;
+        display: inline-block;
         span {
           text-transform: uppercase;
-          font-size: 20px;
-          font-weight: normal;
+          font-size: 18px;
         }
-      }
-      p {
-        margin-top: 10px;
-        font-size: 20px;
-        font-weight: normal;
       }
     }
   }

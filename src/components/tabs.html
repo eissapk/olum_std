@@ -5,41 +5,20 @@
       <div class="dots"><span></span></div>
 
       <div class="sliderWrapper">
-        <div class="slider">
-          <span class="tab">
-            <span class="tab__num">(1)</span>
-            <input type="text" class="tab__title" placeholder="New Tab" />
-            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
-          </span>
-          <span class="tab">
-            <span class="tab__num">(2)</span>
-            <input type="text" class="tab__title" placeholder="New Tab" />
-            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
-          </span>
-          <span class="tab">
-            <span class="tab__num">(3)</span>
-            <input type="text" class="tab__title" placeholder="New Tab" />
-            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
-          </span>
-          <span class="tab">
-            <span class="tab__num">(4)</span>
-            <input type="text" class="tab__title" placeholder="New Tab" />
-            <button type="button" class="tab--closeBtn"><img src="${close}" alt="close" /></button>
-          </span>
-        </div>
+        <div class="slider"></div>
       </div>
 
       <!-- add tab -->
-      <button type="button" class="addTab"><img src="${plus}" alt="add" /></button>
+      <button type="button" class="addTab">${this.plus}</button>
     </div>
   </div>
 </template>
 
 <script>
-  import { $ } from "../../lib/pk.js";
-  import plus from "../assets/plus.svg";
-  import close from "../assets/close.svg";
+  import { $, debug } from "../../lib/pk.js";
   export default class Tabs {
+    plus = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>`;
+    close = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg>`;
     startX = 0;
     currentX = 0;
     isDown = false;
@@ -49,7 +28,6 @@
     tabWidth = 250;
 
     constructor() {}
-
     data() {
       return {
         name: "Tabs",
@@ -62,6 +40,9 @@
 
     render() {
       this.slider = $(".slider");
+      const addBtn = $(".addTab");
+
+      addBtn.on("click", () => this.addNewTab());
       this.slider.on("touchstart", e => this.dragStart(e));
       this.slider.on("mousedown", e => this.dragStart(e));
       this.slider.on("touchend", e => this.dragEnd(e));
@@ -70,6 +51,18 @@
       this.slider.on("mousemove", e => this.dragMove(e));
       this.slider.on("wheel", e => this.scroll(e));
       this.slider.on("mouseleave", () => (this.isActive = false));
+    }
+
+    addNewTab() {
+      const tabs = $(".tab", true);
+      tabs.forEach(tab => tab.classList.remove("activeTab"));
+      const tab = `
+      <span class="tab activeTab">
+        <span class="tab__num">(0)</span>
+        <input type="text" class="tab__title" value="New Tab" placeholder="New Tab" readonly />
+        <button type="button" class="tab--closeBtn">${this.close}</button>
+      </span>`;
+      this.slider.insertAdjacentHTML("afterbegin", tab);
     }
 
     scroll(e) {
@@ -205,17 +198,22 @@
         float: left;
         border-radius: 50%;
         margin: 5px 0 5px 10px;
+        position: relative;
 
         &:hover {
           background: $hoverColor;
           transition: all 0.1s ease-in-out;
         }
 
-        img {
-          vertical-align: bottom;
-          width: 20px;
-          height: 20px;
-          margin: 5px;
+        svg {
+          pointer-events: none;
+          width: 14px;
+          height: 14px;
+          position: absolute;
+          fill: #8a898b;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
       }
 
@@ -225,7 +223,7 @@
         overflow: hidden;
 
         .slider {
-          min-width: 2000px;
+          min-width: 100000px;
           display: flex;
           flex-wrap: nowrap;
           flex-direction: row;
@@ -263,7 +261,6 @@
               outline: none;
               border: 1px solid white;
               text-indent: 10px;
-              border-radius: 3px;
               width: calc(100% - 75px);
               &:hover {
                 border-color: #dee1e6;
@@ -280,12 +277,43 @@
               &:hover {
                 background: #eee;
               }
-              img {
-                display: block;
-                margin: 0 auto;
+              svg {
+                fill: #8a898b;
                 pointer-events: none;
                 width: 15px;
                 height: 15px;
+                margin: 5px;
+              }
+            }
+
+            &.activeTab {
+              background-color: $blue;
+
+              .tab__num {
+                color: $border;
+              }
+
+              .tab__title {
+                border: 1px solid $blue;
+                background-color: $blue;
+                color: $border;
+
+                &:hover {
+                  border-color: $border;
+                }
+              }
+
+              .tab--closeBtn {
+                svg {
+                  fill: $border;
+                }
+
+                &:hover {
+                  background: $border;
+                  svg {
+                    fill: $blue;
+                  }
+                }
               }
             }
           }

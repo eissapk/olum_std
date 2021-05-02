@@ -2,7 +2,7 @@
   <div class="Nav">
     <!-- logo -->
     <a to="/" class="Nav__logo">
-      <img src="${this.myLogo}" alt="${this.calc()}" />
+      <img src="${logo}" alt="logo" />
       <span>my note</span>
     </a>
     <!-- mode -->
@@ -17,10 +17,6 @@
   import sun from "../../assets/sun.svg";
 
   export default class Nav {
-    myLogo = logo;
-    calc() {
-      return Math.random().toString(36).replace(/\./, "");
-    }
     constructor() {}
     data() {
       return {
@@ -36,8 +32,30 @@
     render() {
       const modeBtn = $(".Nav--modeBtn");
       const img = $(modeBtn).get("img");
-
+      this.initial(img);
       modeBtn.on("click", () => this.toggleMode(modeBtn, img));
+    }
+
+    checker() {
+      let item;
+      if (localStorage.getItem("darkMode") === null) {
+        localStorage.setItem("darkMode", false);
+        item = false;
+      } else {
+        item = JSON.parse(localStorage.getItem("darkMode"));
+      }
+      return item;
+    }
+
+    initial(img) {
+      const isDarkmode = this.checker();
+      if (isDarkmode) {
+        img.src = sun;
+        $("body").classList.add("darkMode");
+      } else {
+        img.src = moon;
+        $("body").classList.remove("darkMode");
+      }
     }
 
     toggleMode(btn, img) {
@@ -49,9 +67,11 @@
       if (this.hasDarkMode) {
         $("body").classList.remove("darkMode");
         img.src = moon;
+        localStorage.setItem("darkMode", false);
       } else {
         $("body").classList.add("darkMode");
         img.src = sun;
+        localStorage.setItem("darkMode", true);
       }
     }
   }

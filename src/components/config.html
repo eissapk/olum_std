@@ -1,5 +1,17 @@
 <template>
-  <div class="Config">test config</div>
+  <div class="Config">
+    <section class="Config__inner">
+      <p class="Config__inner__text">
+        <span>Backup</span>
+        or
+        <span>Update</span>
+        your data in case you cleared browser cache or formated your device!
+      </p>
+
+      <button type="button" class="Config__inner--backupBtn">backup</button>
+      <button type="button" class="Config__inner--updateBtn">update</button>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -25,11 +37,55 @@
 </script>
 
 <style lang="scss">
-
   .Config {
     position: relative;
-    background: white;
+    background: transparent;
     margin: 0 auto;
+    padding: 10px;
     border-radius: $radius;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+
+    &__inner {
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: $radius;
+      &__text {
+        color: #8a898b;
+        margin-bottom: 20px;
+        line-height: 25px;
+        span {
+          color: $blue;
+          font-weight: bold;
+        }
+      }
+
+      button {
+        color: #fff;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border: 0;
+        border-radius: 5px;
+        margin: 5px;
+        text-align: center;
+        font-weight: 600;
+        text-transform: capitalize;
+        cursor: pointer;
+      }
+      &--backupBtn {
+        background-color: $green;
+      }
+
+      &--updateBtn {
+        background-color: $red;
+      }
+    }
   }
 </style>
