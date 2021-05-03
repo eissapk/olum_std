@@ -1,5 +1,6 @@
 @import "./styles/normalize.scss";
 @import "./styles/mixins.scss";
+@import "./styles/shared.scss";
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
 // @include font("./assets/fonts");
 
@@ -11,13 +12,13 @@
 }
 
 ::selection {
-  background-color: #fc6159;
-  color: white;
+  background-color: $red;
+  color: $white;
 }
 
 body {
   font-family: "Lato", Helvetica, Arial, sans-serif;
-  color: #384258;
+  color: $mainTextColor;
 
   a {
     text-decoration: none;
@@ -55,25 +56,25 @@ body {
       background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./assets/bg.webp");
     }
     .Tabs {
-      background: #384258 !important;
-      border-color: #384258 !important;
+      background: $mainTextColor !important;
+      border-color: $mainTextColor !important;
 
       .innerTabs {
         .addTab {
           svg {
-            fill: white !important;
+            fill: $white !important;
           }
           &:hover {
-            background: white !important;
+            background: $white !important;
             svg {
-              fill: #384258 !important ;
+              fill: $mainTextColor !important ;
             }
           }
         }
 
         .sliderWrapper .slider .tab {
-          border: 1px solid #384258 !important;
-          border-bottom-color: #ffffff !important;
+          border: 1px solid $mainTextColor !important;
+          border-bottom-color: $mainTextColor !important;
         }
       }
     }

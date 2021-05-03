@@ -15,7 +15,9 @@
 </template>
 
 <script>
-  import { setDimensions } from "../services/setWH.js";
+  import { $ } from "../../lib/pk.js";
+  import setWH from "../services/setWH.js";
+
   export default class Config {
     constructor() {}
     margin = 15;
@@ -30,9 +32,10 @@
     }
 
     render() {
-      setDimensions(".Config", this.margin);
-      window.on("resize", () => setDimensions(".Config", this.margin));
+      const container = $(".Config");
+      setWH(container, this.margin);
     }
+
   }
 </script>
 
@@ -53,11 +56,11 @@
 
     &__inner {
       text-align: center;
-      background: white;
+      background: $white;
       padding: 20px;
       border-radius: $radius;
       &__text {
-        color: #8a898b;
+        color: $subTextColor;
         margin-bottom: 20px;
         line-height: 25px;
         span {
@@ -67,12 +70,12 @@
       }
 
       button {
-        color: #fff;
+        color: $white;
         width: 100px;
         height: 40px;
         line-height: 40px;
         border: 0;
-        border-radius: 5px;
+        border-radius: $radius;
         margin: 5px;
         text-align: center;
         font-weight: 600;

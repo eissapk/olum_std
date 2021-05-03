@@ -14,8 +14,8 @@
   import { pk } from "../app.mjs";
   import { $, debug } from "../../lib/pk.js";
   import add from "../assets/add.svg";
+  import api from "../services/api.js";
   export default class AddNote {
-    currentTabsNum = 0;
     constructor() {}
 
     data() {
@@ -29,26 +29,41 @@
     }
 
     render() {
-      this.currentTabsNum = $(".Tabs .tab", true).length;
-
       const addBtn = $(".addBtn");
       addBtn.on("click", () => this.addNewNote());
     }
 
     addNewNote() {
-      this.currentTabsNum = $(".Tabs .tab", true).length;
-      if (this.currentTabsNum <= 0) {
-        alert("add tab first");
+      const currentTabsNum = $(".Tabs .tab", true).length;
+      const hasActiveTab = this.hasActiveTab();
+      if (currentTabsNum === 0) {
+        alert("add tab in order to add your note");
+      } else if (!hasActiveTab) {
+        alert("select a tab in order to add your note");
       } else {
         pk.navigate("/add");
       }
+    }
+
+    hasActiveTab() {
+      const [tab] = $(".Tabs .activeTab", true);
+      if (tab) {
+        const obj = {};
+        obj.tabId = tab.getAttribute("data-tabid");
+        obj.tabName = $(tab).get(".tab__title").value.trim();
+        api.activeTab = obj;
+        api.current.tabName = obj.tabName;
+        api.current.tabId = obj.tabId;
+        return true;
+      }
+      return false;
     }
   }
 </script>
 
 <style lang="scss">
   .AddNote {
-    background-color: white;
+    background-color: $white;
     position: absolute;
     left: 0;
     bottom: 0;
@@ -56,7 +71,7 @@
     width: 100%;
     border-radius: 0 0 $radius $radius;
     font-size: 17px;
-    border-top: 1px solid #dfdfe0;
+    border-top: 1px solid $border1;
     .addBtn {
       height: 50px;
       padding: 0 10px;

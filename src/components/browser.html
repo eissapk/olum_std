@@ -13,7 +13,7 @@
   import Search from "../components/search";
   import Tabs from "../components/tabs";
   import Notes from "../components/notes";
-  import { setDimensions } from "../services/setWH.js";
+  import setWH from "../services/setWH.js";
 
   export default class Browser {
     margin = 15;
@@ -30,8 +30,8 @@
     }
 
     render() {
-      setDimensions(".Browser", this.margin);
-      window.on("resize", () => setDimensions(".Browser", this.margin));
+      const container = $(".Browser");
+      setWH(container, this.margin);
     }
   }
 </script>

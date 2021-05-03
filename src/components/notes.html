@@ -1,7 +1,17 @@
 <template>
   <div class="Notes">
-    <ul class="Notes__inner">
-      <!-- <li class="Notes__inner__note">
+    <ul class="Notes__inner"></ul>
+  </div>
+</template>
+
+<script>
+  import { debug, setTemp, $ } from "../../lib/pk.js";
+  import edit from "../assets/edit.svg";
+  import api from "../services/api.js";
+  export default class Notes {
+    constructor() {}
+    temp = `
+      <li class="Notes__inner__note" data-noteid="{{noteId}}">
         <button type="button" class="Notes__inner__note--editBtn"><img src="${edit}" alt="edit-pen" /></button>
 
         <span class="Notes__inner__note--selectBtn">
@@ -11,19 +21,9 @@
           </label>
         </span>
 
-        <span class="Notes__inner__note__text">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Possimus, eos ratione, temporibus, quibusdam deleniti harum non incidunt provident
-          hic enim aperiam minus odio nobis necessitatibus? Ratione at nisi dolor veritatis?
-        </span>
-      </li> -->
-    </ul>
-  </div>
-</template>
-
-<script>
-  import edit from "../assets/edit.svg";
-  export default class Notes {
-    constructor() {}
+        <span class="Notes__inner__note__text">{{noteContent}}</span>
+      </li>
+      `;
 
     data() {
       return {
@@ -36,37 +36,51 @@
       };
     }
 
-    render() {}
+    render() {
+      const container = $(".Notes__inner");
+      const tab = api.activeTab;
+      const data = api.get();
+
+      const notes = data
+        .filter(obj => obj.tabId == tab.tabId)
+        .map(obj => {
+          const { noteContent, noteId } = obj;
+          return setTemp(this.temp, { noteContent, noteId });
+        })
+        .join("");
+
+      container.innerHTML = notes;
+    }
   }
 </script>
 
 <style lang="scss">
   .Notes {
-    background-color: white;
+    background-color: $white;
     position: absolute;
     left: 0;
     top: 100px;
     height: calc(100% - 150px);
     width: 100%;
     overflow: auto;
-    border-right: 1px solid #f5f5f5;
+    border-right: 1px solid $border4;
 
     &::-webkit-scrollbar {
-      width: 5px !important;
+      width: 5px;
     }
     &::-webkit-scrollbar-thumb {
       background: $blue;
     }
 
     &::-webkit-scrollbar-track {
-      background: #f5f5f5;
+      background: $border4;
     }
 
     &__inner {
       &__note {
         overflow: hidden;
         padding: 10px;
-        border-bottom: 1px solid #dfdfe0;
+        border-bottom: 1px solid $border1;
         &:last-of-type {
           border-bottom: none;
         }
@@ -103,7 +117,7 @@
             float: left;
 
             &:hover .check {
-              background: $hoverColor;
+              background: $border3;
             }
 
             input {
@@ -126,8 +140,8 @@
               position: relative;
               width: 100%;
               height: 100%;
-              background: #fff;
-              border: 1px solid #e6e6e6;
+              background: $white;
+              border: 1px solid $border3;
               transition: all 0.1s ease-in-out;
               float: left;
               border-radius: 50%;
@@ -139,7 +153,7 @@
                 right: 10px;
                 width: 8px;
                 height: 14px;
-                border: solid #fff;
+                border: solid $white;
                 border-width: 0 3px 3px 0;
                 transform: rotate(45deg);
                 box-sizing: border-box;
@@ -156,7 +170,7 @@
           padding-right: 10px;
           line-height: 25px;
           word-break: break-all;
-          color: #384258;
+          color: $mainTextColor;
           user-select: text !important;
         }
       }

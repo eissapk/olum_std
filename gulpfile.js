@@ -15,7 +15,7 @@ const _notify = taskName => {
 };
 
 gulp.task("compile", () => gulp.src("./src").pipe(shell("node compiler.js compile")).pipe(_notify("compile")));
-gulp.task("bundle", () => gulp.src("./src").pipe(shell("webpack --mode=development --devtool=eval")).pipe(_notify("bundle")));
+gulp.task("bundle", () => gulp.src("./src").pipe(shell("webpack --mode=development --devtool=source-map")).pipe(_notify("bundle")));
 gulp.task("reload", () => gulp.src(`./${dest}`).pipe(connect.reload()));
 gulp.task("watch", async () => gulp.watch("./src/**/*", gulp.series(["compile", "bundle", "reload"])));
 gulp.task("server", () => {
