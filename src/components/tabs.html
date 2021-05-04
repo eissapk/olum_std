@@ -4,9 +4,8 @@
       <!-- dots -->
       <div class="dots"><span></span></div>
 
-      <div class="sliderWrapper">
-        <div class="slider"></div>
-      </div>
+      <!-- slider -->
+      <div class="slider"></div>
 
       <!-- add tab -->
       <button type="button" class="addTab">${this.plus}</button>
@@ -18,6 +17,7 @@
   import { $, debug, setTemp } from "../../lib/pk.js";
   import genID from "../services/id.js";
   import api from "../services/api.js";
+  import getCurrentTab from "../services/current.js";
   export default class Tabs {
     plus = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>`;
     close = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg>`;
@@ -33,7 +33,7 @@
     isDown = false;
     isActive = false;
     walk = 0;
-    totalWidth;
+    scrollLeft = 0;
     tabWidth = 250;
     oldTap = 0;
     dblClickTimeout = 500;
@@ -74,20 +74,33 @@
 
     buildTabs() {
       const data = api.get();
-      const tabs = data
-        .map(obj => {
-          const { tabName, tabId } = obj;
-          return setTemp(this.temp, { tabName, tabId });
-        })
+      const tabs = [...new Set(data.map(obj => obj.tabId))].map(id => data.find(obj => (obj.tabId === id ? obj : false)));
+      const tabsMarkup = tabs
+        .map(obj => setTemp(this.temp, obj))
+        .reverse()
         .join("");
+      this.slider.innerHTML = tabsMarkup;
 
-      this.slider.innerHTML = tabs;
-      const [tab] = $(".Tabs .tab", true);
+      // select last opened tab
+      if (!api.hasLastTab()) {
+        this.selectFirstTab();
+      } else {
+        const tab = $(`[data-tabid="${api.hasLastTab()}"]`);
+        if (tab) {
+          tab.classList.add("activeTab");
+          getCurrentTab();
+          tab.scrollIntoView();
+        } else {
+          this.selectFirstTab();
+        }
+      }
+    }
+
+    selectFirstTab() {
+      const tab = $(".Tabs .tab");
       if (tab) {
         tab.classList.add("activeTab");
-        const id = tab.getAttribute("data-tabid");
-        const name = $(tab).get(".tab__title").value.trim();
-        api.activeTab = { tabId: id, tabName: name };
+        getCurrentTab();
       }
     }
 
@@ -100,23 +113,23 @@
 
       const tab = setTemp(this.temp, obj);
       this.slider.insertAdjacentHTML("afterbegin", tab);
-      const [_tab] = $(this.slider).get(".tab", true);
-      _tab.classList.add("activeTab");
+      const _tab = $(this.slider).get(".tab");
+      if (_tab) {
+        _tab.classList.add("activeTab");
+        _tab.click();
+        _tab.scrollIntoView({ behavior: "smooth" });
+      }
 
-      api.current.tabId = id;
-      api.current.tabName = name;
+      getCurrentTab();
     }
 
     activateTab(e) {
       if (e.target.classList.contains("tab")) {
         $(".tab", true).forEach(tab => tab.classList.remove("activeTab"));
         e.target.classList.add("activeTab");
-        const tab = e.target;
-        const id = tab.getAttribute("data-tabid");
-        const name = $(tab).get(".tab__title").value.trim();
-        api.current.tabId = id;
-        api.current.tabName = name;
-        api.activeTab = { tabId: id, tabName: name };
+        getCurrentTab();
+        api.trigger();
+        api.saveLastTab();
       }
     }
 
@@ -124,23 +137,27 @@
       if (e.target.classList.contains("tab--closeBtn")) {
         const tab = e.target.parentElement;
         const id = tab.getAttribute("data-tabid");
-        tab.remove();
-        // TODO  add checker for tab content if there is content then show confirm popup and vice versa
+
+        if (confirm("are you sure?")) {
+          tab.remove();
+          api.removeTab(id);
+        }
       }
     }
 
     editTab(e) {
       if (e.target.classList.contains("tab")) {
         const tab = e.target;
-        const id = tab.getAttribute("data-tabid");
         const input = $(tab).get(".tab__title");
         const newTap = new Date().getTime();
         const interval = newTap - this.oldTap;
         if (interval > 0 && interval < this.dblClickTimeout) {
           this.handleTabTitle(input, true);
           input.focus();
-          input.on("input", () => (api.current.tabName = input.value.trim()));
-          api.current.tabId = id;
+          input.on("input", () => {
+            getCurrentTab();
+            api.editTab();
+          });
         }
         this.oldTap = newTap;
       }
@@ -165,20 +182,7 @@
 
     scroll(e) {
       e = e || window.event;
-      const wrapper = $(".sliderWrapper");
-      const tabs = $(wrapper).get(".tab", true);
-      this.totalWidth = tabs.length ? tabs.length * tabs[0].offsetWidth - wrapper.offsetWidth : 0;
-      let currentLeft = +getComputedStyle(this.slider).left.replace(/\D/gi, "");
-      if (e.deltaY < 0) {
-        // next
-        currentLeft -= this.tabWidth;
-        if (currentLeft < 0) currentLeft = 0;
-      } else {
-        // prev
-        currentLeft += this.tabWidth;
-        if (currentLeft > this.totalWidth) currentLeft = this.totalWidth;
-      }
-      this.slider.style.left = `-${currentLeft}px`;
+      this.slider.scrollLeft += e.deltaY;
     }
 
     dragStart(e) {
@@ -190,6 +194,7 @@
       } else {
         this.startX = e.touches[0].pageX - this.slider.offsetLeft;
       }
+      this.scrollLeft = this.slider.scrollLeft;
     }
 
     dragEnd(e) {
@@ -200,33 +205,14 @@
 
     dragMove(e) {
       e = e || window.event;
-
       if (this.isDown && this.isActive) {
-        const wrapper = $(".sliderWrapper");
-        const tabs = $(wrapper).get(".tab", true);
-        this.totalWidth = tabs.length ? tabs.length * tabs[0].offsetWidth - wrapper.offsetWidth : 0;
-        let currentLeft = +getComputedStyle(this.slider).left.replace(/\D/gi, "");
-
         if (e.type == "mousemove") {
           this.currentX = e.pageX - this.slider.offsetLeft;
         } else {
           this.currentX = e.touches[0].pageX - this.slider.offsetLeft;
         }
-
         this.walk = this.currentX - this.startX;
-        const walk = this.walk > 0 ? this.walk : this.walk * -1; // +ve num
-
-        if (this.walk < 0) {
-          // next
-          currentLeft += walk;
-          if (currentLeft > this.totalWidth) currentLeft = this.totalWidth;
-        } else {
-          // prev
-          currentLeft -= walk;
-          if (currentLeft < 0) currentLeft = 0;
-        }
-
-        this.slider.style.left = `-${currentLeft}px`;
+        this.slider.scrollLeft = this.scrollLeft - this.walk;
       }
     }
   }
@@ -314,103 +300,99 @@
         }
       }
 
-      .sliderWrapper {
+      .slider {
         float: left;
-        width: calc(100% - (90px + 40px));
+        width: calc(100% - 130px);
         overflow: hidden;
+        white-space: nowrap;
+        height: 40px;
 
-        .slider {
-          min-width: 100000px;
-          display: flex;
-          flex-wrap: nowrap;
-          flex-direction: row;
-          position: relative;
-          left: 0;
+        &:active {
+          cursor: grab;
+        }
 
-          &:active {
-            cursor: grab;
+        .tab {
+          width: unquote("${this.tabWidth}px");
+          height: 40px;
+          line-height: 40px;
+          background: $white;
+          border: 1px solid $border4;
+          border-bottom-color: $border1;
+          border-radius: 10px 10px 0 0;
+          padding: 0 10px;
+          display: inline-block;
+          white-space: normal;
+
+          &__num {
+            float: left;
+            height: 30px;
+            margin: 5px 0;
+            line-height: 30px;
+            width: 40px;
+            text-align: center;
+            pointer-events: none;
           }
 
-          .tab {
-            width: unquote("${this.tabWidth}px");
-            height: 40px;
-            line-height: 40px;
-            background: $white;
-            border: 1px solid $border4;
-            border-bottom-color: $border1;
-            border-radius: 10px 10px 0 0;
-            padding: 0 10px;
-
-            &__num {
-              float: left;
-              height: 30px;
-              margin: 5px 0;
-              line-height: 30px;
-              width: 40px;
-              text-align: center;
-              pointer-events: none;
+          &__title {
+            float: left;
+            height: 30px;
+            margin: 5px;
+            outline: none;
+            border: 1px solid $white;
+            text-indent: 10px;
+            width: calc(100% - 75px);
+            pointer-events: none;
+            text-overflow: ellipsis;
+            &:hover {
+              border-color: $border2;
             }
+          }
 
-            &__title {
-              float: left;
-              height: 30px;
+          &--closeBtn {
+            float: left;
+            width: 25px;
+            height: 25px;
+            margin: 7.5px 0;
+            border-radius: 50%;
+            &:hover {
+              background: $offWhite;
+            }
+            svg {
+              fill: $subTextColor;
+              pointer-events: none;
+              width: 15px;
+              height: 15px;
               margin: 5px;
-              outline: none;
-              border: 1px solid $white;
-              text-indent: 10px;
-              width: calc(100% - 75px);
-              pointer-events: none;
-              text-overflow: ellipsis;
-              &:hover {
-                border-color: $border2;
-              }
+            }
+          }
+
+          &.activeTab {
+            background-color: $activeTabColor;
+            border-color: $activeTabColor;
+
+            .tab__num {
+              color: $white;
             }
 
-            &--closeBtn {
-              float: left;
-              width: 25px;
-              height: 25px;
-              margin: 7.5px 0;
-              border-radius: 50%;
-              &:hover {
-                background: $offWhite;
-              }
-              svg {
-                fill: $subTextColor;
-                pointer-events: none;
-                width: 15px;
-                height: 15px;
-                margin: 5px;
-              }
-            }
-
-            &.activeTab {
+            .tab__title {
+              border: 1px solid $activeTabColor;
               background-color: $activeTabColor;
+              color: $white;
 
-              .tab__num {
-                color: $white;
+              &:hover {
+                border-color: $white;
+              }
+            }
+
+            .tab--closeBtn {
+              svg {
+                fill: $white;
               }
 
-              .tab__title {
-                border: 1px solid $activeTabColor;
-                background-color: $activeTabColor;
-                color: $white;
-
-                &:hover {
-                  border-color: $white;
-                }
-              }
-
-              .tab--closeBtn {
+              &:hover {
+                background: $white;
                 svg {
-                  fill: $white;
-                }
-
-                &:hover {
-                  background: $white;
-                  svg {
-                    fill: $activeTabColor;
-                  }
+                  fill: $activeTabColor;
                 }
               }
             }

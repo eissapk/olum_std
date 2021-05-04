@@ -51,7 +51,6 @@
 
     render() {
       setTimeout(() => this.calcWidth(), 200);
-      window.on("resize", () => this.calcWidth());
     }
 
     calcWidth() {
@@ -188,7 +187,7 @@
       outline: none;
 
       &:hover {
-        background-color: $border3;
+        background-color: $offWhite;
       }
     }
   }

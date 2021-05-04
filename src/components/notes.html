@@ -8,6 +8,7 @@
   import { debug, setTemp, $ } from "../../lib/pk.js";
   import edit from "../assets/edit.svg";
   import api from "../services/api.js";
+  import getCurrentTab from "../services/current.js";
   export default class Notes {
     constructor() {}
     temp = `
@@ -37,18 +38,18 @@
     }
 
     render() {
+      getCurrentTab();
+      this.displayNotes();
+      window.on(api.event, () => {
+        getCurrentTab();
+        this.displayNotes();
+      });
+    }
+
+    displayNotes() {
       const container = $(".Notes__inner");
-      const tab = api.activeTab;
       const data = api.get();
-
-      const notes = data
-        .filter(obj => obj.tabId == tab.tabId)
-        .map(obj => {
-          const { noteContent, noteId } = obj;
-          return setTemp(this.temp, { noteContent, noteId });
-        })
-        .join("");
-
+      const notes = data.map(obj => (obj.tabId === api.current.tabId ? setTemp(this.temp, obj) : "")).join("");
       container.innerHTML = notes;
     }
   }

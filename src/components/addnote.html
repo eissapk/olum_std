@@ -14,7 +14,7 @@
   import { pk } from "../app.mjs";
   import { $, debug } from "../../lib/pk.js";
   import add from "../assets/add.svg";
-  import api from "../services/api.js";
+  import getCurrentTab from "../services/current.js";
   export default class AddNote {
     constructor() {}
 
@@ -34,29 +34,15 @@
     }
 
     addNewNote() {
-      const currentTabsNum = $(".Tabs .tab", true).length;
-      const hasActiveTab = this.hasActiveTab();
-      if (currentTabsNum === 0) {
+      const hasTab = $(".Tabs .tab");
+      const hasActiveTab = getCurrentTab();
+      if (!hasTab) {
         alert("add tab in order to add your note");
       } else if (!hasActiveTab) {
         alert("select a tab in order to add your note");
       } else {
         pk.navigate("/add");
       }
-    }
-
-    hasActiveTab() {
-      const [tab] = $(".Tabs .activeTab", true);
-      if (tab) {
-        const obj = {};
-        obj.tabId = tab.getAttribute("data-tabid");
-        obj.tabName = $(tab).get(".tab__title").value.trim();
-        api.activeTab = obj;
-        api.current.tabName = obj.tabName;
-        api.current.tabId = obj.tabId;
-        return true;
-      }
-      return false;
     }
   }
 </script>
