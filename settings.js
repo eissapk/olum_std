@@ -12,6 +12,4 @@ module.exports = {
   favicon:"./public/favicon.png",
   template: "./public/index.html",
   isDebugging: false,
-  notifyMsg: "<taskName> task is done",
-  notifyTitle: "Pkjs Notification"
 };
