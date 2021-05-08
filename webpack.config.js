@@ -4,43 +4,49 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { title, dest, favicon, template, src, hash, comments, asyncAwait } = require("./settings");
 
-const config = {
-  entry: {
-    main: [`./${src}/app.mjs`, `./${src}/app.scss`],
-  },
-  output: {
-    path: path.resolve(__dirname, dest),
-    filename: `app[fullhash:${hash}].js`,
-  },
-  plugins: [new CleanWebpackPlugin({ cleanAfterEveryBuildPatterns: [`./${dest}/**/*.*`] }), new HtmlWebpackPlugin({ title, template, favicon })],
-  optimization: { minimize: true, minimizer: [new TerserPlugin({ extractComments: comments })] },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      {
-        test: /\.s[ac]ss|css$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-      {
-        test: /\.(?:ico|gif|png|jpg|jpeg|svg|webp)$/i,
-        type: "asset/resource",
-      },
-    ],
-  },
-  externals: {
-    lodash: {
-      commonjs: "lodash",
-      commonjs2: "lodash",
-      amd: "lodash",
-      root: "_",
+module.exports = env => {
+  const mode = !!env.dev ? "development" : "production";
+  const globs = [`./${src}/app.mjs`, `./${src}/app.scss`];
+  const main = asyncAwait ? ["babel-polyfill", ...globs] : [...globs];
+
+  const config = {
+    mode,
+    entry: { main },
+    output: {
+      path: path.resolve(__dirname, dest),
+      filename: `app[fullhash:${hash}].js`,
     },
-  },
+    plugins: [new HtmlWebpackPlugin({ title, template, favicon })],
+    module: {
+      rules: [
+        {
+          test: /\.(?:js|mjs)$/i,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+          },
+        },
+        {
+          test: /\.(?:scss|sass|css)$/i,
+          use: ["style-loader", "css-loader", "sass-loader"],
+        },
+        {
+          test: /\.(?:ico|gif|png|jpg|jpeg|svg|webp)$/i,
+          type: "asset/resource",
+        },
+      ],
+    }
+  };
+  
+  if (mode === "development") {
+    const clean = new CleanWebpackPlugin({ cleanAfterEveryBuildPatterns: [`./${dest}/**/*`] });
+    config.plugins.unshift(clean);
+    config.devtool = "eval-source-map";
+  }
+
+  if (mode === "production") {
+    config.optimization = { minimize: true, minimizer: [new TerserPlugin({ extractComments: comments })] };
+  }
+
+  return config;
 };
-if (asyncAwait) config.entry.main.unshift("babel-polyfill");
-module.exports = config;

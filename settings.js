@@ -5,7 +5,7 @@ module.exports = {
   livereload: true,
   fallback: "/",
   comments: false,
-  hash: 10,
+  hash: 5,
   title: "My Note",
   asyncAwait: false,
   https: false,
