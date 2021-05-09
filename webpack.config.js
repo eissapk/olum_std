@@ -10,6 +10,7 @@ module.exports = env => {
   const main = asyncAwait ? ["babel-polyfill", ...globs] : [...globs];
 
   const config = {
+    stats: "errors-warnings",
     mode,
     entry: { main },
     output: {
@@ -35,9 +36,9 @@ module.exports = env => {
           type: "asset/resource",
         },
       ],
-    }
+    },
   };
-  
+
   if (mode === "development") {
     const clean = new CleanWebpackPlugin({ cleanAfterEveryBuildPatterns: [`./${dest}/**/*`] });
     config.plugins.unshift(clean);

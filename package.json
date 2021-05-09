@@ -2,7 +2,7 @@
   "name": "pkjs",
   "version": "1.0.0",
   "description": "A simple lightweight library for providing SPA experience.",
-  "main": "gulpfile.js",
+  "main": "tasks",
   "scripts": {
     "dev": "gulp dev --require babel-polyfill --require @babel/register --gulpfile tasks",
     "build": "gulp build --require babel-polyfill --require @babel/register --gulpfile tasks"
@@ -28,11 +28,14 @@
     "gulp-connect": "^5.7.0",
     "gulp-notify": "^4.0.0",
     "gulp-shell": "^0.8.0",
+    "gulp-sync": "^0.1.4",
     "html-webpack-plugin": "^5.3.1",
+    "node-notifier": "^9.0.1",
     "openurl": "^1.1.1",
     "run-sequence": "^2.2.1",
     "sass": "^1.32.8",
     "sass-loader": "^10.1.0",
+    "shelljs": "^0.8.4",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "webpack": "^5.11.0",

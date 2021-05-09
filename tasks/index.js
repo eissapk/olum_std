@@ -1,9 +1,30 @@
-import gulp from "gulp";
 import compile from "./compile";
-import bundle, { _bundle } from "./bundle";
+import { bundleDev, bundleBuild } from "./bundle";
 import watch from "./watch";
 import server from "./server";
 import clean from "./clean";
+import colors from "colors";
 
-export const dev = gulp.series(compile, bundle, watch, server);
-export const build = gulp.series(compile, _bundle, clean);
+async function renderDev() {
+  try {
+    await compile();
+    await bundleDev();
+    await server();
+    watch();
+  } catch (err) {
+    console.log(colors.red.bold(err));
+  }
+}
+
+async function renderBuild() {
+  try {
+    await compile();
+    await bundleBuild();
+    await clean();
+  } catch (err) {
+    console.log(colors.red.bold(err));
+  }
+}
+
+export const dev = renderDev;
+export const build = renderBuild;
