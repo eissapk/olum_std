@@ -10,7 +10,7 @@ const taskName = "watch";
 let timeout;
 
 const sequence = () => {
-  console.log(colors.blue.bold(taskName));
+  console.log(colors.bgRed.white(taskName));
   if (typeof timeout != "undefined") clearTimeout(timeout);
   timeout = setTimeout(() => compile().then(bundleDev), 1000);
 };

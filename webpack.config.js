@@ -15,7 +15,8 @@ module.exports = env => {
     entry: { main },
     output: {
       path: path.resolve(__dirname, dest),
-      filename: `app[fullhash:${hash}].js`,
+      // filename: `app[fullhash:${hash}].js`,
+      filename: `pkapp.js`,
     },
     plugins: [new HtmlWebpackPlugin({ title, template, favicon })],
     module: {

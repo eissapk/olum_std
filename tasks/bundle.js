@@ -1,6 +1,7 @@
 import shell from "shelljs";
 import notify from "./notifier";
 import logger from "./logger";
+import reload from "./reload";
 
 export const bundleDev = () => {
   const taskName = "bundle";
@@ -10,6 +11,7 @@ export const bundleDev = () => {
       shell.exec("webpack --env dev");
       logger(taskName, "end");
       notify(taskName);
+      reload();
       resolve();
     } catch (err) {
       reject(err);

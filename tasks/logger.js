@@ -6,8 +6,8 @@ const logger = (name, status) => {
   const m = t.getMinutes();
   const s = t.getSeconds();
 
-  const start = `[${h}:${m}:${s}] Starting '${name}'...`;
-  const end = `[${h}:${m}:${s}] Finished '${name}'...`;
+  const start = colors.bgBlue.white("[" + h + ":" + m + ":" + s + "]" + " Starting " + "'" + name + "'...");
+  const end = colors.bgGreen.white("[" + h + ":" + m + ":" + s + "]" + " Finished " + "'" + name + "'");
 
   if (status === "start") {
     console.log(colors.yellow(start));

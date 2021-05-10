@@ -21,6 +21,7 @@ async function renderBuild() {
     await compile();
     await bundleBuild();
     await clean();
+    // process.exit(0);
   } catch (err) {
     console.log(colors.red.bold(err));
   }
