@@ -1,9 +1,5 @@
 import connect from "gulp-connect";
-import http from "http";
-import fs from "fs";
-import path from "path";
 import openurl from "openurl";
-import notify from "./notifier";
 import logger from "./logger";
 import { dest, port, livereload, https, fallback } from "../settings";
 
@@ -46,7 +42,6 @@ const server = () => {
       // });
 
       logger(taskName, "end");
-      notify(taskName);
       resolve();
     } catch (err) {
       reject(err);

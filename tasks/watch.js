@@ -1,7 +1,6 @@
 import gulp from "gulp";
 import compile from "./compile";
 import { bundleDev } from "./bundle";
-import notify from "./notifier";
 import colors from "colors";
 import logger from "./logger";
 
@@ -16,9 +15,15 @@ const sequence = () => {
 };
 
 const watch = () => {
-  logger(taskName, "start");
-  watcher.on("change", sequence);
-  logger(taskName, "end");
-  notify(taskName);
+  return new Promise((resolve, reject) => {
+    try {
+      logger(taskName, "start");
+      watcher.on("change", sequence);
+      logger(taskName, "end");
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 export default watch;

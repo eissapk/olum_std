@@ -1,5 +1,4 @@
 import shell from "shelljs";
-import notify from "./notifier";
 import logger from "./logger";
 
 const clean = () => {
@@ -9,7 +8,6 @@ const clean = () => {
       logger(taskName, "start");
       shell.exec("node compiler.js clean");
       logger(taskName, "end");
-      notify(taskName);
       resolve();
     } catch (err) {
       reject(err);
