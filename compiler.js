@@ -7,7 +7,8 @@ const extra = require("fs-extra");
 const path = require("path");
 const colors = require("colors");
 const settings = require("./settings");
-const debugLib = arg => settings.isDebugging ? console.log(arg) : "";
+const isDebugging = true;
+const debugLib = arg => isDebugging ? console.log(arg) : "";
 
 class Compiler {
   sub = settings.src;

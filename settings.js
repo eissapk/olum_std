@@ -11,5 +11,4 @@ module.exports = {
   https: false,
   favicon:"./public/favicon.png",
   template: "./public/index.html",
-  isDebugging: false,
 };

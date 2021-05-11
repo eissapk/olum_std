@@ -8,6 +8,7 @@
   import { debug, setTemp, $ } from "../../lib/pk.js";
   import edit from "../assets/edit.svg";
   import api from "../services/api.js";
+  import delNote from "../services/delnote.js";
   import getCurrentTab from "../services/current.js";
   export default class Notes {
     constructor() {}
@@ -17,7 +18,7 @@
 
         <span class="Notes__inner__note--selectBtn">
           <label>
-            <input type="checkbox" />
+            <input type="checkbox" class="noteCheckbox" />
             <span class="check"></span>
           </label>
         </span>
@@ -33,7 +34,6 @@
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
-        scoped: false,
       };
     }
 
@@ -44,6 +44,8 @@
         getCurrentTab();
         this.displayNotes();
       });
+
+      window.on(delNote.event, () => this.removeNote());
     }
 
     displayNotes() {
@@ -51,6 +53,23 @@
       const data = api.get();
       const notes = data.map(obj => (obj.tabId === api.current.tabId ? setTemp(this.temp, obj) : "")).join("");
       container.innerHTML = notes;
+    }
+
+    removeNote() {
+      const container = $(".Notes__inner");
+
+      const notes = $(container).get(".Notes__inner__note", true);
+      const notesArr = notes
+        .map(tab => {
+          const input = $(tab).get(".Notes__inner__note--selectBtn input");
+          if (input.checked) {
+            tab.remove();
+            const noteId = tab.getAttribute("data-noteid");
+            return noteId;
+          }
+        }).filter(note=> typeof note != "undefined");
+
+        api.removeNotes(notesArr);
     }
   }
 </script>

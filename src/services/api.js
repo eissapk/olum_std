@@ -41,6 +41,20 @@ class Api extends Service {
     localStorage.setItem(this.key, JSON.stringify(filteredArr));
   }
 
+  //todo fix this 
+  removeNotes(arr) {
+    const data = this.get();
+    data.forEach((obj, index, array) => {
+      arr.forEach(id => {
+        if (obj.noteId === id) {
+          array.splice(index, 1);
+        }
+      });
+    });
+
+    localStorage.setItem(this.key, JSON.stringify(data));
+  }
+
   saveLastTab() {
     localStorage.setItem(this.tabKey, JSON.stringify(this.current.tabId));
   }

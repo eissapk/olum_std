@@ -136,11 +136,23 @@
     removeTab(e) {
       if (e.target.classList.contains("tab--closeBtn")) {
         const tab = e.target.parentElement;
+        const prevTab = tab.previousElementSibling;
+        const nextTab = tab.nextElementSibling;
         const id = tab.getAttribute("data-tabid");
 
         if (confirm("are you sure?")) {
           tab.remove();
           api.removeTab(id);
+          $(".Notes__inner").innerHTML = "";
+
+          // select nearest tab 
+          if (prevTab) {
+            prevTab.click();
+          } else if (!prevTab && nextTab) {
+            nextTab.click();
+          } else {
+            debug("no tabs found!");
+          }
         }
       }
     }

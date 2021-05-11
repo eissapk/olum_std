@@ -31,6 +31,7 @@
 
 <script>
   import { $ } from "../../lib/pk.js";
+  import delNote from "../services/delnote.js";
   import trash from "../assets/trash.svg";
   import prev from "../assets/prev.svg";
   import next from "../assets/next.svg";
@@ -45,12 +46,13 @@
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
-        scoped: false,
       };
     }
 
     render() {
+      const delBtn = $(".delBtn");
       setTimeout(() => this.calcWidth(), 200);
+      delBtn.on("click", () => delNote.trigger());
     }
 
     calcWidth() {
