@@ -10,6 +10,7 @@
   import api from "../services/api.js";
   import delNote from "../services/delnote.js";
   import getCurrentTab from "../services/current.js";
+  import deselect from "../services/deselect.js";
   export default class Notes {
     constructor() {}
     temp = `
@@ -18,7 +19,7 @@
 
         <span class="Notes__inner__note--selectBtn">
           <label>
-            <input type="checkbox" class="noteCheckbox" />
+            <input type="checkbox" />
             <span class="check"></span>
           </label>
         </span>
@@ -38,13 +39,15 @@
     }
 
     render() {
+      const container = $(".Notes__inner");
       getCurrentTab();
       this.displayNotes();
       window.on(api.event, () => {
         getCurrentTab();
         this.displayNotes();
       });
-
+      // events
+      container.on("input", e => this.blurSelectAll(e));
       window.on(delNote.event, () => this.removeNote());
     }
 
@@ -53,6 +56,10 @@
       const data = api.get();
       const notes = data.map(obj => (obj.tabId === api.current.tabId ? setTemp(this.temp, obj) : "")).join("");
       container.innerHTML = notes;
+    }
+
+    blurSelectAll(e) {
+      if (e.target.nodeName === "INPUT") deselect();
     }
 
     removeNote() {
@@ -67,9 +74,10 @@
             const noteId = tab.getAttribute("data-noteid");
             return noteId;
           }
-        }).filter(note=> typeof note != "undefined");
+        })
+        .filter(note => typeof note != "undefined");
 
-        api.removeNotes(notesArr);
+      api.removeNotes(notesArr);
     }
   }
 </script>
@@ -88,6 +96,7 @@
     &::-webkit-scrollbar {
       width: 5px;
     }
+
     &::-webkit-scrollbar-thumb {
       background: $blue;
     }
@@ -101,6 +110,7 @@
         overflow: hidden;
         padding: 10px;
         border-bottom: 1px solid $border1;
+
         &:last-of-type {
           border-bottom: none;
         }
@@ -115,6 +125,7 @@
           margin-left: 25px;
           width: 30px;
           height: 30px;
+
           img {
             display: block;
             width: 100%;

@@ -51,8 +51,10 @@
 
     render() {
       const delBtn = $(".delBtn");
+      const selectAllInput = $(".selectAll input");
       setTimeout(() => this.calcWidth(), 200);
       delBtn.on("click", () => delNote.trigger());
+      selectAllInput.on("input", e => this.selectAllNotes(e));
     }
 
     calcWidth() {
@@ -63,6 +65,15 @@
         const selectAll = $(container).get(".selectAll").clientWidth;
         const delBtn = $(container).get(".delBtn").clientWidth;
         $(".searchInput").style.width = container.clientWidth - (navigation + selectAll + delBtn + margin) + "px";
+      }
+    }
+
+    selectAllNotes(e) {
+      const checkboxs = $(".Notes__inner__note input", true);
+      if (e.target.checked) {
+        checkboxs.forEach(checkbox => (checkbox ? (checkbox.checked = true) : ""));
+      } else {
+        checkboxs.forEach(checkbox => (checkbox ? (checkbox.checked = false) : ""));
       }
     }
   }
