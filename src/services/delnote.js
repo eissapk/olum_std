@@ -1,5 +1,4 @@
 import { Service } from "../../lib/pk.js";
-
 class DelNote extends Service {
   constructor() {
     super("delNote");

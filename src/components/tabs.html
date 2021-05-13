@@ -2,7 +2,11 @@
   <div class="Tabs">
     <div class="innerTabs">
       <!-- dots -->
-      <div class="dots"><span></span></div>
+      <div class="dots">
+        <span class="min"></span>
+        <span class="mid"></span>
+        <span class="max"></span>
+      </div>
 
       <!-- slider -->
       <div class="slider"></div>
@@ -18,12 +22,13 @@
   import genID from "../services/id.js";
   import api from "../services/api.js";
   import getCurrentTab from "../services/current.js";
+  import searchWidth from "../services/searchwidth.js";
   export default class Tabs {
     plus = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>`;
     close = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg>`;
     temp = `
       <span class="tab" data-tabid="{{tabId}}">
-        <span class="tab__num">(0)</span>
+        <span class="tab__num">({{notesNum}})</span>
         <input type="text" class="tab__title" value="{{tabName}}" placeholder="{{tabName}}" readonly />
         <button type="button" class="tab--closeBtn">${this.close}</button>
       </span>
@@ -50,11 +55,13 @@
     }
 
     render() {
-      this.slider = $(".slider");
+      this.slider = $(".Tabs .slider");
       const addBtn = $(".addTab");
+      const dots = $(".dots");
 
       this.buildTabs();
 
+      dots.on("click", e => this.triggerWidth(e));
       addBtn.on("click", () => this.addNewTab());
       this.slider.on("click", e => this.activateTab(e));
       this.slider.on("click", e => this.removeTab(e));
@@ -72,11 +79,38 @@
       this.slider.on("mouseleave", () => (this.isActive = false));
     }
 
+    triggerWidth(e) {
+      if (e.target.nodeName === "SPAN") {
+        const container = $(".Browser");
+        const type = e.target.className;
+        switch (type) {
+          case "min":
+            container.style.width = "320px";
+            searchWidth(320);
+            break;
+
+          case "mid":
+            container.style.width = "720px";
+            searchWidth(720);
+            break;
+
+          case "max":
+            const w = window.innerWidth - 35;
+            container.style.width = w + "px";
+            searchWidth(w);
+            break;
+        }
+      }
+    }
+
     buildTabs() {
       const data = api.get();
       const tabs = [...new Set(data.map(obj => obj.tabId))].map(id => data.find(obj => (obj.tabId === id ? obj : false)));
       const tabsMarkup = tabs
-        .map(obj => setTemp(this.temp, obj))
+        .map(obj => {
+          const num = api.getNotesNum(obj.tabId);
+          return setTemp(this.temp, { ...obj, notesNum: num });
+        })
         .reverse()
         .join("");
       this.slider.innerHTML = tabsMarkup;
@@ -109,7 +143,11 @@
 
       const id = genID();
       const name = "New Tab";
-      const obj = { tabName: "New Tab", tabId: id };
+      const obj = {
+        tabName: "New Tab",
+        tabId: id,
+        notesNum: 0,
+      };
 
       const tab = setTemp(this.temp, obj);
       this.slider.insertAdjacentHTML("afterbegin", tab);
@@ -117,7 +155,9 @@
       if (_tab) {
         _tab.classList.add("activeTab");
         _tab.click();
-        _tab.scrollIntoView({ behavior: "smooth" });
+        _tab.scrollIntoView({
+          behavior: "smooth",
+        });
       }
 
       getCurrentTab();
@@ -145,7 +185,7 @@
           api.removeTab(id);
           $(".Notes__inner").innerHTML = "";
 
-          // select nearest tab 
+          // select nearest tab
           if (prevTab) {
             prevTab.click();
           } else if (!prevTab && nextTab) {
@@ -231,6 +271,7 @@
 </script>
 
 <style lang="scss">
+  $margin: (80 - 36) / 6;
   .Tabs {
     position: absolute;
     left: 0;
@@ -247,42 +288,29 @@
       padding: 0 10px;
 
       .dots {
-        position: relative;
         width: 80px;
         height: 100%;
         float: left;
         margin-right: 10px;
 
         span {
+          cursor: pointer;
           width: 12px;
           height: 12px;
+          margin: 14px #{$margin}px;
           border-radius: 50%;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: $yellow;
+          float: left;
 
-          &:before {
-            content: "";
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: $red;
-            left: -24px;
-            top: 0;
+          &:nth-of-type(1) {
+            background: $yellow;
           }
 
-          &:after {
-            content: "";
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+          &:nth-of-type(2) {
+            background: $red;
+          }
+
+          &:nth-of-type(3) {
             background: $green;
-            right: -24px;
-            top: 0;
           }
         }
       }

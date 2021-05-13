@@ -35,6 +35,7 @@
   import trash from "../assets/trash.svg";
   import prev from "../assets/prev.svg";
   import next from "../assets/next.svg";
+  import searchWidth from "../services/searchwidth.js";
 
   export default class Search {
     constructor() {}
@@ -51,20 +52,30 @@
 
     render() {
       const delBtn = $(".delBtn");
+      const navBtnsContainer = $(".navigation");
       const selectAllInput = $(".selectAll input");
-      setTimeout(() => this.calcWidth(), 200);
-      delBtn.on("click", () => delNote.trigger());
+      setTimeout(() => searchWidth(window.innerWidth - 35), 200);
+      delBtn.on("click", () => {
+        delNote.trigger();
+        selectAllInput.checked = false;
+      });
       selectAllInput.on("input", e => this.selectAllNotes(e));
+      navBtnsContainer.on("click", e => this.navigate(e));
     }
 
-    calcWidth() {
-      const container = $(".Search");
-      if (container) {
-        const margin = 10;
-        const navigation = $(container).get(".navigation").clientWidth;
-        const selectAll = $(container).get(".selectAll").clientWidth;
-        const delBtn = $(container).get(".delBtn").clientWidth;
-        $(".searchInput").style.width = container.clientWidth - (navigation + selectAll + delBtn + margin) + "px";
+    navigate(e) {
+      const slider = $(".Tabs .slider");
+      const scroll = num => {
+        slider.scrollBy({
+          top: 0,
+          left: num,
+          behavior: "smooth",
+        });
+      };
+      if (e.target.classList.contains("prevBtn")) {
+        scroll(-125);
+      } else if (e.target.classList.contains("nextBtn")) {
+        scroll(125);
       }
     }
 

@@ -2,6 +2,7 @@ import { Service } from "../../lib/pk.js";
 
 class Api extends Service {
   current = {};
+  editedNote = {};
   key = "myNoteApp";
   tabKey = this.key + "_lastTab";
   constructor() {
@@ -53,6 +54,12 @@ class Api extends Service {
     localStorage.setItem(this.key, JSON.stringify(data));
   }
 
+  editNote({ newContent, id }) {
+    const data = this.get();
+    data.forEach(obj => (obj.noteId === id ? (obj.noteContent = newContent) : ""));
+    localStorage.setItem(this.key, JSON.stringify(data));
+  }
+
   saveLastTab() {
     localStorage.setItem(this.tabKey, JSON.stringify(this.current.tabId));
   }
@@ -62,6 +69,16 @@ class Api extends Service {
       return false;
     }
     return JSON.parse(localStorage.getItem(this.tabKey));
+  }
+
+  getNotesNum(tabId) {
+    const num = this.get().filter(obj => obj.tabId === tabId).length;
+    return num;
+  }
+
+  getOldNoteContent(id) {
+    const noteObj = this.get().find(obj => (obj.noteId === id ? obj : ""));
+    return noteObj.noteContent;
   }
 }
 

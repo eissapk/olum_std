@@ -19,6 +19,7 @@
   import api from "../services/api.js";
   import { pk } from "../app.mjs";
   import genID from "../services/id.js";
+  import { parse, reverse } from "../services/parse.js";
 
   export default class Form {
     margin = 15;
@@ -53,7 +54,7 @@
 
       saveBtn.on("click", () => {
         const id = genID();
-        const content = input.value.trim();
+        let content = input.value.trim();
         api.current.noteId = id;
         api.current.noteContent = content;
         api.addNote(api.current);
@@ -62,7 +63,17 @@
     }
 
     edit() {
-      console.warn(this.route);
+      const input = $(".Form textarea");
+      const updateBtn = $(".Form .updateBtn");
+      const id = api.editedNote.id;
+      const oldContent = api.getOldNoteContent(id);
+      input.value = oldContent; // update form
+
+      updateBtn.on("click", () => {
+        let newContent = input.value.trim();
+        api.editNote({ newContent, id });
+        pk.navigate("/");
+      });
     }
   }
 </script>
