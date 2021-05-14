@@ -14,10 +14,6 @@
   import deselect from "../services/deselect.js";
   import { parse } from "../services/parse.js";
   export default class Notes {
-    lt_regex = /</g;
-    gt_regex = />/g;
-    br_regex = /[\n\r]|\u21b5|↵/g;
-    space_regex = /\s/g;
     constructor() {}
     temp = `
       <li class="Notes__inner__note" data-noteid="{{noteId}}">
@@ -64,9 +60,7 @@
       const notes = data
         .map(obj => {
           if (obj.tabId === api.current.tabId) {
-            let str = obj.noteContent.replace(this.lt_regex, "&lt;").replace(this.gt_regex, "&gt;");
-            str = parse(str).replace(this.br_regex, "<br/>");
-            return setTemp(this.temp, { noteId: obj.noteId, noteContent: str });
+            return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
           }
         })
         .join("");
@@ -228,20 +222,28 @@
         }
 
         &__text {
-          width: calc(100% - 130px);
+          /* width: calc(100% - 130px);
           padding-left: 20px;
-          padding-right: 10px;
+          padding-right: 10px; */
+          width: 100%;
+          padding-top: 10px;
+          padding-left: 25px;
           line-height: 25px;
           word-break: break-all;
           color: $mainTextColor;
-          user-select: text !important;
+          user-select: text;
+
+          > * {
+            user-select: text;
+          }
 
           img {
-            width: 100%;
-            max-width: 600px;
-            vertical-align: bottom;
-            border-radius: 6px;
+            display: block;
+            max-height: 250px;
+            max-width: 100%;
+            border-radius: $radius;
           }
+
           a {
             color: $blue;
           }
@@ -250,7 +252,15 @@
             height: 2px;
             background-color: $offWhite;
             border: none;
-            margin: 5px 0;
+            margin: 10px 0;
+          }
+
+          .br {
+            clear: both;
+            width: 100%;
+            height: 5px;
+            display: block;
+            background: transparent;
           }
 
           pre {
@@ -260,6 +270,42 @@
             line-height: 1.45;
             background-color: $offWhite;
             border-radius: 6px;
+          }
+
+          .tasklist {
+            input {
+              margin-right: 5px;
+            }
+          }
+
+          .li {
+            position: relative;
+            padding-left: 15px;
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0px;
+              top: 10px;
+              font-size: 60px;
+              width: 5px;
+              height: 5px;
+              background: black;
+              border-radius: 50%;
+            }
+          }
+
+          blockquote {
+            position: relative;
+            padding-left: 15px;
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 3px;
+              height: 100%;
+              background: $blue;
+            }
           }
         }
       }
