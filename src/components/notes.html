@@ -1,5 +1,5 @@
 <template>
-  <div class="Notes">
+  <div class="Notes one-light one-dark">
     <ul class="Notes__inner"></ul>
   </div>
 </template>
@@ -13,10 +13,13 @@
   import getCurrentTab from "../services/current.js";
   import deselect from "../services/deselect.js";
   import { parse } from "../services/parse.js";
+  import * as hljs from "../../public/highlight.js";
   export default class Notes {
+    start = null;
+    end = null;
     constructor() {}
     temp = `
-      <li class="Notes__inner__note" data-noteid="{{noteId}}">
+      <li class="Notes__inner__note" data-noteid="{{noteId}}" draggable="true">
         <button type="button" class="Notes__inner__note--editBtn"><img src="${edit}" alt="edit-pen" /></button>
 
         <span class="Notes__inner__note--selectBtn">
@@ -42,6 +45,7 @@
 
     render() {
       const container = $(".Notes__inner");
+      this.container = container;
       getCurrentTab();
       this.displayNotes();
       window.on(api.event, () => {
@@ -52,6 +56,11 @@
       container.on("input", e => this.blurSelectAll(e));
       window.on(delNote.event, () => this.deleteNote());
       container.on("click", e => this.toEdit(e));
+      // drag events
+      container.addEventListener("dragover", e => this.dragOver(e));
+      container.addEventListener("dragenter", e => this.dragEnter(e));
+      container.addEventListener("drop", e => this.dragDrop(e));
+      container.addEventListener("dragend", e => this.dragEnd(e));
     }
 
     displayNotes() {
@@ -65,6 +74,7 @@
         })
         .join("");
       container.innerHTML = notes;
+      hljs.highlightAll();
     }
 
     blurSelectAll(e) {
@@ -105,6 +115,42 @@
         pk.navigate("/edit");
       }
     }
+
+    dragDrop(e) {
+      if (e.target.classList.contains("Notes__inner__note")) {
+        this.end = e.target;
+        console.warn("end ", this.end);
+      }
+    }
+
+    dragEnd(e) {
+      if (e.target.classList.contains("Notes__inner__note")) {
+        const nodes = [...this.container.children];
+        this.start = e.target;
+        console.warn("start ", this.start);
+
+        const startIndex = nodes.indexOf(this.start);
+        const endIndex = nodes.indexOf(this.end);
+
+        if (this.start && this.end) {
+          if (startIndex - endIndex < 0) {
+            console.warn("next");
+            this.end.insertAdjacentElement("afterend", this.start);
+          } else {
+            console.warn("prev");
+            this.end.insertAdjacentElement("beforebegin", this.start);
+          }
+        }
+      }
+    }
+
+    dragOver(e) {
+      if (e.target.classList.contains("Notes__inner__note")) e.preventDefault();
+    }
+
+    dragEnter(e) {
+      if (e.target.classList.contains("Notes__inner__note")) e.preventDefault();
+    }
   }
 </script>
 
@@ -135,7 +181,11 @@
       &__note {
         overflow: hidden;
         padding: 10px;
+        border-radius: $radius;
         border-bottom: 1px solid $border1;
+        &:active {
+          box-shadow: inset 0 0 0px 3px $blue;
+        }
 
         &:last-of-type {
           border-bottom: none;
@@ -148,7 +198,6 @@
         }
 
         &--editBtn {
-          margin-left: 25px;
           width: 30px;
           height: 30px;
 
@@ -161,7 +210,7 @@
         }
 
         &--selectBtn {
-          margin-left: 45px;
+          margin-left: 70px;
           height: 30px;
           width: 30px;
           float: left;
@@ -222,12 +271,8 @@
         }
 
         &__text {
-          /* width: calc(100% - 130px);
-          padding-left: 20px;
-          padding-right: 10px; */
           width: 100%;
           padding-top: 10px;
-          padding-left: 25px;
           line-height: 25px;
           word-break: break-all;
           color: $mainTextColor;
@@ -249,10 +294,29 @@
           }
 
           hr {
-            height: 2px;
-            background-color: $offWhite;
-            border: none;
-            margin: 10px 0;
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: $border3;
+            border: 0;
+          }
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+          }
+          h1,
+          h2 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid $border3;
+          }
+          h6 {
+            color: $subTextColor;
           }
 
           .br {
@@ -262,14 +326,41 @@
             display: block;
             background: transparent;
           }
-
+          b {
+            font-weight: 600;
+          }
           pre {
             padding: 16px;
             overflow: auto;
             font-size: 85%;
             line-height: 1.45;
-            background-color: $offWhite;
-            border-radius: 6px;
+            border-radius: $radius;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: $mainTextColor;
+            word-break: normal;
+            white-space: pre;
+            word-wrap: normal;
+
+            code {
+              padding: 0;
+              padding-right: 16px;
+              float: left;
+              user-select: text;
+              span {
+                user-select: text;
+              }
+            }
+          }
+
+          .quoteText {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            background-color: $quoteBgColor;
+            border-radius: $radius;
+            color: $mainTextColor;
+            display: inline;
           }
 
           .tasklist {
@@ -281,6 +372,7 @@
           .li {
             position: relative;
             padding-left: 15px;
+
             &::after {
               content: "";
               position: absolute;
@@ -295,17 +387,11 @@
           }
 
           blockquote {
-            position: relative;
-            padding-left: 15px;
-            &::after {
-              content: "";
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 3px;
-              height: 100%;
-              background: $blue;
-            }
+            padding: 0 1em;
+            color: $subTextColor;
+            border-left: 0.25em solid $border3;
+            margin-top: 0;
+            margin-bottom: 16px;
           }
         }
       }
