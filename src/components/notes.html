@@ -61,12 +61,15 @@
       container.addEventListener("dragenter", e => this.dragEnter(e));
       container.addEventListener("drop", e => this.dragDrop(e));
       container.addEventListener("dragend", e => this.dragEnd(e));
+      container.addEventListener("dragstart", e => this.dragStart(e));
+      container.addEventListener("dragleave", e => this.dragLeave(e));
     }
 
     displayNotes() {
       const container = $(".Notes__inner");
       const data = api.get();
       const notes = data
+        .sort((a, b) => (a.index > b.index ? 1 : -1))
         .map(obj => {
           if (obj.tabId === api.current.tabId) {
             return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
@@ -116,40 +119,65 @@
       }
     }
 
-    dragDrop(e) {
+    dragStart(e) {
       if (e.target.classList.contains("Notes__inner__note")) {
-        this.end = e.target;
-        console.warn("end ", this.end);
+        this.start = e.target;
+        debug(["start", $(this.start).get(".Notes__inner__note__text").textContent]);
+        this.start.classList.add("hold");
+        setTimeout(() => this.start.classList.add("invisible"), 0);
       }
     }
 
     dragEnd(e) {
       if (e.target.classList.contains("Notes__inner__note")) {
-        const nodes = [...this.container.children];
-        this.start = e.target;
-        console.warn("start ", this.start);
+        debug(["end", $(e.target).get(".Notes__inner__note__text").textContent]);
+        [...this.container.children].forEach(child => (child.className = "Notes__inner__note"));
+        this.arrange();
+      }
+    }
 
-        const startIndex = nodes.indexOf(this.start);
-        const endIndex = nodes.indexOf(this.end);
+    arrange() {
+      if (this.start && this.end) this.end.insertAdjacentElement("beforebegin", this.start);
 
-        if (this.start && this.end) {
-          if (startIndex - endIndex < 0) {
-            console.warn("next");
-            this.end.insertAdjacentElement("afterend", this.start);
-          } else {
-            console.warn("prev");
-            this.end.insertAdjacentElement("beforebegin", this.start);
-          }
-        }
+      const nodes = [...this.container.children];
+      const sortedArr = nodes.map(node => {
+        const noteId = node.getAttribute("data-noteid");
+        const index = nodes.indexOf(node);
+        return { noteId, index };
+      });
+
+      api.arrange(sortedArr);
+    }
+
+    dragEnter(e) {
+      if (e.target.classList.contains("Notes__inner__note")) {
+        e.preventDefault();
+        this.end = e.target;
+        debug(["enter", $(this.end).get(".Notes__inner__note__text").textContent]);
+        e.target.classList.add("hovered");
       }
     }
 
     dragOver(e) {
-      if (e.target.classList.contains("Notes__inner__note")) e.preventDefault();
+      if (e.target.classList.contains("Notes__inner__note")) {
+        e.preventDefault();
+        this.end = e.target;
+        debug(["over", $(this.end).get(".Notes__inner__note__text").textContent]);
+        e.target.classList.add("hovered");
+      }
     }
 
-    dragEnter(e) {
-      if (e.target.classList.contains("Notes__inner__note")) e.preventDefault();
+    dragDrop(e) {
+      if (e.target.classList.contains("Notes__inner__note")) {
+        this.end = e.target;
+        debug(["drop", $(this.end).get(".Notes__inner__note__text").textContent]);
+      }
+    }
+
+    dragLeave(e) {
+      if (e.target.classList.contains("Notes__inner__note")) {
+        e.target.classList.remove("hovered");
+      }
     }
   }
 </script>
@@ -181,10 +209,30 @@
       &__note {
         overflow: hidden;
         padding: 10px;
-        border-radius: $radius;
         border-bottom: 1px solid $border1;
-        &:active {
-          box-shadow: inset 0 0 0px 3px $blue;
+        position: relative;
+
+        &.hovered {
+          &::after {
+            position: absolute;
+            content: "";
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba($blue, 0.5);
+          }
+        }
+
+        &.hold {
+          width: 300px;
+          height: 100px;
+          border: 2px solid $subTextColor !important;
+          border-radius: $radius;
+        }
+
+        &.invisible {
+          display: none;
         }
 
         &:last-of-type {

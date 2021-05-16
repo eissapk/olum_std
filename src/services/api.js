@@ -80,6 +80,12 @@ class Api extends Service {
     const noteObj = this.get().find(obj => (obj.noteId === id ? obj : ""));
     return noteObj.noteContent;
   }
+
+  arrange(sortedArr) {
+    const data = this.get();
+    data.forEach(obj => sortedArr.forEach(item => (obj.noteId === item.noteId ? (obj.index = item.index) : "")));
+    localStorage.setItem(this.key, JSON.stringify(data));
+  }
 }
 
 const api = new Api();
