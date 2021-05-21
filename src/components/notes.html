@@ -20,6 +20,7 @@
     constructor() {}
     temp = `
       <li class="Notes__inner__note" data-noteid="{{noteId}}" draggable="true">
+        <button type="button" class="Notes__inner__note--dragBtn"></button>
         <button type="button" class="Notes__inner__note--editBtn"><img src="${edit}" alt="edit-pen" /></button>
 
         <span class="Notes__inner__note--selectBtn">
@@ -124,7 +125,7 @@
         this.start = e.target;
         debug(["start", $(this.start).get(".Notes__inner__note__text").textContent]);
         this.start.classList.add("hold");
-        setTimeout(() => this.start.classList.add("invisible"), 0);
+        setTimeout(() => this.start.classList.add("hide"), 0);
       }
     }
 
@@ -137,7 +138,13 @@
     }
 
     arrange() {
-      if (this.start && this.end) this.end.insertAdjacentElement("beforebegin", this.start);
+      if (this.start && this.end) {
+        if (!this.end.nextElementSibling) {
+          this.end.insertAdjacentElement("afterend", this.start);
+        } else {
+          this.end.insertAdjacentElement("beforebegin", this.start);
+        }
+      }
 
       const nodes = [...this.container.children];
       const sortedArr = nodes.map(node => {
@@ -154,7 +161,7 @@
         e.preventDefault();
         this.end = e.target;
         debug(["enter", $(this.end).get(".Notes__inner__note__text").textContent]);
-        e.target.classList.add("hovered");
+        e.target.classList.add("hover");
       }
     }
 
@@ -163,7 +170,7 @@
         e.preventDefault();
         this.end = e.target;
         debug(["over", $(this.end).get(".Notes__inner__note__text").textContent]);
-        e.target.classList.add("hovered");
+        e.target.classList.add("hover");
       }
     }
 
@@ -176,7 +183,7 @@
 
     dragLeave(e) {
       if (e.target.classList.contains("Notes__inner__note")) {
-        e.target.classList.remove("hovered");
+        e.target.classList.remove("hover");
       }
     }
   }
@@ -212,7 +219,7 @@
         border-bottom: 1px solid $border1;
         position: relative;
 
-        &.hovered {
+        &.hover {
           &::after {
             position: absolute;
             content: "";
@@ -220,18 +227,19 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba($blue, 0.5);
+            background: rgba($yellow, 0.7);
           }
         }
 
         &.hold {
-          width: 300px;
-          height: 100px;
+          width: 300px !important;
+          height: 100px !important;
+          overflow: hidden !important;
           border: 2px solid $subTextColor !important;
-          border-radius: $radius;
+          border-radius: $radius !important;
         }
 
-        &.invisible {
+        &.hide {
           display: none;
         }
 
@@ -239,15 +247,30 @@
           border-bottom: none;
         }
 
-        &--editBtn,
+        &--dragBtn,
         &--selectBtn,
+        &--editBtn,
         &__text {
           float: left;
+        }
+
+        &--dragBtn {
+          position: relative;
+          width: 30px;
+          height: 30px;
+          background: repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 1),
+            rgba(255, 255, 255, 1) 2.5px,
+            rgba(241, 243, 244, 1) 2.5px,
+            rgba(241, 243, 244, 1) 5px
+          );
         }
 
         &--editBtn {
           width: 30px;
           height: 30px;
+          margin-left: 20px;
 
           img {
             display: block;
@@ -258,7 +281,7 @@
         }
 
         &--selectBtn {
-          margin-left: 70px;
+          margin-left: 20px;
           height: 30px;
           width: 30px;
           float: left;
@@ -320,6 +343,7 @@
 
         &__text {
           width: 100%;
+          display: block;
           padding-top: 10px;
           line-height: 25px;
           word-break: break-all;
