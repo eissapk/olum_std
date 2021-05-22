@@ -1,27 +1,92 @@
 <template>
   <div class="Features">
-    <h1>features</h1>
+    <App-Nav />
+    <App-Header />
+    <div class="innerFeatures"><ul></ul></div>
+    <App-Footer />
   </div>
 </template>
 
 <script>
+  import Nav from "../components/layout/nav";
+  import Header from "../components/layout/header";
+  import Footer from "../components/layout/footer";
+  import bg from "../assets/bg.webp";
+  import setWH from "../services/setWH.js";
+  import { $ } from "../../lib/pk.js";
   export default class Features {
+    feats = ["Markdown editor", "Notes sorting", "Dark mode"];
+    margin = 25;
     constructor() {}
     data() {
       return {
         name: "Features",
-        components: {},
+        components: { Nav, Header, Footer },
         template: this.template(),
         style: this.style(),
         render: this.render.bind(this),
       };
     }
 
-    render() {}
+    render() {
+      const container = $(".innerFeatures");
+      setWH(container, this.margin);
+      this.buildFeats();
+    }
+
+    buildFeats() {
+      const container = $(".innerFeatures ul");
+      const feats = this.feats.map(item => `<li>${item}</li>`).join("");
+      container.innerHTML = feats;
+    }
   }
 </script>
 
 <style lang="scss">
   .Features {
+    background-image: url("${bg}");
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    .innerFeatures {
+      background: $white;
+      margin: 0 auto;
+      border-radius: $radius;
+      list-style-type: none;
+      padding: 10px;
+      padding-right: 3px;
+      max-width: 450px;
+      > ul {
+        overflow: auto;
+        height: 100%;
+        width: 100%;
+
+        &::-webkit-scrollbar {
+          width: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: $blue;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: $border4;
+        }
+        li {
+          min-height: 40px;
+          margin-right: 10px;
+          word-break: break-all;
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+          border-bottom: 1px solid $border1;
+          &:last-of-type {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+          }
+        }
+      }
+    }
   }
 </style>
