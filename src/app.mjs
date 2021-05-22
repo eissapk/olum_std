@@ -4,6 +4,7 @@ import Settings from "./views/settings.js";
 import NotFound from "./views/notfound.js";
 import Add from "./views/add.js";
 import Edit from "./views/edit.js";
+import Features from "./views/features.js";
 
 const routes = [
   { path: "/", comp: Home },
@@ -11,6 +12,7 @@ const routes = [
   { path: "/edit", comp: Edit },
   { path: "/settings", comp: Settings },
   { path: "/404", comp: NotFound },
+  { path: "/features", comp: Features },
 ];
 
 export const pk = new Pk({

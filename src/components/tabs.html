@@ -12,7 +12,7 @@
       <div class="slider"></div>
 
       <!-- add tab -->
-      <button type="button" class="addTab">${this.plus}</button>
+      <button type="button" class="addTab flash">${this.plus}</button>
     </div>
   </div>
 </template>
@@ -60,6 +60,7 @@
       const dots = $(".dots");
 
       this.buildTabs();
+      this.initial();
 
       dots.on("click", e => this.triggerWidth(e));
       addBtn.on("click", () => this.addNewTab());
@@ -79,27 +80,59 @@
       this.slider.on("mouseleave", () => (this.isActive = false));
     }
 
+    checker() {
+      let item;
+      if (localStorage.getItem("size") === null) {
+        localStorage.setItem("size", JSON.stringify("max"));
+        item = "max";
+      } else {
+        item = JSON.parse(localStorage.getItem("size"));
+      }
+      return item;
+    }
+
+    initial() {
+      const container = $(".Browser");
+      const status = this.checker();
+      let num;
+      if (status === "min") num = 320;
+      else if (status === "mid") num = 720;
+      else if (status === "max") num = window.innerWidth - 35;
+      container.style.width = num + "px";
+      setTimeout(() => searchWidth(num), 500);
+    }
+
     triggerWidth(e) {
       if (e.target.nodeName === "SPAN") {
         const container = $(".Browser");
+        let num;
         const type = e.target.className;
         switch (type) {
           case "min":
-            container.style.width = "320px";
-            searchWidth(320);
+            num = 320;
+            localStorage.setItem("size", JSON.stringify("min"));
             break;
-
           case "mid":
-            container.style.width = "720px";
-            searchWidth(720);
+            num = 720;
+            localStorage.setItem("size", JSON.stringify("mid"));
             break;
-
           case "max":
-            const w = window.innerWidth - 35;
-            container.style.width = w + "px";
-            searchWidth(w);
+            num = window.innerWidth - 35;
+            localStorage.setItem("size", JSON.stringify("max"));
             break;
         }
+        container.style.width = num + "px";
+        searchWidth(num);
+      }
+    }
+
+    flash() {
+      const addBtn = $(".addTab");
+      const tabs = $(".tab", true);
+      if (tabs.length) {
+        addBtn.classList.remove("flash");
+      } else {
+        addBtn.classList.add("flash");
       }
     }
 
@@ -114,6 +147,7 @@
         .reverse()
         .join("");
       this.slider.innerHTML = tabsMarkup;
+      this.flash();
 
       // select last opened tab
       if (!api.hasLastTab()) {
@@ -151,6 +185,7 @@
 
       const tab = setTemp(this.temp, obj);
       this.slider.insertAdjacentHTML("afterbegin", tab);
+      this.flash();
       const _tab = $(this.slider).get(".tab");
       if (_tab) {
         _tab.classList.add("activeTab");
@@ -183,6 +218,7 @@
         if (confirm("are you sure?")) {
           tab.remove();
           api.removeTab(id);
+          this.flash();
           $(".Notes__inner").innerHTML = "";
 
           // select nearest tab
@@ -271,7 +307,11 @@
 </script>
 
 <style lang="scss">
-  $margin: (80 - 36) / 6;
+  $dotSize: 15;
+  $dotsWrapperWidth: 80;
+  $dotsWrapperHeight: 40;
+  $marginTop: ($dotsWrapperHeight - $dotSize)/2;
+  $marginLeft: ($dotsWrapperWidth - $dotSize * 3)/6;
   .Tabs {
     position: absolute;
     left: 0;
@@ -281,23 +321,24 @@
     background: $offWhite;
     border-radius: $radius $radius 0 0;
     border-bottom: 1px solid $border1;
+    user-select: none;
 
     .innerTabs {
-      height: 40px;
+      height: #{$dotsWrapperHeight}px;
       margin-top: 10px;
       padding: 0 10px;
 
       .dots {
-        width: 80px;
+        width: #{$dotsWrapperWidth}px;
         height: 100%;
         float: left;
         margin-right: 10px;
 
         span {
           cursor: pointer;
-          width: 12px;
-          height: 12px;
-          margin: 14px #{$margin}px;
+          width: #{$dotSize}px;
+          height: #{$dotSize}px;
+          margin: #{$marginTop}px #{$marginLeft}px;
           border-radius: 50%;
           float: left;
 
@@ -323,6 +364,9 @@
         margin: 5px 0 5px 10px;
         position: relative;
 
+        &.flash {
+          animation: addTab 1s cubic-bezier(0.66, 0, 0, 1) infinite;
+        }
         &:hover {
           background: $border3;
           transition: all 0.1s ease-in-out;
@@ -439,6 +483,14 @@
           }
         }
       }
+    }
+  }
+  @keyframes addTab {
+    0% {
+      box-shadow: inset 0 0 0 2px $blue;
+    }
+    100% {
+      box-shadow: inset 0 0 0 2px rgba($blue, 0);
     }
   }
 </style>

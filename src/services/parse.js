@@ -41,12 +41,12 @@ export function parse(md) {
   });
   text = text.replace(/<pre[\s\S]*?>[\s\S]*?<\/pre>/gi, str => str.replace(hash_regex, "&num;"));
   // heading - must be a descending order
-  text = text.replace(/[#]{6}(.*)/gi, "<h6>$1</h6>");
-  text = text.replace(/[#]{5}(.*)/gi, "<h5>$1</h5>");
-  text = text.replace(/[#]{4}(.*)/gi, "<h4>$1</h4>");
-  text = text.replace(/[#]{3}(.*)/gi, "<h3>$1</h3>");
-  text = text.replace(/[#]{2}(.*)/gi, "<h2>$1</h2>");
-  text = text.replace(/[#]{1}(.*)/gi, "<h1>$1</h1>");
+  text = text.replace(/[#]{6}(.*)/gi, `<h6>$1</h6>`);
+  text = text.replace(/[#]{5}(.*)/gi, `<h5>$1</h5>`);
+  text = text.replace(/[#]{4}(.*)/gi, `<h4>$1</h4>`);
+  text = text.replace(/[#]{3}(.*)/gi, `<h3>$1</h3>`);
+  text = text.replace(/[#]{2}(.*)/gi, `<h2>$1</h2>`);
+  text = text.replace(/[#]{1}(.*)/gi, `<h1>$1</h1>`);
   // task list
   text = text.replace(/([\*\-][\s]?\[x\])(.*)/g, `<p class="tasklist"><input type="checkbox" checked disabled/>$2</p>`);
   text = text.replace(/([\*\-][\s]?\[\s?\])(.*)/g, `<p class="tasklist"><input type="checkbox" disabled/>$2</p>`);

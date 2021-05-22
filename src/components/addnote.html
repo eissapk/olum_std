@@ -7,6 +7,8 @@
     </button>
     <!-- settings button -->
     <a to="/settings" class="settingsBtn">settings</a>
+    <!-- star button -->
+    <button type="button" class="starBtn" to="/features"><img src="${star}" alt="star" /></button>
   </div>
 </template>
 
@@ -14,6 +16,7 @@
   import { pk } from "../app.mjs";
   import { $, debug } from "../../lib/pk.js";
   import add from "../assets/add.svg";
+  import star from "../assets/star.svg";
   import getCurrentTab from "../services/current.js";
   export default class AddNote {
     constructor() {}
@@ -58,6 +61,7 @@
     border-radius: 0 0 $radius $radius;
     font-size: 17px;
     border-top: 1px solid $border1;
+    user-select: none;
     .addBtn {
       height: 50px;
       padding: 0 10px;
@@ -77,6 +81,17 @@
         text-transform: capitalize;
         font-weight: bold;
         color: $blue;
+      }
+    }
+    .starBtn {
+      float: right;
+      width: 30px;
+      height: 30px;
+      margin: 10px;
+      img {
+        width: auto;
+        height: 100%;
+        margin: 0 auto;
       }
     }
     .settingsBtn {
