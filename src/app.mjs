@@ -7,12 +7,12 @@ import Edit from "./views/edit.js";
 import Features from "./views/features.js";
 
 const routes = [
-  { path: "/", comp: Home },
+  { path: "/404", comp: NotFound },
   { path: "/add", comp: Add },
   { path: "/edit", comp: Edit },
-  { path: "/settings", comp: Settings },
-  { path: "/404", comp: NotFound },
   { path: "/features", comp: Features },
+  { path: "/settings", comp: Settings },
+  { path: "/", comp: Home },
 ];
 
 export const pk = new Pk({
@@ -20,5 +20,6 @@ export const pk = new Pk({
   root: "/",
   el: "#app",
   prefix: "app",
+  err: "/404",
   routes,
 });
