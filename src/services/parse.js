@@ -4,12 +4,18 @@ const br_regex = /\n|\r|↵|\u21b5/g;
 const hash_regex = /\#/gi;
 const tag_regex = /<[^>]*>/gi;
 const space_regex = /\s/g;
-
+const marked_regex = /(\&lt;mark\&gt;)(.*)(\&lt;\/mark\&gt;)/gi;
 //* order matters
 export function parse(md) {
   let text = md;
   // tags
   text = text.replace(tag_regex, str => str.replace(lt_regex, "&lt;").replace(gt_regex, "&gt;"));
+  // skiping marked tags
+  text = text.replace(marked_regex, str => {
+    str = str.replace(/\&lt;/g, "<");
+    str = str.replace(/\&gt;/g, ">");
+    return str;
+  });
 
   //! start MD
   // line

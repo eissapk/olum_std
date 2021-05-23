@@ -15,6 +15,7 @@
   import deselect from "../services/deselect.js";
   import { parse } from "../services/parse.js";
   import * as hljs from "../../public/highlight.js";
+  import { engine } from "../services/engine.js";
   export default class Notes {
     start = null;
     end = null;
@@ -67,20 +68,43 @@
       container.on("drop", e => this.dragDrop(e));
       container.on("dragleave", e => this.dragLeave(e));
       container.on("mousemove", e => this.handleDrag(e));
+      // engine
+      window.on(engine.event, () => this.displayNotes(engine.query));
     }
 
-    displayNotes() {
+    displayNotes(query) {
       const container = $(".Notes__inner");
       const data = api.get();
-      const notes = data
-        .sort((a, b) => (a.index > b.index ? 1 : -1))
-        .map(obj => {
-          if (obj.tabId === api.current.tabId) {
-            return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
-          }
-        })
-        .join("");
-      container.innerHTML = notes;
+      if (!query) {
+        const notes = data
+          .sort((a, b) => (a.index > b.index ? 1 : -1))
+          .map(obj => {
+            if (obj.tabId === api.current.tabId) {
+              return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
+            }
+          })
+          .join("");
+        container.innerHTML = notes;
+      } else {
+        let markup;
+        const regex = new RegExp(`(${query})`, "gi");
+        console.warn(regex);
+        const filteredNotes = data
+          .map(obj => {
+            if (regex.test(obj.noteContent.lower().trim())) {
+              const marked = obj.noteContent.lower().trim().replace(regex, `<mark>$1</mark>`);
+              return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(marked) });
+            }
+          })
+          .filter(item => typeof item != "undefined");
+        if (filteredNotes.length) markup = filteredNotes.join("");
+        else markup = `<div class="noResult">No Results</div>`;
+        container.innerHTML = markup;
+        // scroll to matched phrase
+        const mark = $("mark");
+        if (mark) mark.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+      }
+
       hljs.highlightAll();
     }
 
@@ -213,7 +237,6 @@
     width: 100%;
     overflow: auto;
     border-right: 1px solid $border4;
-
     &::-webkit-scrollbar {
       width: 5px;
     }
@@ -227,6 +250,20 @@
     }
 
     &__inner {
+      .noResult {
+        position: relative;
+        top: -100px;
+        width: calc(100% - 20px);
+        background: $red;
+        margin: 0 auto;
+        text-align: center;
+        border-radius: $radius;
+        color: $offWhite;
+        padding: 20px 10px;
+        font-weight: bold;
+        animation: noResult 0.3s ease forwards;
+      }
+
       &__note {
         overflow: hidden;
         padding: 10px;
@@ -475,6 +512,15 @@
           }
         }
       }
+    }
+  }
+
+  @keyframes noResult {
+    from {
+      margin-top: 0;
+    }
+    to {
+      margin-top: 110px;
     }
   }
 </style>

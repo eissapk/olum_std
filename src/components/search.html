@@ -30,12 +30,13 @@
 </template>
 
 <script>
-  import { $ } from "../../lib/pk.js";
+  import { $, debug, setTemp } from "../../lib/pk.js";
   import delNote from "../services/delnote.js";
   import trash from "../assets/trash.svg";
   import prev from "../assets/prev.svg";
   import next from "../assets/next.svg";
   import searchWidth from "../services/searchwidth.js";
+  import { engine } from "../services/engine.js";
 
   export default class Search {
     constructor() {}
@@ -52,6 +53,8 @@
 
     render() {
       const delBtn = $(".delBtn");
+      const engine = $(".searchInput");
+
       const navBtnsContainer = $(".navigation");
       const selectAllInput = $(".selectAll input");
       setTimeout(() => searchWidth(window.innerWidth - 35), 200);
@@ -61,6 +64,13 @@
       });
       selectAllInput.on("input", e => this.selectAllNotes(e));
       navBtnsContainer.on("click", e => this.navigate(e));
+      engine.on("keyup", e => this.fireEngine(e));
+    }
+
+    fireEngine(e) {
+      const query = e.target.value.lower().trim();
+      engine.query = query;
+      engine.trigger();
     }
 
     navigate(e) {
@@ -98,7 +108,7 @@
     height: 50px;
     width: 100%;
     background: $offWhite;
-    user-select:none;
+    user-select: none;
 
     .navigation {
       padding: 0 10px;
