@@ -20,6 +20,8 @@
     start = null;
     end = null;
     isActive = false;
+    currentMatch = 0;
+    isMatchedNoteNavigatable = false;
     constructor() {}
     temp = `
       <li class="Notes__inner__note" data-noteid="{{noteId}}" draggable="true">
@@ -49,6 +51,7 @@
 
     render() {
       const container = $(".Notes__inner");
+      const navBtnsContainer = $(".navigation");
       this.container = container;
       getCurrentTab();
       this.displayNotes();
@@ -69,43 +72,86 @@
       container.on("dragleave", e => this.dragLeave(e));
       container.on("mousemove", e => this.handleDrag(e));
       // engine
-      window.on(engine.event, () => this.displayNotes(engine.query));
+      window.on(engine.event, () => this.displayFilteredNotes(engine.query));
+      navBtnsContainer.on("click", e => this.navigateMatches(e));
     }
 
-    displayNotes(query) {
+    displayNotes() {
       const container = $(".Notes__inner");
       const data = api.get();
-      if (!query) {
-        const notes = data
-          .sort((a, b) => (a.index > b.index ? 1 : -1))
-          .map(obj => {
-            if (obj.tabId === api.current.tabId) {
-              return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
-            }
-          })
-          .join("");
-        container.innerHTML = notes;
-      } else {
-        let markup;
-        const regex = new RegExp(`(${query})`, "gi");
-        console.warn(regex);
-        const filteredNotes = data
-          .map(obj => {
-            if (regex.test(obj.noteContent.lower().trim())) {
-              const marked = obj.noteContent.lower().trim().replace(regex, `<mark>$1</mark>`);
-              return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(marked) });
-            }
-          })
-          .filter(item => typeof item != "undefined");
-        if (filteredNotes.length) markup = filteredNotes.join("");
-        else markup = `<div class="noResult">No Results</div>`;
-        container.innerHTML = markup;
-        // scroll to matched phrase
-        const mark = $("mark");
-        if (mark) mark.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-      }
-
+      const notes = data
+        .sort((a, b) => (a.index > b.index ? 1 : -1))
+        .map(obj => {
+          if (obj.tabId === api.current.tabId) {
+            return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
+          }
+        })
+        .join("");
+      container.innerHTML = notes;
       hljs.highlightAll();
+    }
+
+    deactivateTab() {
+      const activeTab = $(".activeTab");
+      if (activeTab) activeTab.classList.remove("activeTab");
+    }
+
+    displayAllNotes() {
+      const container = $(".Notes__inner");
+      const data = api.get();
+      const notes = data
+        .sort((a, b) => (a.index > b.index ? 1 : -1))
+        .map(obj => setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) }))
+        .join("");
+      container.innerHTML = notes;
+      hljs.highlightAll();
+    }
+
+    displayFilteredNotes(query) {
+      this.currentMatch = 0;
+      if (!!query) {
+        this.isMatchedNoteNavigatable = true;
+        this.deactivateTab();
+        this.displayAllNotes();
+        // replace matched query with mark tag
+        const allTags = $(".Notes__inner *", true);
+        allTags.forEach(tag => {
+          [...tag.childNodes]
+            .filter(n => n.nodeType === Node.TEXT_NODE)
+            .forEach(textNode => {
+              const text = textNode.textContent.lower().trim();
+              if (text.includes(query)) {
+                const wrapper = document.createElement("mark");
+                textNode.replaceWith(wrapper);
+                wrapper.append(textNode);
+              }
+            });
+        });
+        // scroll to 1st match
+        const mark = $(".Notes__inner mark");
+        if (mark) this.scroll(mark);
+      } else {
+        this.isMatchedNoteNavigatable = false;
+        this.deactivateTab();
+        this.displayAllNotes();
+      }
+    }
+
+    navigateMatches(e) {
+      const marks = $(".Notes__inner mark", true);
+      if (marks.length && this.isMatchedNoteNavigatable) {
+        if (e.target.classList.contains("nextBtn")) {
+          if (this.currentMatch < marks.length - 1) this.currentMatch++;
+        } else if (e.target.classList.contains("prevBtn")) {
+          if (this.currentMatch > 0) this.currentMatch--;
+          else if (this.currentMatch < 0) this.currentMatch = 0;
+        }
+        this.scroll(marks[this.currentMatch]);
+      }
+    }
+
+    scroll(elm) {
+      if (elm) elm.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     }
 
     blurSelectAll(e) {
@@ -250,20 +296,6 @@
     }
 
     &__inner {
-      .noResult {
-        position: relative;
-        top: -100px;
-        width: calc(100% - 20px);
-        background: $red;
-        margin: 0 auto;
-        text-align: center;
-        border-radius: $radius;
-        color: $offWhite;
-        padding: 20px 10px;
-        font-weight: bold;
-        animation: noResult 0.3s ease forwards;
-      }
-
       &__note {
         overflow: hidden;
         padding: 10px;
@@ -512,15 +544,6 @@
           }
         }
       }
-    }
-  }
-
-  @keyframes noResult {
-    from {
-      margin-top: 0;
-    }
-    to {
-      margin-top: 110px;
     }
   }
 </style>

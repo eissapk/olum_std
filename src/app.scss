@@ -18,7 +18,11 @@
 body {
   font-family: "Lato", Helvetica, Arial, sans-serif;
   color: $mainTextColor;
-
+  mark {
+    border-left: 3px solid $green;
+    background: $yellow;
+    padding-left: 1px;
+  }
   a {
     text-decoration: none;
 

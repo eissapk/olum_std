@@ -149,7 +149,10 @@
       this.slider.innerHTML = tabsMarkup;
       this.flash();
 
-      // select last opened tab
+      this.selectLastOpenedTab();
+    }
+
+    selectLastOpenedTab() {
       if (!api.hasLastTab()) {
         this.selectFirstTab();
       } else {
@@ -162,6 +165,8 @@
           this.selectFirstTab();
         }
       }
+      const activeTab = $(".activeTab");
+      if (activeTab) activeTab.click();
     }
 
     selectFirstTab() {
@@ -205,6 +210,12 @@
         getCurrentTab();
         api.trigger();
         api.saveLastTab();
+
+        // wipe out engine
+        const container = $(".searchMatches");
+        const input = $(".searchInput");
+        container.classList.add("hide");
+        input.value = "";
       }
     }
 
