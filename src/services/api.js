@@ -86,6 +86,15 @@ class Api extends Service {
     data.forEach(obj => sortedArr.forEach(item => (obj.noteId === item.noteId ? (obj.index = item.index) : "")));
     localStorage.setItem(this.key, JSON.stringify(data));
   }
+
+  updateStorage(rawData) {
+    const parsedData = JSON.parse(rawData);
+    if (parsedData.length) {
+      localStorage.setItem(this.key, rawData);
+    } else {
+      alert("No Data in This File!");
+    }
+  }
 }
 
 const api = new Api();
