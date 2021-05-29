@@ -5,7 +5,7 @@ import NotFound from "./views/notfound.js";
 import Add from "./views/add.js";
 import Edit from "./views/edit.js";
 import Features from "./views/features.js";
-//todo make all routes dynamic based on the root e.g. root: "/mynotebeta",
+
 const routes = [
   { path: "/404", comp: NotFound },
   { path: "/add", comp: Add },

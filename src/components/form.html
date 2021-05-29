@@ -41,9 +41,9 @@
       setWH(container, this.margin);
       const input = $(".Form textarea");
       input.focus();
-      if (this.route === "/add") {
+      if (this.route === pk.resolve("add")) {
         this.add();
-      } else if (this.route === "/edit") {
+      } else if (this.route === pk.resolve("edit")) {
         this.edit();
       }
     }
@@ -55,10 +55,14 @@
       saveBtn.on("click", () => {
         const id = genID();
         let content = input.value.trim();
-        api.current.noteId = id;
-        api.current.noteContent = content;
-        api.addNote(api.current);
-        pk.navigate("/");
+        if (content) {
+          api.current.noteId = id;
+          api.current.noteContent = content;
+          api.addNote(api.current);
+          pk.navigate("/");
+        } else {
+          alert("empty field!");
+        }
       });
     }
 
@@ -71,8 +75,12 @@
 
       updateBtn.on("click", () => {
         let newContent = input.value.trim();
-        api.editNote({ newContent, id });
-        pk.navigate("/");
+        if (newContent) {
+          api.editNote({ newContent, id });
+          pk.navigate("/");
+        } else {
+          alert("empty field!");
+        }
       });
     }
   }
