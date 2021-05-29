@@ -33,7 +33,6 @@ export function parse(md) {
   text = text.replace(/[\~]{2}([^\~].*?)[\~]{2}/gi, "<del>$1</del>");
   text = text.replace(/[\_\*]{1}([^\_\*].*?)[\_\*]{1}/g, "<i>$1</i>");
   // code 
-  // todo fix via ^[\#\/]{2} to detect ^[\`]{3}
   text = text.replace(/[\`]{3}([a-z]+)([^\`]+)[\`]{3}/gi, (str, str2, str3) => {
     str3 = str3
       .replace(/\>/g, "&gt;")
