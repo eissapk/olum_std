@@ -17,7 +17,7 @@ const routes = [
 
 export const pk = new Pk({
   mode: "history",
-  root: "/",
+  root: "/mynotebeta",
   el: "#app",
   prefix: "app",
   err: "/404",

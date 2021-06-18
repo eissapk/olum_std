@@ -1,8 +1,7 @@
 @import "./styles/normalize.scss";
 @import "./styles/mixins.scss";
 @import "./styles/shared.scss";
-@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
-// @include font("./assets/fonts");
+@include font("./assets/fonts");
 
 * {
   box-sizing: border-box;

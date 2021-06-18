@@ -6,7 +6,7 @@ const { title, dest, favicon, template, src, hash, comments, asyncAwait } = requ
 
 module.exports = env => {
   const mode = !!env.dev ? "development" : "production";
-  const globs = [`./${src}/app.mjs`, `./${src}/app.scss`];
+  const globs = [`./${src}/app.scss`, `./${src}/app.mjs`];
   const main = asyncAwait ? ["babel-polyfill", ...globs] : [...globs];
 
   const config = {
@@ -32,7 +32,7 @@ module.exports = env => {
           use: ["style-loader", "css-loader", "sass-loader"],
         },
         {
-          test: /\.(?:ico|gif|png|jpg|jpeg|svg|webp)$/i,
+          test: /\.(?:ico|gif|png|jpg|jpeg|svg|webp|woff|woff2|ttf|eot)$/i,
           type: "asset/resource",
         },
       ],
