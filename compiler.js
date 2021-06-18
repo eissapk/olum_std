@@ -2,6 +2,8 @@
 const commander = require("commander");
 const cmd = new commander.Command();
 const sass = require("sass");
+const autoprefixer = require('autoprefixer');
+const postcss = require('postcss');
 const fs = require("fs");
 const extra = require("fs-extra");
 const path = require("path");
@@ -75,7 +77,7 @@ class Compiler {
 
   html(file) {
     const tempArr = file.match(this.regex.template.all);
-    const template = Array.isArray(tempArr) && tempArr.length ? tempArr[0] : "";
+    const template = Array.isArray(tempArr) && tempArr.length ? tempArr[0] : ""; // get 1st template tag
     const markup = template.replace(this.regex.template.tag, "");
     return "\n template() { \n return `" + markup + "`;\n}\n";
   }
@@ -93,6 +95,12 @@ class Compiler {
     const scss = style.replace(this.regex.style.tag, "");
     const compiledShared = sass.renderSync({ data: shared }).css.toString();
     const css = this.hasSASS(style) ? sass.renderSync({ data: shared + scss }).css.toString() : compiledShared + scss;
+    // prefix css
+    // postcss([ autoprefixer ]).process(css).then(result => {
+    //   result.warnings().forEach(warn => console.warn(warn.toString()));
+    //   const finalStyle = "\n style() { \n return `" + result.css + "`;\n}\n";
+    //   console.log(colors.green(finalStyle));
+    // });
     return "\n style() { \n return `" + css + "`;\n}\n";
   }
 
