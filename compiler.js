@@ -96,11 +96,11 @@ class Compiler {
     const compiledShared = sass.renderSync({ data: shared }).css.toString();
     const css = this.hasSASS(style) ? sass.renderSync({ data: shared + scss }).css.toString() : compiledShared + scss;
     // prefix css
-    // postcss([ autoprefixer ]).process(css).then(result => {
-    //   result.warnings().forEach(warn => console.warn(warn.toString()));
-    //   const finalStyle = "\n style() { \n return `" + result.css + "`;\n}\n";
-    //   console.log(colors.green(finalStyle));
-    // });
+    postcss([ autoprefixer ]).process(css, { from: undefined }).then(result => {
+      result.warnings().forEach(warn => console.warn(warn.toString()));
+      const finalStyle = "\n style() { \n return `" + result.css + "`;\n}\n";
+      console.log(colors.green(finalStyle));
+    });
     return "\n style() { \n return `" + css + "`;\n}\n";
   }
 
