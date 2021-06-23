@@ -315,6 +315,7 @@
       }
     }
   }
+
 </script>
 
 <style lang="scss">
@@ -407,8 +408,8 @@
         }
 
         .tab {
-          /* width: unquote("${this.tabWidth}px"); here is the problem with postcss a class variable which is unknown as string*/
-          width: 250px;
+          /* width: unquote("${this.tabWidth}px"); */
+          /* width: ${this.tabWidth}px;  */
           height: 40px;
           line-height: 40px;
           background: $white;
