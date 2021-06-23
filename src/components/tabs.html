@@ -321,8 +321,8 @@
   $dotSize: 15;
   $dotsWrapperWidth: 80;
   $dotsWrapperHeight: 40;
-  $marginTop: ($dotsWrapperHeight - $dotSize)/2;
-  $marginLeft: ($dotsWrapperWidth - $dotSize * 3)/6;
+  $marginTop: ($dotsWrapperHeight - $dotSize) / 2;
+  $marginLeft: ($dotsWrapperWidth - $dotSize * 3) / 6;
   .Tabs {
     position: absolute;
     left: 0;
@@ -407,7 +407,8 @@
         }
 
         .tab {
-          width: unquote("${this.tabWidth}px");
+          /* width: unquote("${this.tabWidth}px"); here is the problem with postcss a class variable which is unknown as string*/
+          width: 250px;
           height: 40px;
           line-height: 40px;
           background: $white;
