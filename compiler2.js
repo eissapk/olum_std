@@ -46,8 +46,11 @@ class Compiler {
   };
 
   constructor() {
+    // cmd.command("path").action(this.getPaths.bind(this));
     // cmd.command("clean").action(this.clean.bind(this));
     // cmd.command("copy").action(this.copy.bind(this));
+    // cmd.command("shared").action(this.sharedStyle.bind(this));
+    // cmd.command("update").action(this.update.bind(this));
     // cmd.command("compile").action(this.init.bind(this));
     // cmd.parse(process.argv);
   }
@@ -85,8 +88,8 @@ class Compiler {
 
 
 
-
-  getPaths(base) {
+// the problem is here
+  getPaths(base = "src") {
     return new Promise((resolve, reject) => {
       const dirs = src => fs.readdirSync(src).map(item => path.join(src, item)).filter(item => fs.statSync(item).isDirectory());
       const recursive = src => [src, ...flatten(dirs(src).map(recursive))];
@@ -124,7 +127,6 @@ class Compiler {
     });
   }
 
-  // solve if folder doesn't exist
   clean() {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(this.sub)) { // if folder exists
@@ -277,11 +279,11 @@ class Compiler {
 
   async init() {
     try {
-      await this.getPaths("src");
+      // await this.getPaths("src");
       await this.clean();
       await this.copy();
       const shared = await this.sharedStyle();
-      this.update(shared);
+      // this.update(shared);
     } catch (err) {
       console.error(colors.red.bold(err));
     }
@@ -289,20 +291,3 @@ class Compiler {
 }
 
 new Compiler().init();
-
-
-
-
-// var result = sass.renderSync({
-//   data: `
-// @use "sass:math";
-
-// h1 {
-//   font-size: math.div(100px, 3);
-// }`,
-//   precision: 20
-// });
-
-// console.log(result.css.toString());
-// // h1 {
-// //  font-size: 33.333333333333336px; }
