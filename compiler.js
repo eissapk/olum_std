@@ -135,6 +135,8 @@ class Compiler {
       try {
         // compile sass to css 
         const compiled = sass.renderSync({ data: shared }).css.toString();
+        const msg = `Compiled ${quotes("shared", "green")} Style.`;
+        debugLib(msg);
         resolve(compiled);
       } catch (err) { // error related to Sass
         reject(log("Sass Compiler", file, err));
@@ -149,19 +151,45 @@ class Compiler {
     return regex.test(openTag);
   }
 
+  /* stringify template litrals placeholder ${} before sass/postcss */
+  stringify(string, file) {
+    const regex = new RegExp("(\\$\\{.*\\})", "gi"); // detects => ${}
+    let arr = string.match(regex);
+    arr = isFullArr(arr) ? arr : [];
+    arr.forEach(item => {
+      debugLib(`Detected template litrals placeholder ${quotes(item, "red")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
+      string = string.replace(regex, `"$1"`);
+    });
+    return string;
+  }
+
+  /* parse template litrals placeholder ${} after sass/postcss */
+  parse(string, file) {
+    const regex = new RegExp(`(\\s?\\"(\\$\\{.*\\})\\"\\s?)`, "gi"); // detects => "${}"
+    let arr = string.match(regex);
+    arr = isFullArr(arr) ? arr : [];
+    arr.forEach(item => {
+      debugLib(`Parsed template litrals placeholder ${quotes(item, "red")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
+      string = string.replace(regex, "$2");
+    });
+    return string;
+  }
+
   css(file, data, shared, compiledShared) {
     return new Promise((resolve, reject) => {
       const styleArr = data.match(this.regex.style.all);
       const style = isFullArr(styleArr) ? styleArr[styleArr.length - 1] : ""; // get last style tag as the order of component file | because you may have style tag inside the class "script tag"
-      const scss = style.replace(this.regex.style.tag, "");
-      
+      let scss = style.replace(this.regex.style.tag, "");
+      scss = this.stringify(scss, file); // stringify ${}
+
       try {
         // compile sass to css 
         const css = this.hasSASS(style) ? sass.renderSync({ data: shared + scss }).css.toString() : compiledShared + scss;
         // prefix compiled css
         postcss([autoprefixer]).process(css, { from: undefined }).then(result => {
           result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
-          const finalStyle = "\n style() { \n return `" + result.css + "`;\n}\n";
+          const parsed = this.parse(result.css, file); // parse "${}"
+          const finalStyle = "\n style() { \n return `" + parsed + "`;\n}\n";
           resolve(finalStyle);
         }).catch(err => reject(log("PostCSS Compiler", file, err.reason + "\n" + err.showSourceCode())));
       
