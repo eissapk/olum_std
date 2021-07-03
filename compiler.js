@@ -3,6 +3,7 @@ const commander = require("commander");
 const cmd = new commander.Command();
 const sass = require("sass");
 const autoprefixer = require("autoprefixer");
+const cssnano = require('cssnano');
 const postcss = require("postcss");
 const fs = require("fs");
 const extra = require("fs-extra");
@@ -47,7 +48,7 @@ class Compiler {
 
   constructor() {
     cmd.command("clean").action(this.clean.bind(this));
-    cmd.command("compile").action(this.init.bind(this));
+    cmd.command("compile [mode]").action(this.init.bind(this));
     cmd.parse(process.argv);
   }
 
@@ -153,7 +154,7 @@ class Compiler {
 
   /* stringify template litrals placeholder ${} before sass/postcss */
   stringify(string, file) {
-    const regex = new RegExp("(\\$\\{.*\\})", "gi"); // detects => ${}
+    const regex = new RegExp(`(\\$\\{+[\\w|\\.]+\\})`, "gi"); // detects => ${}
     let arr = string.match(regex);
     arr = isFullArr(arr) ? arr : [];
     arr.forEach(item => {
@@ -165,7 +166,7 @@ class Compiler {
 
   /* parse template litrals placeholder ${} after sass/postcss */
   parse(string, file) {
-    const regex = new RegExp(`(\\s?\\"(\\$\\{.*\\})\\"\\s?)`, "gi"); // detects => "${}"
+    const regex = new RegExp(`(\\s?\\"(\\$\\{+[\\w|\\.]+\\})\\"\\s?)`, "gi"); // detects => "${}"
     let arr = string.match(regex);
     arr = isFullArr(arr) ? arr : [];
     arr.forEach(item => {
@@ -189,12 +190,28 @@ class Compiler {
         postcss([autoprefixer]).process(css, { from: undefined }).then(result => {
           result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
           const parsed = this.parse(result.css, file); // parse "${}"
-          const finalStyle = "\n style() { \n return `" + parsed + "`;\n}\n";
-          resolve(finalStyle);
-        }).catch(err => reject(log("PostCSS Compiler", file, err.reason + "\n" + err.showSourceCode())));
+          resolve(parsed);
+        }).catch(err => reject(log("PostCSS Compiler - [autoprefixer]", file, err.reason + "\n" + err.showSourceCode())));
       
       } catch (err) { // error related to Sass
         reject(log("Sass Compiler", file, err));
+      }
+    });
+  }
+
+  // fix "" at the end of style in production mode url(http://localhost:5000/18d61002d046a084f529.webp"") 
+  // then optimize this method to be merged with postcss autoprefixer in css method
+  minifyCSS(css, file) {
+    return new Promise((resolve, reject) => {
+      if (this.mode === "development") {
+        return resolve("\n style() { \n return `" + css + "`;\n}\n");
+      } else if (this.mode === "production") {
+        css = this.stringify(css, file); // stringify ${}
+        postcss([cssnano]).process(css, { from: undefined }).then(result => {
+          result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
+          const parsed = this.parse(result.css, file); // parse "${}"
+          resolve("\n style() { \n return `" + parsed + "`;\n}\n");
+        }).catch(err => reject(log("PostCSS Compiler - [cssnano]", file, err.reason + "\n" + err.showSourceCode())));
       }
     });
   }
@@ -259,8 +276,9 @@ class Compiler {
             try {
               const html = await this.html(data);
               const css = await this.css(file, data, shared, compiledShared);
+              const minifiedCSS = await this.minifyCSS(css, file);
               const js = await this.js(file, data);
-              const compiledFile = await this.merge(html, css, js);
+              const compiledFile = await this.merge(html, minifiedCSS, js);
               await this.createFile(file, newPath, compiledFile);
 
               if (num + 1 <= this.paths.length - 1) recursive(num + 1); // next
@@ -278,7 +296,12 @@ class Compiler {
     }
   }
 
-  async init() {
+  async init(mode) {
+    // detect mode 
+    mode = typeof mode != "undefined" && mode === "dev" ? "development" : "production";
+    this.mode = mode;
+    debugLib(`Compiling in ${quotes(this.mode, "green")} mode...`);
+
     try {
       await this.getPaths("src");
       await this.clean();
