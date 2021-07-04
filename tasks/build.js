@@ -8,7 +8,7 @@ export default async function renderBuild() {
     await compile("production");
     await bundle("production");
     await clean();
-    process.exit(0);
+    setTimeout(() => process.exit(0), 1000); // handle this part later
   } catch (err) {
     console.log(colors.red.bold(err));
   }
