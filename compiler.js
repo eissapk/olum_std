@@ -158,7 +158,7 @@ class Compiler {
     let arr = string.match(regex);
     arr = isFullArr(arr) ? arr : [];
     arr.forEach(item => {
-      debugLib(`Detected template litrals placeholder ${quotes(item, "red")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
+      debugLib(`Stringified template litrals placeholder ${quotes(item, "red")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
       string = string.replace(regex, `"$1"`);
     });
     return string;
@@ -170,7 +170,7 @@ class Compiler {
     let arr = string.match(regex);
     arr = isFullArr(arr) ? arr : [];
     arr.forEach(item => {
-      debugLib(`Parsed template litrals placeholder ${quotes(item, "red")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
+      debugLib(`Parsed template litrals placeholder ${quotes(item, "green")} in <style> : ${quotes(file.trim().replace(this.sub, "src"), "yellow")}`);
       string = string.replace(regex, "$2");
     });
     return string;
@@ -181,37 +181,27 @@ class Compiler {
       const styleArr = data.match(this.regex.style.all);
       const style = isFullArr(styleArr) ? styleArr[styleArr.length - 1] : ""; // get last style tag as the order of component file | because you may have style tag inside the class "script tag"
       let scss = style.replace(this.regex.style.tag, "");
-      scss = this.stringify(scss, file); // stringify ${}
+      scss = this.stringify(scss, file);
 
       try {
         // compile sass to css 
         const css = this.hasSASS(style) ? sass.renderSync({ data: shared + scss }).css.toString() : compiledShared + scss;
-        // prefix compiled css
-        postcss([autoprefixer]).process(css, { from: undefined }).then(result => {
-          result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
-          const parsed = this.parse(result.css, file); // parse "${}"
-          resolve(parsed);
-        }).catch(err => reject(log("PostCSS Compiler - [autoprefixer]", file, err.reason + "\n" + err.showSourceCode())));
-      
+
+        if (this.mode === "development") { // development
+          const parsedDev = this.parse(css, file);
+          resolve("\n style() { \n return `" + parsedDev + "`;\n}\n");
+
+        } else if (this.mode === "production") { // production
+          // prefix & minify css
+          postcss([autoprefixer, cssnano]).process(css, { from: undefined }).then(result => {
+            result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
+            const parsedBuild = this.parse(result.css, file);
+            resolve("\n style() { \n return `" + parsedBuild + "`;\n}\n");
+          }).catch(err => reject(log("PostCSS - [autoprefixer, cssnano]", file, err.reason + "\n" + err.showSourceCode())));
+        }
+
       } catch (err) { // error related to Sass
         reject(log("Sass Compiler", file, err));
-      }
-    });
-  }
-
-  // fix "" at the end of style in production mode url(http://localhost:5000/18d61002d046a084f529.webp"") 
-  // then optimize this method to be merged with postcss autoprefixer in css method
-  minifyCSS(css, file) {
-    return new Promise((resolve, reject) => {
-      if (this.mode === "development") {
-        return resolve("\n style() { \n return `" + css + "`;\n}\n");
-      } else if (this.mode === "production") {
-        css = this.stringify(css, file); // stringify ${}
-        postcss([cssnano]).process(css, { from: undefined }).then(result => {
-          result.warnings().forEach(warn => console.warn(colors.yellow.bold(warn.toString())));
-          const parsed = this.parse(result.css, file); // parse "${}"
-          resolve("\n style() { \n return `" + parsed + "`;\n}\n");
-        }).catch(err => reject(log("PostCSS Compiler - [cssnano]", file, err.reason + "\n" + err.showSourceCode())));
       }
     });
   }
@@ -276,9 +266,8 @@ class Compiler {
             try {
               const html = await this.html(data);
               const css = await this.css(file, data, shared, compiledShared);
-              const minifiedCSS = await this.minifyCSS(css, file);
               const js = await this.js(file, data);
-              const compiledFile = await this.merge(html, minifiedCSS, js);
+              const compiledFile = await this.merge(html, css, js);
               await this.createFile(file, newPath, compiledFile);
 
               if (num + 1 <= this.paths.length - 1) recursive(num + 1); // next
