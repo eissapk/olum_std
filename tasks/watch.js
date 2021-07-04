@@ -1,6 +1,6 @@
 import gulp from "gulp";
-import { compileDev } from "./compile";
-import { bundleDev } from "./bundle";
+import compile from "./compile";
+import bundle from "./bundle";
 import colors from "colors";
 import logger from "./logger";
 
@@ -11,7 +11,7 @@ let timeout;
 const sequence = () => {
   console.log(colors.bgRed.white(taskName));
   if (typeof timeout != "undefined") clearTimeout(timeout);
-  timeout = setTimeout(() => compileDev().then(bundleDev), 1000);
+  timeout = setTimeout(() => compile("development").then(() => bundle("development")), 1000);
 };
 
 const watch = () => {

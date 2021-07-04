@@ -1,12 +1,12 @@
-import { compileBuild } from "./compile";
-import { bundleBuild } from "./bundle";
+import compile from "./compile";
+import bundle from "./bundle";
 import clean from "./clean";
 import colors from "colors";
 
 export default async function renderBuild() {
   try {
-    await compileBuild();
-    await bundleBuild();
+    await compile("production");
+    await bundle("production");
     await clean();
     process.exit(0);
   } catch (err) {

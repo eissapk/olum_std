@@ -2,14 +2,15 @@ import shell from "shelljs";
 import logger from "./logger";
 import reload from "./reload";
 
-export const bundleDev = () => {
+const bundle = mode => {
   const taskName = "bundle";
   return new Promise((resolve, reject) => {
     try {
       logger(taskName, "start");
-      shell.exec("webpack --env dev");
+      if (mode === "development") shell.exec("webpack --env dev");
+      else if (mode === "production") shell.exec("webpack");
       logger(taskName, "end");
-      reload();
+      if (mode === "development") reload();
       resolve();
     } catch (err) {
       reject(err);
@@ -17,16 +18,4 @@ export const bundleDev = () => {
   });
 };
 
-export const bundleBuild = () => {
-  const taskName = "bundle";
-  return new Promise((resolve, reject) => {
-    try {
-      logger(taskName, "start");
-      shell.exec("webpack");
-      logger(taskName, "end");
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
+export default bundle;
