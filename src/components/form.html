@@ -15,7 +15,6 @@
 
 <script>
   import { $, debug } from "../../lib/pk.js";
-  import setWH from "../services/setWH.js";
   import api from "../services/api.js";
   import { pk } from "../app.mjs";
   import genID from "../services/id.js";
@@ -37,8 +36,6 @@
 
     render() {
       this.route = pk.getRoute();
-      const container = $(".Form");
-      setWH(container, this.margin);
       const input = $(".Form textarea");
       input.focus();
       if (this.route === pk.resolve("add")) {
@@ -92,6 +89,8 @@
     background: $white;
     margin: 0 auto;
     border-radius: $radius;
+    width: calc(100% - 20px);
+    height: calc(100vh - 159px);
     .header {
       height: 40px;
       background-color: $offWhite;

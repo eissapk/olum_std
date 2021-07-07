@@ -16,7 +16,6 @@
 
 <script>
   import { $ } from "../../lib/pk.js";
-  import setWH from "../services/setWH.js";
   import api from "../services/api.js";
 
   export default class Config {
@@ -37,10 +36,8 @@
       this.file = document.createElement("input");
       this.file.type = "file";
       this.file.accept = this.fileType;
-      const container = $(".Config");
       const backupBtn = $(".Config__inner--backupBtn");
       const updateBtn = $(".Config__inner--updateBtn");
-      setWH(container, this.margin);
 
       backupBtn.on("click", () => this.backup());
       updateBtn.on("click", () => this.file.click());
@@ -86,6 +83,8 @@
     align-items: center;
     justify-content: center;
     align-content: center;
+    width: calc(100% - 20px);
+    height: calc(100vh - 159px);
 
     &__inner {
       text-align: center;

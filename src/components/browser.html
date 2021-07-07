@@ -13,7 +13,6 @@
   import Search from "../components/search";
   import Tabs from "../components/tabs";
   import Notes from "../components/notes";
-  import setWH from "../services/setWH.js";
 
   export default class Browser {
     margin = 15;
@@ -31,7 +30,7 @@
 
     render() {
       const container = $(".Browser");
-      setWH(container, this.margin);
+      window.on("resize", () => (container.style.width = "calc(100% - 20px)"));
     }
   }
 </script>
@@ -42,5 +41,7 @@
     margin: 0 auto;
     border-radius: $radius;
     transition: width 0.3s ease-in-out;
+    width: calc(100% - 20px);
+    height: calc(100vh - 159px);
   }
 </style>

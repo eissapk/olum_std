@@ -12,7 +12,6 @@
   import Header from "../components/layout/header";
   import Footer from "../components/layout/footer";
   import bg from "../assets/bg.webp";
-  import setWH from "../services/setWH.js";
   import { $ } from "../../lib/pk.js";
   export default class Features {
     feats = ["Markdown editor", "Notes sorting", "Dark mode", "advanced search engine"];
@@ -29,8 +28,6 @@
     }
 
     render() {
-      const container = $(".innerFeatures");
-      setWH(container, this.margin);
       this.buildFeats();
     }
 
@@ -57,6 +54,8 @@
       padding: 10px;
       padding-right: 3px;
       max-width: 450px;
+      width: calc(100% - 20px);
+      height: calc(100vh - 159px);
       > ul {
         overflow: auto;
         height: 100%;

@@ -435,7 +435,7 @@
           color: $mainTextColor;
 
           img {
-            display: block;
+            display: inline-block;
             max-height: 250px;
             max-width: 100%;
             border-radius: $radius;
@@ -513,6 +513,7 @@
           }
 
           .tasklist {
+            display: inline-block;
             input {
               margin-right: 5px;
             }
@@ -521,6 +522,7 @@
           .li {
             position: relative;
             padding-left: 15px;
+            display: inline-block;
 
             &::after {
               content: "";
@@ -541,6 +543,9 @@
             border-left: 0.25em solid $border3;
             margin-top: 0;
             margin-bottom: 16px;
+            p {
+              display: inline-block;
+            }
           }
         }
       }

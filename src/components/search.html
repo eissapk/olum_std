@@ -41,7 +41,6 @@
   import trash from "../assets/trash.svg";
   import prev from "../assets/prev.svg";
   import next from "../assets/next.svg";
-  import searchWidth from "../services/searchwidth.js";
   import { engine } from "../services/engine.js";
   import Tabs from "../components/tabs";
 
@@ -66,7 +65,6 @@
       const exitBtn = $(".exitSearch");
       const navBtnsContainer = $(".navigation");
       const selectAllInput = $(".selectAll input");
-      setTimeout(() => searchWidth(window.innerWidth - 35), 200);
       delBtn.on("click", () => {
         delNote.trigger();
         selectAllInput.checked = false;
@@ -247,6 +245,7 @@
     }
 
     .searchInput {
+      width: calc(100% - 206px);
       float: left;
       height: 40px;
       margin: 5px 0;
