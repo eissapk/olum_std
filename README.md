@@ -14,6 +14,3 @@ width: ${this.tabWidth}px;
 * don't remove template / style tag even if they are empty
 
 * you may have a case in which two views use one component, so in order to know current route from the shared component then you gotta use this method pk.getRoute(), it returns a string with the route e.g. "/about"
-# Todos
-* pwa option
-* component option [3files or 1file]
