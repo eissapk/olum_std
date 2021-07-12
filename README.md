@@ -1,4 +1,4 @@
-<p align="center"><img width="200" height="200" src="./public/favicon.png" alt="logo"></p>
+<p align="center"><img width="100" src="https://www.eissa.xyz/olum/logo.png" alt="Olum logo"></p>
 
 # Olumjs
 `The VanillaJS developer’s platform.`
