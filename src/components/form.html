@@ -14,9 +14,9 @@
 </template>
 
 <script>
-  import { $, debug } from "../../lib/pk.js";
+  import { $, debug } from "../../lib/olum.js";
   import api from "../services/api.js";
-  import { pk } from "../app.mjs";
+  import { olum } from "../app.mjs";
   import genID from "../services/id.js";
   import { parse, reverse } from "../services/parse.js";
 
@@ -35,12 +35,12 @@
     }
 
     render() {
-      this.route = pk.getRoute();
+      this.route = olum.getRoute();
       const input = $(".Form textarea");
       input.focus();
-      if (this.route === pk.resolve("add")) {
+      if (this.route === olum.resolve("add")) {
         this.add();
-      } else if (this.route === pk.resolve("edit")) {
+      } else if (this.route === olum.resolve("edit")) {
         this.edit();
       }
     }
@@ -56,7 +56,7 @@
           api.current.noteId = id;
           api.current.noteContent = content;
           api.addNote(api.current);
-          pk.navigate("/");
+          olum.navigate("/");
         } else {
           alert("empty field!");
         }
@@ -74,7 +74,7 @@
         let newContent = input.value.trim();
         if (newContent) {
           api.editNote({ newContent, id });
-          pk.navigate("/");
+          olum.navigate("/");
         } else {
           alert("empty field!");
         }

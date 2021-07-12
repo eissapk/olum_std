@@ -1,4 +1,4 @@
-import { $ } from "../../lib/pk.js";
+import { $ } from "../../lib/olum.js";
 import api from "./api.js";
 import deselect from "./deselect.js";
 export default function getCurrentTab() {

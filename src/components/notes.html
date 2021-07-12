@@ -5,8 +5,8 @@
 </template>
 
 <script>
-  import { debug, setTemp, $ } from "../../lib/pk.js";
-  import { pk } from "../app.mjs";
+  import { debug, setTemp, $ } from "../../lib/olum.js";
+  import { olum } from "../app.mjs";
   import edit from "../assets/edit.svg";
   import sort from "../assets/sort.svg";
   import api from "../services/api.js";
@@ -189,7 +189,7 @@
         const content = $(note).get(".Notes__inner__note__text").textContent;
         api.editedNote.id = id;
         api.editedNote.content = content;
-        pk.navigate("/edit");
+        olum.navigate("/edit");
       }
     }
 

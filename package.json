@@ -1,15 +1,20 @@
 {
-  "name": "pkjs",
+  "name": "olum_std",
   "version": "1.0.0",
-  "description": "A simple lightweight library for providing SPA experience.",
+  "description": "The VanillaJS developer’s platform.",
   "main": "tasks",
   "scripts": {
     "dev": "gulp dev --require babel-polyfill --require @babel/register --gulpfile tasks",
     "build": "gulp build --require babel-polyfill --require @babel/register --gulpfile tasks"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "olum",
+    "olumjs",
+    "vanilla",
+    "spa"
+  ],
+  "author": "Eissa Saber",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.13.0",

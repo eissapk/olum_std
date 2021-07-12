@@ -20,8 +20,8 @@ const server = () => {
 
       //! pure
       // const server = http.createServer((req, res) => {
-      //   if (req.url === "/pkapp.js") {
-      //     fs.readFile(path.resolve(__dirname, "../build/pkapp.js"), (err, content) => {
+      //   if (req.url === "/olumapp.js") {
+      //     fs.readFile(path.resolve(__dirname, "../build/olumapp.js"), (err, content) => {
       //       if (err) console.log(err);
       //       res.writeHead(200, { "Content-Type": "text/javascript" });
       //       res.write(content);

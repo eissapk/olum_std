@@ -13,8 +13,8 @@
 </template>
 
 <script>
-  import { pk } from "../app.mjs";
-  import { $, debug } from "../../lib/pk.js";
+  import { olum } from "../app.mjs";
+  import { $, debug } from "../../lib/olum.js";
   import add from "../assets/add.svg";
   import star from "../assets/star.svg";
   import getCurrentTab from "../services/current.js";
@@ -44,7 +44,7 @@
       } else if (!hasActiveTab) {
         alert("select a tab in order to add your note");
       } else {
-        pk.navigate("/add");
+        olum.navigate("/add");
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Service } from "../../lib/pk.js";
+import { Service } from "../../lib/olum.js";
 
 class Api extends Service {
   current = {};

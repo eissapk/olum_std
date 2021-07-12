@@ -108,7 +108,7 @@ export default class DevTool {
       .DevTool__body__root {
         overflow: hidden;
       }
-      .DevTool__body__root [pk-component] {
+      .DevTool__body__root [olum-component] {
         padding-left: 20px;
         padding-top: 5px;
         /* reset */
@@ -116,7 +116,7 @@ export default class DevTool {
         height: auto !important;
         background: transparent !important;
       }
-      .DevTool__body__root [pk-component]:first-of-type {
+      .DevTool__body__root [olum-component]:first-of-type {
         padding: 0;
       }
       .DevTool__body__root .line {
@@ -193,10 +193,10 @@ export default class DevTool {
       .DevTool__body__root .line:hover .scroll svg {
         fill: white;
       }
-      .DevTool__body__root .caret [pk-component] {
+      .DevTool__body__root .caret [olum-component] {
         display: none;
       }
-      .DevTool__body__root .caret.active > [pk-component] {
+      .DevTool__body__root .caret.active > [olum-component] {
         display: block;
       }
       .DevTool__body__root .caret > .line::before {
@@ -264,7 +264,7 @@ export default class DevTool {
   }
 
   label(root, arr) {
-    const compAttrRegex = /(pk-component=[\"\']([^\"|\']*)[\"\'])|(pk-component)/gi;
+    const compAttrRegex = /(olum-component=[\"\']([^\"|\']*)[\"\'])|(olum-component)/gi;
     const openingSelfClosingTagRegex = /<[a-z]+(>|.*?[^?]>)/gi;
     const greaterCharRegex = /\>/gi;
     const compsArr = [...arr];
@@ -280,7 +280,7 @@ export default class DevTool {
         // labeling
         const compWrapper = data.template.match(openingSelfClosingTagRegex);
         if (isFullArr(compWrapper)) {
-          data.template = data.template.replace(compWrapper[0], compWrapper[0].replace(greaterCharRegex, ` pk-component="${name}">`));
+          data.template = data.template.replace(compWrapper[0], compWrapper[0].replace(greaterCharRegex, ` olum-component="${name}">`));
         }
       }
     });
@@ -295,13 +295,13 @@ export default class DevTool {
       if (isFullArr(compWrapper)) {
         entry.template = entry.template.replace(
           compWrapper[0],
-          compWrapper[0].replace(greaterCharRegex, ` pk-component="${name}" router-view="${name}">`)
+          compWrapper[0].replace(greaterCharRegex, ` olum-component="${name}" router-view="${name}">`)
         );
       }
     }
 
     // root (placeholder)
-    this.appMarkup.setAttribute("pk-component", this.rootCompName);
+    this.appMarkup.setAttribute("olum-component", this.rootCompName);
 
     return {
       entry,
@@ -330,19 +330,19 @@ export default class DevTool {
     const elms = clonedTree.querySelectorAll("*");
     elms.forEach(elm => {
       this.clean(elm);
-      if (!elm.getAttribute("pk-component")) elm.remove();
+      if (!elm.getAttribute("olum-component")) elm.remove();
     });
     this.clean(clonedTree);
     root.append(clonedTree);
 
-    const comps = root.querySelectorAll("[pk-component]");
+    const comps = root.querySelectorAll("[olum-component]");
     comps.forEach(comp => {
       if (!!comp.childElementCount) comp.className = "caret";
       const lt = `<span class="chars">&lt;</span>`;
       const gt = `<span class="chars">&gt;</span>`;
-      const name = `<span class="name">${comp.getAttribute("pk-component")}</span>`;
+      const name = `<span class="name">${comp.getAttribute("olum-component")}</span>`;
       const view = comp.getAttribute("router-view") ? `<span class="view">router-view</span>` : "";
-      const scroll = `<button type="button" class="scroll" data-name="${comp.getAttribute("pk-component")}">${this.eye}</button>`;
+      const scroll = `<button type="button" class="scroll" data-name="${comp.getAttribute("olum-component")}">${this.eye}</button>`;
       const line = `<div class="line">${lt + name + gt + view + scroll}</div>`;
       comp.insertAdjacentHTML("afterbegin", line);
     });
@@ -444,15 +444,15 @@ export default class DevTool {
   scroll(e) {
     if (e.target.classList.contains("scroll")) {
       const name = e.target.getAttribute("data-name");
-      const comp = document.querySelector(`[pk-component="${name}"]`);
+      const comp = document.querySelector(`[olum-component="${name}"]`);
       if (!!comp) comp.scrollIntoView({ behavior: "smooth" });
     }
   }
 
   displayLayer(e, layer) {
     if (e.target.classList.contains("line")) {
-      const compName = e.target.parentElement.getAttribute("pk-component");
-      const currentComp = document.querySelector(`[pk-component="${compName}"]`);
+      const compName = e.target.parentElement.getAttribute("olum-component");
+      const currentComp = document.querySelector(`[olum-component="${compName}"]`);
       const rect = currentComp.getBoundingClientRect();
       const left = rect.left;
       const top = rect.top;

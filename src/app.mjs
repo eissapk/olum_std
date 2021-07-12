@@ -1,4 +1,4 @@
-import { Pk } from "../lib/pk.js";
+import { Olum } from "../lib/olum.js";
 import Home from "./views/home.js";
 import Settings from "./views/settings.js";
 import NotFound from "./views/notfound.js";
@@ -15,7 +15,7 @@ const routes = [
   { path: "/", comp: Home },
 ];
 
-export const pk = new Pk({
+export const olum = new Olum({
   mode: "history",
   root: "/mynotebeta",
   el: "#app",

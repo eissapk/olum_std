@@ -1,4 +1,4 @@
-import { $ } from "../../lib/pk.js";
+import { $ } from "../../lib/olum.js";
 function deselect() {
   const selectAllInput = $(".selectAll input");
   if (selectAllInput) {
