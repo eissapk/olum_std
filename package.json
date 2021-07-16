@@ -1,6 +1,6 @@
 {
   "name": "olum_std",
-  "version": "1.0.0",
+  "version": "0.0.4",
   "description": "The VanillaJS developer’s platform.",
   "main": "tasks",
   "scripts": {
