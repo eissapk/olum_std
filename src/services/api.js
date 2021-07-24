@@ -11,6 +11,7 @@ class Api extends Service {
 
   addNote(obj) {
     const data = this.get();
+    obj.index = data.length;
     data.push(obj);
     localStorage.setItem(this.key, JSON.stringify(data));
   }
