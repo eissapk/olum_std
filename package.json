@@ -46,5 +46,8 @@
   },
   "bin": {
     "execute": "compiler.js"
+  },
+  "dependencies": {
+    "marked": "^2.1.3"
   }
 }

@@ -13,7 +13,7 @@
   import delNote from "../services/delnote.js";
   import getCurrentTab from "../services/current.js";
   import deselect from "../services/deselect.js";
-  import { parse } from "../services/parse.js";
+  import marked from "marked";
   import * as hljs from "../../public/highlight.js";
   import { engine } from "../services/engine.js";
   export default class Notes {
@@ -83,7 +83,10 @@
         .sort((a, b) => (a.index > b.index ? 1 : -1))
         .map(obj => {
           if (obj.tabId === api.current.tabId) {
-            return setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) });
+            return setTemp(this.temp, {
+              noteId: obj.noteId,
+              noteContent: marked(obj.noteContent),
+            });
           }
         })
         .join("");
@@ -101,7 +104,12 @@
       const data = api.get();
       const notes = data
         .sort((a, b) => (a.index > b.index ? 1 : -1))
-        .map(obj => setTemp(this.temp, { noteId: obj.noteId, noteContent: parse(obj.noteContent) }))
+        .map(obj =>
+          setTemp(this.temp, {
+            noteId: obj.noteId,
+            noteContent: marked(obj.noteContent),
+          })
+        )
         .join("");
       container.innerHTML = notes;
       hljs.highlightAll();
@@ -151,7 +159,12 @@
     }
 
     scroll(elm) {
-      if (elm) elm.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+      if (elm)
+        elm.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
     }
 
     blurSelectAll(e) {
@@ -234,7 +247,10 @@
       const sortedArr = nodes.map(node => {
         const noteId = node.getAttribute("data-noteid");
         const index = nodes.indexOf(node);
-        return { noteId, index };
+        return {
+          noteId,
+          index,
+        };
       });
 
       api.arrange(sortedArr);
@@ -283,6 +299,7 @@
     width: 100%;
     overflow: auto;
     border-right: 1px solid $border4;
+
     &::-webkit-scrollbar {
       width: 5px;
     }
@@ -345,6 +362,7 @@
           border: 1px solid $border3;
           border-radius: $radius;
           user-select: none;
+
           img {
             display: block;
             width: 100%;
@@ -434,55 +452,8 @@
           word-break: break-all;
           color: $mainTextColor;
 
-          img {
-            display: inline-block;
-            max-height: 250px;
-            max-width: 100%;
-            border-radius: $radius;
-            user-select: none;
-          }
-
-          a {
-            color: $blue;
-          }
-
-          hr {
-            height: 0.25em;
-            padding: 0;
-            margin: 24px 0;
-            background-color: $border3;
-            border: 0;
-          }
-
-          h1,
-          h2,
-          h3,
-          h4,
-          h5,
-          h6 {
-            margin-top: 24px;
-            margin-bottom: 16px;
-          }
-          h1,
-          h2 {
-            padding-bottom: 0.3em;
-            border-bottom: 1px solid $border3;
-          }
-          h6 {
-            color: $subTextColor;
-          }
-
-          .br {
-            clear: both;
-            width: 100%;
-            height: 5px;
-            display: block;
-            background: transparent;
-          }
-          b {
-            font-weight: 600;
-          }
           pre {
+            background: $oneLight;
             padding: 16px;
             overflow: auto;
             font-size: 85%;
@@ -490,7 +461,6 @@
             border-radius: $radius;
             margin-top: 0;
             margin-bottom: 16px;
-            color: $mainTextColor;
             word-break: normal;
             white-space: pre;
             word-wrap: normal;
@@ -502,50 +472,75 @@
             }
           }
 
-          .quoteText {
-            padding: 0.2em 0.4em;
-            margin: 0;
-            font-size: 85%;
-            background-color: $quoteBgColor;
-            border-radius: $radius;
-            color: $mainTextColor;
-            display: inline;
-          }
-
-          .tasklist {
-            display: inline-block;
-            input {
-              margin-right: 5px;
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            code {
+              background-color: $quoteBgColor;
+              padding: 0.2em 0.4em;
+              border-radius: $radius;
             }
           }
 
-          .li {
-            position: relative;
-            padding-left: 15px;
-            display: inline-block;
+          h1,
+          h2 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid $border;
+          }
 
-            &::after {
-              content: "";
-              position: absolute;
-              left: 0px;
-              top: 10px;
-              font-size: 60px;
-              width: 5px;
-              height: 5px;
-              background: black;
-              border-radius: 50%;
-            }
+          h6 {
+            color: $subTextColor;
+          }
+
+          b {
+            font-weight: 600;
           }
 
           blockquote {
             padding: 0 1em;
             color: $subTextColor;
-            border-left: 0.25em solid $border3;
+            border-left: 0.25em solid $border;
             margin-top: 0;
             margin-bottom: 16px;
             p {
               display: inline-block;
             }
+          }
+
+          ul li code,
+          blockquote p code {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            background-color: $quoteBgColor;
+            border-radius: $radius;
+            display: inline;
+          }
+
+          blockquote p {
+            line-height: 26px;
+          }
+
+          code.language-javascript {
+            background-color: transparent;
+          }
+
+          ul {
+            list-style-position: inside;
+            list-style-type: disc;
+            padding-left: 15px;
+            li {
+              line-height: 26px;
+            }
+          }
+
+          a {
+            color: $blue;
           }
         }
       }
