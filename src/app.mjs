@@ -5,7 +5,6 @@ import NotFound from "./views/notfound.js";
 import Add from "./views/add.js";
 import Edit from "./views/edit.js";
 import Features from "./views/features.js";
-import { serviceWorker } from "../settings.js";
 
 const routes = [
   { path: "/404", comp: NotFound },
@@ -25,7 +24,6 @@ export const olum = new Olum({
   routes,
 });
 
-// serviceWorker
-if (serviceWorker && "serviceWorker" in navigator) {
-  window.on("load", () => navigator.serviceWorker.register("/service-worker.js").catch(console.error));
-}
+// if ("serviceWorker" in navigator) { // uncomment to enable service worker when deploying
+//   window.on("load", () => navigator.serviceWorker.register("/service-worker.js").catch(console.error));
+// }
