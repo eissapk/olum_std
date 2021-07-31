@@ -5,6 +5,7 @@ import NotFound from "./views/notfound.js";
 import Add from "./views/add.js";
 import Edit from "./views/edit.js";
 import Features from "./views/features.js";
+import { serviceWorker } from "../settings.js";
 
 const routes = [
   { path: "/404", comp: NotFound },
@@ -23,3 +24,8 @@ export const olum = new Olum({
   err: "/404",
   routes,
 });
+
+// serviceWorker
+if (serviceWorker && "serviceWorker" in navigator) {
+  window.on("load", () => navigator.serviceWorker.register("/service-worker.js").catch(console.error));
+}
