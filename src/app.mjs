@@ -1,4 +1,4 @@
-import { Olum, localize } from "../lib/olum.js";
+import { Olum, Localize } from "../lib/olum.js";
 import Home from "./views/home.js";
 import Settings from "./views/settings.js";
 import NotFound from "./views/notfound.js";
@@ -9,9 +9,11 @@ import Features from "./views/features.js";
 // translations
 import en from "./locales/en.js";
 import ar from "./locales/ar.js";
-localize({ en, ar });
+new Localize({ en, ar }, ["ar"]);
+console.log("olumDesc".trans());
 
-console.warn("olumDesc".trans());
+{/* <button type="button" tolang="ar">العربية</button> */}
+{/* <button type="button" tolang="en">English</button> */}
 
 const routes = [
   { path: "/404", comp: NotFound },
