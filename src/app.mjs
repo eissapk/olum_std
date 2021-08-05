@@ -12,9 +12,6 @@ import ar from "./locales/ar.js";
 new Localize({ en, ar }, ["ar"]);
 console.log("olumDesc".trans());
 
-{/* <button type="button" tolang="ar">العربية</button> */}
-{/* <button type="button" tolang="en">English</button> */}
-
 const routes = [
   { path: "/404", comp: NotFound },
   { path: "/add", comp: Add },
