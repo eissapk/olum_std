@@ -11,7 +11,7 @@ module.exports = {
   https: false,
   favicon: "./public/favicon.png",
   template: "./public/index.html",
-  serviceWorker: true,
+  serviceWorker: false,
   manifest: {
     name: "My Note - Progressive Web App",
     short_name: "My Note",

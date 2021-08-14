@@ -1,6 +1,6 @@
 {
-  "name": "olum_std",
-  "version": "0.1.1",
+  "name": "olum-std",
+  "version": "0.1.2",
   "description": "The VanillaJS developer’s platform.",
   "main": "tasks",
   "scripts": {
@@ -30,6 +30,7 @@
     "commander": "^7.2.0",
     "css-loader": "^5.0.1",
     "cssnano": "^5.0.6",
+    "decompress": "^4.2.1",
     "fs-extra": "^9.1.0",
     "gulp": "^4.0.0",
     "gulp-connect": "^5.7.0",
