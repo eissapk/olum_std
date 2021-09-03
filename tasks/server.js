@@ -16,7 +16,7 @@ const server = () => {
         fallback: `./${dest + fallback}`,
       };
       connect.server(options);
-      openurl.open(`${https ? "https" : "http"}://localhost:${options.port}`);
+      // openurl.open(`${https ? "https" : "http"}://localhost:${options.port}`);
 
       //! pure
       // const server = http.createServer((req, res) => {

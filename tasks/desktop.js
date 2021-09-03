@@ -9,7 +9,7 @@ const q2 = { type: "list", name: "bit", message: "Choose processor type", choice
 const q3 = { type: "list", name: "os", message: "Choose an operating system", choices: ["Linux", "Windows" , "Mac"] };
 const q4 = { type: "list", name: "linuxPackage", message: "Choose linux package", choices: ["deb", "rpm"] };
 
-const ver = "v0.55.0";
+const ver = "v0.39.0";
 let link =`https://dl.nwjs.io/${ver}/`;
 let file;
 let dir;

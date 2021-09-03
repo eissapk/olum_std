@@ -117,7 +117,7 @@ const linux = (obj, resolve, reject) => {
               // packaging
               const debPath = path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN`);
               const chmod = "chmod 755 *";
-              const dpkg = `dpkg-deb --build --root-owner-group ${packageJSON.name}`;
+              const dpkg = `dpkg-deb --build ${packageJSON.name}`;
               const dpkgCheck = "whereis dpkg-deb";
               shelljs.exec(dpkgCheck , {silent:true},(code, stdout, stderr) => {
                 if (stderr) {
