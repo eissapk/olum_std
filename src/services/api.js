@@ -88,13 +88,30 @@ class Api extends Service {
     localStorage.setItem(this.key, JSON.stringify(data));
   }
 
-  updateStorage(rawData) {
-    const parsedData = JSON.parse(rawData);
-    if (parsedData.length) {
-      localStorage.setItem(this.key, rawData);
+  updateStorage(data) {
+    // const parsedData = JSON.parse(data);
+    // if (parsedData.length) {
+    //   localStorage.setItem(this.key, data);
+    // } else {
+    //   alert("No Data in This File!");
+    // }
+    if (data === null) data = [];
+    else data = [...data].filter(item => item !== undefined || item !== null);
+    localStorage.setItem(this.key, JSON.stringify(data));
+  }
+
+  getEndpoint() {
+    let url;
+    if (localStorage.getItem("endpoint") === null) {
+      url = "";
     } else {
-      alert("No Data in This File!");
+      url = localStorage.getItem("endpoint");
     }
+    return url;
+  }
+
+  setEndpoint(url) {
+    localStorage.setItem("endpoint", url);
   }
 }
 
