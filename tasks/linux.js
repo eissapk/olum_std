@@ -34,7 +34,81 @@ const linux = (obj, resolve, reject) => {
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN/postinst`),
-              content: `#!/bin/bash\nif [[ $EUID = 0 ]]; then\n  cp -r /usr/share/applications/${packageJSON.name}.desktop /home/$SUDO_USER/.local/share/applications\n  cd /opt/${packageJSON.name} && chmod 775 *\nfi`
+              content: `#!/bin/bash
+
+# get the right user name of the os
+userName=$SUDO_USER
+# check if it's root 
+if [[ $EUID = 0 ]]; then
+    userName=$SUDO_USER
+# check if it's user
+elif ! [[ $EUID = 0 ]]; then
+    userName=$USER
+fi
+
+# copy .desktop file for activating the app launcher
+cp -r /usr/share/applications/${packageJSON.name}.desktop /home/$userName/.local/share/applications
+
+# changing the mode of all nw & nacl
+cd /opt/${packageJSON.name} && chmod 775 *
+              `
+            },
+            {
+              path: path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN/preinst`),
+              content: `#!/bin/bash
+
+# get the right user name of the os
+userName=$SUDO_USER
+# check if it's root 
+if [[ $EUID = 0 ]]; then
+    userName=$SUDO_USER
+# check if it's user
+elif ! [[ $EUID = 0 ]]; then
+    userName=$USER
+fi
+
+# remove old files/dirs of ${packageJSON.name}
+echo "Looking for old versions of ${packageJSON.name}..."
+if [ -d /opt/${packageJSON.name} ]; then
+    rm -r /opt/${packageJSON.name}
+    echo "Removed old ${packageJSON.name} from /opt/${packageJSON.name}"
+fi
+
+echo "Looking for old config files of ${packageJSON.name}..."
+if [ -f /home/$userName/.local/share/applications/${packageJSON.name}.desktop ]; then
+    rm -r /home/$userName/.local/share/applications/${packageJSON.name}.desktop
+    echo "Removed old config files from ~/.local/share/applications"
+fi
+
+if [ -f /usr/share/applications/${packageJSON.name}.desktop ]; then
+    rm -r /usr/share/applications/${packageJSON.name}.desktop
+    echo "Removed old config files from /usr/share/applications/"
+fi
+
+removeLockFiles () {
+    echo "Looking for lock files..."
+    if [ -f /var/cache/apt/archives/lock ]; then
+        rm -r /var/cache/apt/archives/lock
+        echo "Removed lock file from /var/cache/apt/archives/lock"
+    fi
+
+    if [ -f /var/lib/apt/lists/lock ]; then
+        rm -r /var/lib/apt/lists/lock
+        echo "Removed lock file from /var/lib/apt/lists/lock"
+    fi
+
+    if [ -f /var/lib/dpkg/lock-frontend ]; then
+        rm -r /var/lib/dpkg/lock-frontend
+        echo "Removed lock file from /var/lib/dpkg/lock-frontend"
+    fi
+
+    if [ -f /var/lib/dpkg/lock ]; then
+        rm -r /var/lib/dpkg/lock
+        echo "Removed lock file from /var/lib/dpkg/lock"
+    fi
+}
+removeLockFiles
+              `
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/usr/share/applications/${packageJSON.name}.desktop`),
