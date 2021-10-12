@@ -100,18 +100,18 @@ class Api extends Service {
     localStorage.setItem(this.key, JSON.stringify(data));
   }
 
-  getEndpoint() {
-    let url;
-    if (localStorage.getItem("endpoint") === null) {
-      url = "";
+  getCredentials() {
+    let obj;
+    if (localStorage.getItem("credentials") === null) {
+      obj = null;
     } else {
-      url = localStorage.getItem("endpoint");
+      obj = JSON.parse(localStorage.getItem("credentials"));
     }
-    return url;
+    return obj;
   }
 
-  setEndpoint(url) {
-    localStorage.setItem("endpoint", url);
+  setCredentials(obj) {
+    localStorage.setItem("credentials", JSON.stringify(obj));
   }
 }
 

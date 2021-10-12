@@ -4,15 +4,30 @@
       <p class="Config__inner__text">
         <span>Backup</span>
         or
-        <span>Update</span>
+        <span>Fetch</span>
         your data in case you cleared browser cache or formated your device!
       </p>
 
       <button type="button" class="Config__inner--backupBtn">backup</button>
       <button type="button" class="Config__inner--updateBtn">fetch</button>
 
+      <div class="Config__inner__dbhint">
+        <h3>Database credentials</h3>
+        <p>Your credentials will be stored in your localstorage</p>
+      </div>
+
       <form>
-        <input type="text" placeholder="Enter firebase endpoint" />
+        <div>
+          <label>Firebase</label>
+          <i>leave it blank to enable gist</i>
+          <input id="endpoint" type="text" placeholder="Enter endpoint" />
+        </div>
+        <div>
+          <label>Gist</label>
+          <input id="github_token" type="text" placeholder="Enter github token" />
+          <input id="gist_id" type="text" placeholder="Enter gist id" />
+          <input id="gist_filename" type="text" placeholder="Enter gist filename" />
+        </div>
         <button type="submit">save</button>
       </form>
     </section>
@@ -20,7 +35,7 @@
 </template>
 
 <script>
-  import { $, Origin } from "../../lib/olum.js";
+  import { $, Origin, debug } from "../../lib/olum.js";
   import api from "../services/api.js";
 
   export default class Config {
@@ -49,21 +64,34 @@
       updateBtn.on("click", () => this.update());
       // updateBtn.on("click", () => this.file.click());
       // this.file.on("change", e => this.update(e));
-      this.endpoint();
+      this.credentials();
     }
 
-    endpoint() {
+    credentials() {
       const form = $(".Config form");
-      const input = $(form).get("input");
-      input.value = api.getEndpoint();
+      const endpoint = $(form).get("#endpoint");
+      const github_token = $(form).get("#github_token");
+      const gist_id = $(form).get("#gist_id");
+      const gist_filename = $(form).get("#gist_filename");
+
+      const storageObj = api.getCredentials();
+      if (storageObj !== null) {
+        endpoint.value = storageObj.endpoint || "";
+        github_token.value = storageObj.github_token || "";
+        gist_id.value = storageObj.gist_id || "";
+        gist_filename.value = storageObj.gist_filename || "";
+      }
 
       form.on("submit", e => {
         e.preventDefault();
-        let url = input.value.trim();
-        if (url !== "") {
-          url = url.replace(/\/+$/, "");
-          api.setEndpoint(url);
-        }
+        const obj = {
+          endpoint: endpoint.value.trim().replace(/\/+$/, "") || null,
+          github_token: github_token.value.trim() || null,
+          gist_id: gist_id.value.trim() || null,
+          gist_filename: gist_filename.value.trim() || null,
+        };
+        api.setCredentials(obj);
+        alert("Saved your credentials to localstorage");
       });
     }
 
@@ -76,9 +104,50 @@
         // a.download = `My Note ${this.currentTime()}.json`;
         // a.click();
 
-        const url = api.getEndpoint() + "/data.json";
         // cloud
-        this.origin.put(url, { body: data }).then(console.log).catch(console.error);
+        const storageObj = api.getCredentials();
+        let endpoint = storageObj.endpoint || null;
+        if (endpoint !== null) endpoint += "/data.json";
+
+        // check db
+        if (endpoint !== null) {
+          // use firebase
+          this.origin
+            .put(endpoint, { body: data })
+            .then(res => {
+              debug(res);
+              alert("backed up your data to 'Firebase'");
+            })
+            .catch(err => {
+              console.error(err);
+              alert("Error while backing up your data to 'Firebase'\n" + err);
+            });
+        } else {
+          // use gist
+          fetch(`https://api.github.com/gists/${storageObj.gist_id}`, {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${storageObj.github_token}`,
+            },
+            body: JSON.stringify({
+              files: {
+                [storageObj.gist_filename]: {
+                  content: JSON.stringify(data),
+                },
+              },
+            }),
+          })
+            .then(res => res.json())
+            .then(data => {
+              debug(data);
+              alert("backed up your data to 'Gist'");
+            })
+            .catch(err => {
+              console.error(err);
+              alert("Error while backing up your data to 'Gist'\n" + err);
+            });
+        }
+        debug(storageObj);
       } else {
         alert("No Data to Backup!");
       }
@@ -89,12 +158,40 @@
       // reader.readAsText(e.target.files[0]);
       // reader.onload = e => api.updateStorage(e.target.result);
 
-      const url = api.getEndpoint() + "/data.json";
       // cloud
-      this.origin
-        .get(url)
-        .then(data => api.updateStorage(data))
-        .catch(console.error);
+      const storageObj = api.getCredentials();
+      let endpoint = storageObj.endpoint || null;
+      if (endpoint !== null) endpoint += "/data.json";
+
+      // check db
+      if (endpoint !== null) {
+        // use firebase
+        this.origin
+          .get(endpoint)
+          .then(data => {
+            api.updateStorage(data);
+            debug(data);
+            alert("fetched your data from 'Firebase'");
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Error while fetching your data from 'Firebase'\n" + err);
+          });
+      } else {
+        // use gist
+        this.origin
+          .get(`https://api.github.com/gists/${storageObj.gist_id}`)
+          .then(data => {
+            const _data = JSON.parse(data.files[storageObj.gist_filename].content);
+            api.updateStorage(_data);
+            debug(_data);
+            alert("fetched your data from 'Gist'");
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Error while fetching your data from 'Gist'\n" + err);
+          });
+      }
     }
 
     currentTime() {
@@ -125,10 +222,12 @@
       background: $white;
       padding: 20px;
       border-radius: $radius;
+
       &__text {
         color: $subTextColor;
         margin-bottom: 20px;
         line-height: 25px;
+
         span {
           color: $blue;
           font-weight: bold;
@@ -148,6 +247,7 @@
         text-transform: capitalize;
         cursor: pointer;
       }
+
       &--backupBtn {
         background-color: $red;
       }
@@ -155,19 +255,45 @@
       &--updateBtn {
         background-color: $green;
       }
+      &__dbhint {
+        margin: 20px 0;
+        border-top: 1px solid $border;
+        padding-top: 20px;
+        p {
+          margin-top: 10px;
+        }
+      }
 
       form {
         overflow: hidden;
         margin-top: 10px;
+
+        > div {
+          margin-top: 20px;
+        }
+        label {
+          text-align: left;
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+        }
+        i {
+          text-align: left;
+          display: block;
+          font-size: 14px;
+          color: $subTextColor;
+        }
         input {
           height: 40px;
           outline: none;
           width: calc(100% - 60px);
           border-radius: $radius;
-
+          display: block;
           border: 1px solid $border;
           text-indent: 10px;
+          margin-top: 10px;
         }
+
         button {
           background: $blue;
           width: 50px;
