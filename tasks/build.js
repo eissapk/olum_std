@@ -4,7 +4,6 @@ import clean from "./clean";
 import catchall from "./catchall";
 import desktop from "./desktop";
 import colors from "colors";
-import exit from "./exit";
 
 export default async function renderBuild() {
   try {
@@ -14,7 +13,7 @@ export default async function renderBuild() {
     await clean("src"); // remove '.pre-build' folder
     await catchall(); // catch all routes to fallback to root
     await desktop(); // package desktop app
-    exit();
+    process.exitCode = 1;
   } catch (err) {
     console.log(colors.red.bold(err));
   }

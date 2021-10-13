@@ -1,14 +1,21 @@
 import inquirer from "inquirer";
 import fs from "fs";
-import path, { resolve } from "path";
+import path from "path";
 import settings from "../settings";
 import extra from "fs-extra";
 import colors from "colors";
 import decompress from "decompress";
-import shelljs from "shelljs";
+import { exec } from "child_process";
 import packageJSON from "../package.json";
 
 const q1 = { type: "confirm", name: "nwjs", message: "NWjs is ready" };
+
+const getIcon = () => {
+  let filename = "favicon.png";
+  const arr = settings.favicon.match(/\/(?:.(?!\/))+$/g);
+  if (arr.length) filename = arr[0].replace(/\//g,"").trim();
+  return filename;
+}
 
 const linux = (obj, resolve, reject) => {  
   if (obj.package == "deb") {
@@ -30,89 +37,102 @@ const linux = (obj, resolve, reject) => {
           files: [
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN/control`),
-              content: `Package: ${packageJSON.name}\nVersion: ${packageJSON.version}\nSection: base\nPriority: optional\nArchitecture: all\nInstalled-Size: SIZE\nDepends:\nMaintainer: ${packageJSON.author}\nDescription: ${packageJSON.description}\n\n`
+              content: 
+`Package: ${packageJSON.name}
+Version: ${packageJSON.version}
+Architecture: all
+Essential: no
+Priority: optional
+Maintainer: ${packageJSON.author}
+Description: ${packageJSON.description}
+Homepage: 
+Installed-Size: SIZE
+Depends:\n\n
+`
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN/postinst`),
-              content: `#!/bin/bash
+              content: 
+`#!/bin/bash
 
 # get the right user name of the os
 userName=$SUDO_USER
-# check if it's root 
+# check if it's root
 if [[ $EUID = 0 ]]; then
-    userName=$SUDO_USER
+  userName=$SUDO_USER
 # check if it's user
 elif ! [[ $EUID = 0 ]]; then
-    userName=$USER
+  userName=$USER
 fi
 
 # copy .desktop file for activating the app launcher
-cp -r /usr/share/applications/${packageJSON.name}.desktop /home/$userName/.local/share/applications
+cp /usr/share/applications/${packageJSON.name}.desktop /home/$userName/.local/share/applications
 
 # changing the mode of all nw & nacl
 cd /opt/${packageJSON.name} && chmod 775 *
-              `
+`
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/DEBIAN/preinst`),
-              content: `#!/bin/bash
+              content: 
+`#!/bin/bash
 
 # get the right user name of the os
 userName=$SUDO_USER
-# check if it's root 
+# check if it's root
 if [[ $EUID = 0 ]]; then
-    userName=$SUDO_USER
+  userName=$SUDO_USER
 # check if it's user
 elif ! [[ $EUID = 0 ]]; then
-    userName=$USER
+  userName=$USER
 fi
 
-# remove old files/dirs of ${packageJSON.name}
+# remove old dir of ${packageJSON.name}
 echo "Looking for old versions of ${packageJSON.name}..."
 if [ -d /opt/${packageJSON.name} ]; then
-    rm -r /opt/${packageJSON.name}
-    echo "Removed old ${packageJSON.name} from /opt/${packageJSON.name}"
+  rm -r /opt/${packageJSON.name}
+  echo "Removed old ${packageJSON.name} from /opt/${packageJSON.name}"
 fi
 
-echo "Looking for old config files of ${packageJSON.name}..."
-if [ -f /home/$userName/.local/share/applications/${packageJSON.name}.desktop ]; then
-    rm -r /home/$userName/.local/share/applications/${packageJSON.name}.desktop
-    echo "Removed old config files from ~/.local/share/applications"
-fi
-
-if [ -f /usr/share/applications/${packageJSON.name}.desktop ]; then
-    rm -r /usr/share/applications/${packageJSON.name}.desktop
-    echo "Removed old config files from /usr/share/applications/"
-fi
-
-removeLockFiles () {
-    echo "Looking for lock files..."
-    if [ -f /var/cache/apt/archives/lock ]; then
-        rm -r /var/cache/apt/archives/lock
-        echo "Removed lock file from /var/cache/apt/archives/lock"
+echo "Looking for old config files..."
+OLD_FILES="/home/$userName/.local/share/applications/${packageJSON.name}.desktop /usr/share/applications/${packageJSON.name}.desktop"
+for OLD_FILE in $OLD_FILES
+  do 
+    if [ -f $OLD_FILE ]; then
+      sudo rm $OLD_FILE
+      echo "Removed $OLD_FILE"
     fi
+done
 
-    if [ -f /var/lib/apt/lists/lock ]; then
-        rm -r /var/lib/apt/lists/lock
-        echo "Removed lock file from /var/lib/apt/lists/lock"
+# lock files
+echo "Looking for lock files..."
+LOCK_FILES="/var/cache/apt/archives/lock /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock"
+for LOCK_FILE in $LOCK_FILES
+  do 
+    if [ -f $LOCK_FILE ]; then
+      sudo rm -r $LOCK_FILE
+      echo "Removed $LOCK_FILE"
     fi
-
-    if [ -f /var/lib/dpkg/lock-frontend ]; then
-        rm -r /var/lib/dpkg/lock-frontend
-        echo "Removed lock file from /var/lib/dpkg/lock-frontend"
-    fi
-
-    if [ -f /var/lib/dpkg/lock ]; then
-        rm -r /var/lib/dpkg/lock
-        echo "Removed lock file from /var/lib/dpkg/lock"
-    fi
-}
-removeLockFiles
-              `
+done
+`
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/usr/share/applications/${packageJSON.name}.desktop`),
-              content: `[Desktop Entry]\nEncoding=UTF-8\nName=${packageJSON.name}\nComment=${packageJSON.name}\nExec=/opt/${packageJSON.name}/nw\nIcon=/opt/${packageJSON.name}/${settings.dest}/favicon.png\nCategories=Application\nType=Application\nTerminal=false`
+              content: 
+`[Desktop Entry]
+Encoding=UTF-8
+Version=1.0.0
+Name=${packageJSON.name}
+GenericName=${packageJSON.name}
+Comment=${packageJSON.description}
+Exec=/opt/${packageJSON.name}/nw
+TryExec=/opt/${packageJSON.name}/nw
+Icon=/opt/${packageJSON.name}/${settings.dest}/${getIcon()}
+Categories=Utility;
+Type=Application
+Terminal=false
+Keywords=web;software;
+`
             },
             {
               path: path.resolve(__dirname, `../desktop/${packageJSON.name}/opt/${packageJSON.name}/package.json`),
@@ -122,15 +142,15 @@ removeLockFiles
                 description: packageJSON.description,
                 main: settings.dest + "/index.html",
                 window: {
-                  toolbar: false,
+                  toolbar: true,
                   title: packageJSON.name,
-                  icon: settings.dest + "/favicon.png",
-                  width: 1170,
-                  height: 650,
+                  icon: settings.dest + "/" + getIcon(),
+                  width: 768,
+                  height: 728,
                   min_width: 600,
-                  min_height: 580,
+                  min_height: 600,
                   position: "center",
-                  "background-color": "#a69aa6"
+                  "background-color": "#eeeeee"
                 },
                 "chromium-args": "--disable-web-security"
               },null,2)
@@ -193,7 +213,7 @@ removeLockFiles
               const chmod = "chmod 755 *";
               const dpkg = `dpkg-deb --build ${packageJSON.name}`;
               const dpkgCheck = "whereis dpkg-deb";
-              shelljs.exec(dpkgCheck , {silent:true},(code, stdout, stderr) => {
+              exec(dpkgCheck, (code, stdout, stderr) => {
                 if (stderr) {
                   console.error(colors.red(stderr));
                   return reject();
@@ -204,7 +224,7 @@ removeLockFiles
                   return reject();
                 } else {
                   console.log(colors.green(`Packaging...`));
-                  shelljs.exec(`cd ${debPath} && ${chmod} && cd ../../ && ${dpkg}`, {silent:true}, (code, stdout, stderr) => {
+                  exec(`cd ${debPath} && ${chmod} && cd ../../ && ${dpkg}`, (code, stdout, stderr) => {
                     if (stderr) {
                       console.error(colors.red(stderr));
                       return reject();
