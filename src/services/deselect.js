@@ -1,4 +1,4 @@
-import { $ } from "../../lib/olum.js";
+import { $ } from "olum-helpers";
 function deselect() {
   const selectAllInput = $(".selectAll input");
   if (selectAllInput) {

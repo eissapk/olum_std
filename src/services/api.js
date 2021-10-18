@@ -1,4 +1,4 @@
-import { Service } from "../../lib/olum.js";
+import { Service } from "olum-helpers";
 
 class Api extends Service {
   current = {};

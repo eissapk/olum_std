@@ -1,4 +1,4 @@
-import { $ } from "../../lib/olum.js";
+import { $ } from "olum-helpers";
 import api from "./api.js";
 import deselect from "./deselect.js";
 export default function getCurrentTab() {
