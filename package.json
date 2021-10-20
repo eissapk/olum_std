@@ -57,9 +57,14 @@
     "not dead"
   ],
   "babel": {
-    "presets": ["@babel/preset-env"],
+    "presets": [
+      "@babel/preset-env"
+    ],
     "plugins": [
-      ["@babel/plugin-proposal-class-properties"], "@babel/plugin-syntax-dynamic-import"
+      [
+        "@babel/plugin-proposal-class-properties"
+      ],
+      "@babel/plugin-syntax-dynamic-import"
     ]
   },
   "olum": {
@@ -86,17 +91,19 @@
       "orientation": "any",
       "start_url": "index.html",
       "theme_color": "#ffffff",
-      "icons": [{
-        "src": "./public/manifest.png",
-        "sizes": [
-          96,
-          128,
-          192,
-          256,
-          384,
-          512
-        ]
-      }]
+      "icons": [
+        {
+          "src": "./public/manifest.png",
+          "sizes": [
+            96,
+            128,
+            192,
+            256,
+            384,
+            512
+          ]
+        }
+      ]
     }
   }
 }

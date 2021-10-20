@@ -3,12 +3,13 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
-const WebpackPwaManifest = require('webpack-pwa-manifest');
+const WebpackPwaManifest = require("webpack-pwa-manifest");
 const { title, dest, favicon, template, src, hash, comments, asyncAwait, serviceWorker, manifest } = require("./package.json").olum;
 
 module.exports = env => {
   const mode = !!env.dev ? "development" : "production";
   const globs = [`./${src}/app.scss`, `./${src}/app.mjs`];
+  mode === "development" ? globs.push("./public/devtool.js") : null;
   const main = asyncAwait ? ["babel-polyfill", ...globs] : [...globs];
 
   const config = {
@@ -26,7 +27,7 @@ module.exports = env => {
           test: /\.(?:js|mjs)$/i,
           exclude: /(node_modules|bower_components)/,
           use: {
-            loader: "babel-loader"
+            loader: "babel-loader",
           },
         },
         {
