@@ -1,4 +1,4 @@
-import { Olum } from "../lib/olum.js";
+import { Olum } from "olum";
 import { Localize } from "olum-helpers";
 import Home from "./views/home.js";
 import Settings from "./views/settings.js";
