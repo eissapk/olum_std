@@ -1,6 +1,7 @@
 {
   "name": "olum-std",
   "version": "0.1.2",
+  "private": true,
   "description": "The VanillaJS developer’s platform.",
   "main": "tasks",
   "scripts": {
@@ -49,5 +50,53 @@
   "dependencies": {
     "marked": "^2.1.3",
     "olum-helpers": "^0.1.0"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "babel": {
+    "presets": ["@babel/preset-env"],
+    "plugins": [
+      ["@babel/plugin-proposal-class-properties"], "@babel/plugin-syntax-dynamic-import"
+    ]
+  },
+  "olum": {
+    "dest": "build",
+    "src": ".pre-build",
+    "port": 8000,
+    "livereload": true,
+    "fallback": "/",
+    "comments": false,
+    "hash": 5,
+    "title": "My Note",
+    "asyncAwait": true,
+    "https": false,
+    "favicon": "./public/favicon.png",
+    "template": "./public/index.html",
+    "serviceWorker": false,
+    "manifest": {
+      "name": "My Note - Progressive Web App",
+      "short_name": "My Note",
+      "description": "Advanced todo app with markdown editor",
+      "background_color": "#ffffff",
+      "publicPath": "./",
+      "display": "standalone",
+      "orientation": "any",
+      "start_url": "index.html",
+      "theme_color": "#ffffff",
+      "icons": [{
+        "src": "./public/manifest.png",
+        "sizes": [
+          96,
+          128,
+          192,
+          256,
+          384,
+          512
+        ]
+      }]
+    }
   }
 }

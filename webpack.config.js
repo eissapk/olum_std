@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const { title, dest, favicon, template, src, hash, comments, asyncAwait, serviceWorker, manifest } = require("./settings");
+const { title, dest, favicon, template, src, hash, comments, asyncAwait, serviceWorker, manifest } = require("./package.json").olum;
 
 module.exports = env => {
   const mode = !!env.dev ? "development" : "production";
@@ -24,9 +24,9 @@ module.exports = env => {
       rules: [
         {
           test: /\.(?:js|mjs)$/i,
-          exclude: /node_modules/,
+          exclude: /(node_modules|bower_components)/,
           use: {
-            loader: "babel-loader",
+            loader: "babel-loader"
           },
         },
         {
