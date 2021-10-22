@@ -1,0 +1,26 @@
+<template>
+  <div class="Footer">footer</div>
+</template>
+
+<script>
+  export default class Footer {
+    constructor() {}
+    data() {
+      return {
+        name: "Footer",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {      console.log("footer component ran");
+}
+  }
+</script>
+
+<style lang="scss">
+  .Footer {
+  }
+</style>

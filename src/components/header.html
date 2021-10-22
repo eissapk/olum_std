@@ -1,0 +1,28 @@
+<template>
+  <div class="Header">
+    header
+  </div>
+</template>
+
+<script>
+  export default class Header {
+    constructor() {}
+    data() {
+      return {
+        name: "Header",
+        components: {},
+        template: this.template(),
+        style: this.style(),
+        render: this.render.bind(this),
+      };
+    }
+
+    render() {      console.log("header component ran");
+}
+  }
+</script>
+
+<style lang="scss">
+  .Header {
+  }
+</style>
