@@ -211,8 +211,10 @@
         var view = new View();
         var entry = view.data();
         var compsArr = $this.buildTree(entry);
-        var viewObj = $this.merge({ entry, compsArr });
-        
+        // labeling components
+        var label = isDev() ? $this.labelView(entry, compsArr) : { entry: entry, compsArr: compsArr };
+        // final component (View)      
+        var viewObj = $this.merge(label);
         // css
         $this.buildStyles(viewObj.style);
         // html

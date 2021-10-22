@@ -61,6 +61,7 @@
     
     // set defaults 
     var rootElm = null;
+    var rootCompName = null;
     var which = null;
     var prefix = config && config.prefix ? config.prefix : null;
 
@@ -80,6 +81,14 @@
         var delimiter;
         if (selector.indexOf(".") !== -1) delimiter = ".";
         else if (selector.indexOf("#") !== -1) delimiter = "#";
+
+        // start devtool
+        if (isDev()) {
+          rootCompName = selector.replace(/\#|\./, "").cap();
+          global.olumDevtool = { rootCompName: rootCompName, selector: selector };
+        }
+        // end devtool
+
         selector = selector.replace(/\#|\./, "");
         rootElm =
           delimiter === "." ? document.getElementsByClassName(selector)[0] :
@@ -159,14 +168,62 @@
         script,
       };
     }
+    
+    function labelView(root, arr) {
+      var compAttrRegex = /(olum-component=[\"\']([^\"|\']*)[\"\'])|(olum-component)/gi;
+      var openingSelfClosingTagRegex = /<[a-z]+(>|.*?[^?]>)/gi;
+      var greaterCharRegex = /\>/gi;
+      var compsArr = Array.from(arr);
+      var entry = root;
+
+      // children
+      for(var i = 0; i < compsArr.length; i++) {
+        var name = compsArr[i].child.data.name || "undefined";
+        if (compsArr[i].child && compsArr[i].child.data && compsArr[i].child.data.hasOwnProperty("template")) {
+          var data = compsArr[i].child.data;
+          // clean
+          data.template = data.template.replace(compAttrRegex, "");
+          // labeling
+          var compWrapper = data.template.match(openingSelfClosingTagRegex);
+          if (isFullArr(compWrapper)) {
+            data.template = data.template.replace(compWrapper[0], compWrapper[0].replace(greaterCharRegex, " olum-component='"+name+"'>"));
+          }
+        }
+      }
+
+      // parent (view)
+      if (entry.template) {
+        var name = entry.name || "undefined";
+        // clean
+        entry.template = entry.template.replace(compAttrRegex, "");
+        // labeling
+        var compWrapper = entry.template.match(openingSelfClosingTagRegex);
+        if (isFullArr(compWrapper)) {
+          entry.template = entry.template.replace(
+            compWrapper[0],
+            compWrapper[0].replace(greaterCharRegex, " olum-component='"+name+"' router-view='"+name+"'>")
+          );
+        }
+      }
+
+      // root (placeholder)
+      rootElm.setAttribute("olum-component", rootCompName);
+  
+      return {
+        entry,
+        compsArr,
+      };
+    }
 
     function useComponent() {
       debug("use component");
       var view = new which.cb();
       var entry = view.data();
       var compsArr = buildTree(entry);
-      var viewObj = merge({ entry: entry, compsArr: compsArr });
-
+      // labeling components
+      var label = isDev() ? labelView(entry, compsArr) : { entry: entry, compsArr: compsArr };
+      // final component (View)      
+      var viewObj = merge(label);
       // css
       buildStyles(viewObj.style);
       // html
@@ -186,8 +243,9 @@
       // props
       router.__proto__.rootElm = rootElm;
       // methods
-      router.__proto__.buildTree = buildTree;
       router.__proto__.buildStyles = buildStyles;
+      router.__proto__.buildTree = buildTree;
+      router.__proto__.labelView = labelView;
       router.__proto__.merge = merge;
       
       if (router.isReady) router.listen();
