@@ -14,6 +14,7 @@
   /* helpers */
   var global = typeof self !== "undefined" ? self : this;
   var debugStr = "OlumRouter [warn]:";
+  var isDebugging = true;
 
   function isDef(val) {
     return (val !== undefined && val !== null);
@@ -51,28 +52,29 @@
   function debug(args, level) {
     if (!isDef(level)) level = "log";
     level = level == "err" ? "error" : level;
-    if (isDev()) Array.isArray(args) ? console[level].apply(console, args) : console[level](args);
+    if (isDebugging) Array.isArray(args) ? console[level].apply(console, args) : console[level](args);
   }
 
   function OlumRouter(config) {
     if (!(this instanceof OlumRouter)) throw new Error("can't invoke 'OlumRouter' without 'new' keyword");
     if (!config) throw new Error(debugStr + " Missing config object @OlumRouter");
     var $this = this;
+    var pushStateAPI = global.history.pushState;
+    
+    // set defaults
     var routes = [];
     var root = "/";
     var mode = "hash";
-    var pushStateAPI = global.history.pushState;
     var err = null;
     var isFrozen = false;
     var popStateEvent = null;
     var viewLoaded = null;
-    this.routerIsReady = false;
-    this.rootElm = null;
-    this.prefix = null;
     mode = config && config.mode === "history" && pushStateAPI  ? "history" : "hash";
     root = config && config.root ? config.root : "/";
     err = config && config.err ? resolve(config.err) : null;
     
+    // public
+    this.isReady = false;
     this.freeze = function() {
       isFrozen = true;
     }
@@ -88,6 +90,78 @@
       return "/" + fragment;
     }
     
+    this.navigate = function (path) {
+      $this.unfreeze();
+      path = resolve(path);
+      if (mode === "history") {
+        global.history.pushState({}, "", path);
+        debug("Pushed to history");
+        dispatchEvent(popStateEvent);
+      } else if (mode === "hash") {
+        // todo enhance this part 
+        if (root === "/") {
+          location.href = location.href.replace(/\#.*/g, "")+"#"+path;
+        } else {
+          var _root = clear(root);
+          _root = _root.replace(/\//g, "\\/");
+          var rootRegex = new RegExp("\\/"+_root, "g");
+          var _path = path.replace(rootRegex, "");
+          _path = "/" + _path.replace(/^\//g, "");
+          location.href = location.href.replace(/\#.*/g, "")+"#"+_path;
+        }
+      }
+    }
+    
+    this.listen = function() {
+      debug($this.__proto__);
+      global.addEventListener("popstate", function() {
+        debug(["Dispatched Popstate", routes]);
+        var current = $this.getRoute();
+        var _root = "/" + clear(root);
+        
+        // todo enhance this part 
+        current = (mode === "hash" && root !== "/") ? (current = _root + current).replace(/\/$/, "") : current;
+
+        var route;
+        for(var i = 0; i < routes.length; i++) {
+          if (routes[i].path === current) {
+            route = routes[i];
+            break;
+          } else if (current === "" || current === "/" || current.includes("index.html")) {
+            route = routes[i].path === _root;
+            break;
+          }
+        }
+
+        if (isDef(route)) {
+          if (!isFrozen) route.cb(); // invokes mount(view)
+        } else {
+          if (isDef(err)) {
+            var _err;
+            for(var index = 0; index < routes.length; index++) {
+              if (routes[index].path === err) {
+                _err = routes[index];
+                break;
+              }
+            }
+            if (isDef(_err)) {
+              _err.cb();
+            } else {
+              console.error(debugStr + " Unmached path @OlumRouter");
+            }
+          } else {
+            $this.rootElm.innerHTML = "Not Found!";
+          }
+        }
+
+        debug({ current, route });
+
+      });
+
+      dispatchEvent(popStateEvent);
+    }
+    
+    // private
     function clear(str) {
       var regex = new RegExp("^[\#\/]{1,}|\/$", "g");
       str = String(str).toLowerCase().trim().replace(regex, "");
@@ -113,7 +187,7 @@
             var _path_ = resolve(path);
             var current = $this.getRoute();
             if (_path_=== current) return; // stop routing | preserve history from duplicated routes
-            navigate(path); // navigate to clicked route
+            $this.navigate(path); // navigate to clicked route
           });
         }
       }
@@ -130,86 +204,17 @@
       }
     }
     
-    function buildTree(entry) {
-      var compsArr = [];
-
-      function recursive(comp) {
-        if (comp.hasOwnProperty("components") && isFullObj(comp.components)) {
-          for (var key in comp.components) {
-            var obj = {};
-            addProp(obj, "parent", comp.name);
-            addProp(obj, "child", {});
-            addProp(obj.child, "name", key);
-            var instance = new comp.components[key]();
-            addProp(obj.child, "data", instance.data());
-            compsArr.push(obj);
-
-            if (obj.hasOwnProperty("child") && obj.child.hasOwnProperty("data")) {
-              var nextEntry = obj.child.data;
-              recursive(nextEntry);
-            }
-          }
-        }
-      };
-      recursive(entry);
-      return compsArr;
-    }
-    
-    function merge(tree) {
-      var entry = tree.entry;
-      var compsArr = tree.compsArr;
-
-      // parent (view) 
-      var template = entry.template || "";
-      var style = entry.style || "";
-      var script = {};
-      !!(entry.render) ? (script[0] = entry.render) : null;
-
-      // children 
-      if (isFullArr(compsArr)) {
-        for(var i = 0; i < compsArr.length; i++) {
-          var data = compsArr[i].child.data;
-          var html = data.template || "";
-          var css = data.style || "";
-          var js = data.render || null;
-          var name = $this.prefix ? $this.prefix + "-" + data.name : data.name;
-          var regex = new RegExp("<(" + name + "\\s{0,})\\/>", "gi"); // detect components e.g. <App-AddTodo /> or <AddTodo />
-
-          template = template.replace(regex, html);
-          style += css;
-          if (js !== null) script[i + 1] = js;
-        }
-      }
-
-      return {
-        template,
-        style,
-        script,
-      };
-    }
-    
-    function buildStyles(css) {
-      var id = "olum_style_tag";
-      var styleTag = document.getElementById(id);
-      if (!styleTag) {
-        styleTag = document.createElement("style");
-        styleTag.id = id;
-        document.head.append(styleTag);
-      }
-      styleTag.innerHTML = css;
-    }
-    
     function mount(View) {
       if (!View || typeof View != "function") {
         throw new Error(debugStr + " Missing View argument @OlumRouter");
       } else {
         var view = new View();
         var entry = view.data();
-        var compsArr = buildTree(entry);
-        var viewObj = merge({ entry, compsArr });
+        var compsArr = $this.buildTree(entry);
+        var viewObj = $this.merge({ entry, compsArr });
         
         // css
-        buildStyles(viewObj.style);
+        $this.buildStyles(viewObj.style);
         // html
         $this.rootElm.innerHTML = viewObj.template;
         // js
@@ -220,8 +225,8 @@
           function recursive (num) {
             viewObj.script[scriptKeysArr[num]]();
             if (num === scriptKeysArr.length - 1) {
-              if (isDef($this.viewLoaded)) {
-                dispatchEvent($this.viewLoaded);
+              if (isDef(viewLoaded)) {
+                dispatchEvent(viewLoaded);
                 debug("viewLoaded");
               }
             }
@@ -247,73 +252,12 @@
       return false;
     }
 
-    this.navigate = function (path) {
-      $this.unfreeze();
-      path = resolve(path);
-      if (mode === "history") {
-        global.history.pushState({}, "", path);
-        debug("Pushed to history");
-        dispatchEvent(popStateEvent);
-      } else if (mode === "hash") {
-        // todo enhance this part 
-        if (root === "/") {
-          location.href = location.href.replace(/\#.*/g, "")+"#"+path;
-        } else {
-          var _root = clear(root);
-          _root = _root.replace(/\//g, "\\/");
-          var rootRegex = new RegExp("\\/"+_root, "g");
-          let _path = path.replace(rootRegex, "");
-          _path = "/" + _path.replace(/^\//g, "");
-          location.href = location.href.replace(/\#.*/g, "")+"#"+path;
-        }
-      }
-    }
-
-    this.listen = function() {
-      global.addEventListener("popstate", function() {
-        debug(["Dispatched Popstate", routes]);
-        var current = $this.getRoute();
-        var _root = "/" + clear(root);
-        
-        // todo enhance this part 
-        current = (mode === "hash" && root !== "/") ? (current = _root + current).replace(/\/$/, "") : current;
-
-        // todo replace find with es5
-        var route = routes.find(function (_route) {
-          if (_route.path === current) return _route;
-          else if (current === "" || current === "/" || current.includes("index.html")) return _route.path === _root;
-        });
-
-        if (isDef(route)) {
-          if (!isFrozen) route.cb(); // invokes mount(view)
-        } else console.error(debugStr + " Unmached path @OlumRouter");
-        
-        // else {
-        //   if (isDef(err)) {
-        //     var err = routes.find(function (route){ return route.path === err});
-        //     if (isDef(err)) {
-        //       err.cb();
-        //     } else {
-        //       console.error(debugStr + " Unmached path @OlumRouter");
-        //     }
-        //   } else {
-        //     $this.rootElm.innerHTML = "Not Found!";
-        //   }
-        // }
-
-        debug({ current, route });
-
-      });
-
-      dispatchEvent(popStateEvent);
-    }
-
     if (!hasRoutes()) {
       throw new Error(debugStr + " No routes found!");
     } else {
       popStateEvent = new PopStateEvent("popstate");
       viewLoaded = new CustomEvent("viewLoaded", { detail: {}, bubbles: true, cancelable: true, composed: false });
-      this.routerIsReady = true;
+      this.isReady = true;
     }
     
   }

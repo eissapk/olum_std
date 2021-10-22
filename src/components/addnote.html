@@ -13,7 +13,7 @@
 </template>
 
 <script>
-  import { olum } from "../app.mjs";
+  import router from "../router/index.js";
   import { $, debug } from "olum-helpers";
   import add from "../assets/add.svg";
   import star from "../assets/star.svg";
@@ -44,7 +44,7 @@
       } else if (!hasActiveTab) {
         alert("select a tab in order to add your note");
       } else {
-        olum.navigate("/add");
+        router.navigate("/add");
       }
     }
   }

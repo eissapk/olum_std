@@ -16,7 +16,7 @@
 <script>
   import { $, debug } from "olum-helpers";
   import api from "../services/api.js";
-  import { olum } from "../app.mjs";
+  import router from "../router/index.js";
   import genID from "../services/id.js";
 
   export default class Form {
@@ -34,12 +34,12 @@
     }
 
     render() {
-      this.route = olum.getRoute();
+      this.route = router.getRoute();
       const input = $(".Form textarea");
       input.focus();
-      if (this.route === olum.resolve("add")) {
+      if (this.route.includes("add")) {
         this.add();
-      } else if (this.route === olum.resolve("edit")) {
+      } else if (this.route.includes("edit")) {
         this.edit();
       }
     }
@@ -55,7 +55,7 @@
           api.current.noteId = id;
           api.current.noteContent = content;
           api.addNote(api.current);
-          olum.navigate("/");
+          router.navigate("/");
         } else {
           alert("empty field!");
         }
@@ -73,7 +73,7 @@
         let newContent = input.value.trim();
         if (newContent) {
           api.editNote({ newContent, id });
-          olum.navigate("/");
+          router.navigate("/");
         } else {
           alert("empty field!");
         }

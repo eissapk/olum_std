@@ -14,10 +14,7 @@
   /* helpers */
   var global = typeof self !== "undefined" ? self : this;
   var debugStr = "Olum [warn]:";
-
-  function quotes(str) {
-    return "“" + str + "”"
-  }
+  var isDebugging = true;
 
   function isDef(val) {
     return (val !== undefined && val !== null);
@@ -55,14 +52,44 @@
   function debug(args, level) {
     if (!isDef(level)) level = "log";
     level = level == "err" ? "error" : level;
-    if (isDev()) Array.isArray(args) ? console[level].apply(console, args) : console[level](args);
+    if (isDebugging) Array.isArray(args) ? console[level].apply(console, args) : console[level](args);
   }
 
-  function Olum(prefix) {
+  function Olum(config) {
     if (!(this instanceof Olum)) throw new Error("can't invoke 'Olum' without 'new' keyword");
     var $this = this;
+    
+    // set defaults 
     var rootElm = null;
     var which = null;
+    var prefix = config && config.prefix ? config.prefix : null;
+
+    this.use = function (arg) {
+      if (arg) {
+        if (arg.constructor && arg.constructor.name === "OlumRouter") which = { type: "router", cb: arg };
+        else if (arg.constructor && arg.constructor.name !== "") which = { type: "component", cb: arg };
+        if (which) init();
+        else throw new Error(debugStr + " Root component or router are not defined!");
+      } else {
+        throw new Error(debugStr + " Missing component or router @use()");
+      }
+    }
+
+    this.$ = function (selector) {
+      if (selector) {
+        var delimiter;
+        if (selector.indexOf(".") !== -1) delimiter = ".";
+        else if (selector.indexOf("#") !== -1) delimiter = "#";
+        selector = selector.replace(/\#|\./, "");
+        rootElm =
+          delimiter === "." ? document.getElementsByClassName(selector)[0] :
+          delimiter === "#" ? document.getElementById(selector) :
+          document.getElementsByTagName(selector)[0];
+      } else {
+        throw new Error(debugStr + " Root Element is not found in DOM!");
+      }
+      return this;
+    }
 
     function buildTree(entry) {
       var compsArr = [];
@@ -97,7 +124,7 @@
         styleTag.id = id;
         document.head.append(styleTag);
       }
-      styleTag.innerHTML = css;
+      styleTag.innerHTML = css + "\n [to] * {pointer-events: none;}";
     }
 
     function merge(tree) {
@@ -155,12 +182,15 @@
     function useRouter() {
       debug("use OlumRouter");
       var router = which.cb;
-      if (router.routerIsReady) {
-        router.rootElm = rootElm;
-        router.prefix = prefix;
-        router.listen();
-      }
-      debug(router);
+      // share core functionalites with router
+      // props
+      router.__proto__.rootElm = rootElm;
+      // methods
+      router.__proto__.buildTree = buildTree;
+      router.__proto__.buildStyles = buildStyles;
+      router.__proto__.merge = merge;
+      
+      if (router.isReady) router.listen();
     }
     
     function mount() {
@@ -178,34 +208,7 @@
       if (!rootElm) throw new Error(debugStr + " Root Element is not found in DOM!");
       else mount();
     }
-
-    this.use = function (arg) {
-      if (arg) {
-        if (arg.constructor && arg.constructor.name === "OlumRouter") which = { type: "router", cb: arg };
-        else if (arg.constructor && arg.constructor.name !== "") which = { type: "component", cb: arg };
-        if (which) init();
-        else throw new Error(debugStr + " Root component or router are not defined!");
-      } else {
-        throw new Error(debugStr + " Missing component or router @use()");
-      }
-    }
-
-    this.$ = function (selector) {
-      if (selector) {
-        var delimiter;
-        if (selector.indexOf(".") !== -1) delimiter = ".";
-        else if (selector.indexOf("#") !== -1) delimiter = "#";
-        selector = selector.replace(/\#|\./, "");
-        rootElm =
-          delimiter === "." ? document.getElementsByClassName(selector)[0] :
-          delimiter === "#" ? document.getElementById(selector) :
-          document.getElementsByTagName(selector)[0];
-      } else {
-        throw new Error(debugStr + " Root Element is not found in DOM!");
-      }
-      return this;
-    }
-
+    
   }
 
   return Olum;

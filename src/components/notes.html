@@ -6,7 +6,7 @@
 
 <script>
   import { debug, setTemp, $ } from "olum-helpers";
-  import { olum } from "../app.mjs";
+  import router from "../router/index.js";
   import edit from "../assets/edit.svg";
   import sort from "../assets/sort.svg";
   import api from "../services/api.js";
@@ -202,7 +202,7 @@
         const content = $(note).get(".Notes__inner__note__text").textContent;
         api.editedNote.id = id;
         api.editedNote.content = content;
-        olum.navigate("/edit");
+        router.navigate("/edit");
       }
     }
 

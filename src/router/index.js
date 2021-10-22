@@ -9,12 +9,12 @@ import NotFound from "../views/notfound.js";
 
 const routes = [
   { path: "/", comp: Home },
-  { path: "/settings", comp: Settings },
   { path: "/add", comp: Add },
   { path: "/edit", comp: Edit },
+  { path: "/settings", comp: Settings },
   { path: "/features", comp: Features },
   { path: "/err", comp: NotFound },
 ];
 
-const router = new OlumRouter({ mode: "history", root: "/", routes });
+const router = new OlumRouter({ mode: "history", root: "/", err: "/err" , routes });
 export default router;
