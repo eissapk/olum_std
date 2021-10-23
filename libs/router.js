@@ -75,6 +75,9 @@
     
     // public
     this.isReady = false;
+    this.name = function () {
+      return "OlumRouter";
+    }
     this.freeze = function() {
       isFrozen = true;
     }

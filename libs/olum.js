@@ -67,8 +67,8 @@
 
     this.use = function (arg) {
       if (arg) {
-        if (arg.constructor && arg.constructor.name === "OlumRouter") which = { type: "router", cb: arg };
-        else if (arg.constructor && arg.constructor.name !== "") which = { type: "component", cb: arg };
+        if (arg.name && typeof arg.name === "function" && arg.name() === "OlumRouter") which = { type: "router", cb: arg };
+        else which = { type: "component", cb: arg };
         if (which) init();
         else throw new Error(debugStr + " Root component or router are not defined!");
       } else {
