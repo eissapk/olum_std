@@ -16,16 +16,6 @@
   export default class Features {
     feats = ["Markdown editor", "Notes sorting", "Dark mode", "advanced search engine"];
     margin = 25;
-    constructor() {}
-    data() {
-      return {
-        name: "Features",
-        components: { Nav, Header, Footer },
-        template: this.template(),
-        style: this.style(),
-        render: this.render.bind(this),
-      };
-    }
 
     render() {
       this.buildFeats();

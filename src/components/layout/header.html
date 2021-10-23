@@ -9,17 +9,6 @@
     mArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
     dArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     timeout = 1;
-    constructor() {}
-    data() {
-      return {
-        name: "Header",
-        components: {},
-        template: this.template(),
-        style: this.style(),
-        render: this.render.bind(this),
-        scoped: false,
-      };
-    }
 
     render() {
       this.syncTime();

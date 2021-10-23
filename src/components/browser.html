@@ -16,17 +16,6 @@
 
   export default class Browser {
     margin = 15;
-    constructor() {}
-
-    data() {
-      return {
-        name: "Browser",
-        components: { Tabs, Search, Notes, AddNote },
-        template: this.template(),
-        style: this.style(),
-        render: this.render.bind(this),
-      };
-    }
 
     render() {
       const container = $(".Browser");

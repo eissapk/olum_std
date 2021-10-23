@@ -8,16 +8,6 @@
 <script>
   import Aside from "../components/aside";
   export default class Section {
-    constructor() {}
-    data() {
-      return {
-        name: "Section",
-        components: { Aside },
-        template: this.template(),
-        style: this.style(),
-        render: this.render.bind(this),
-      };
-    }
 
     render() {      console.log("section component ran");
 }

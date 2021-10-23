@@ -42,17 +42,6 @@
     oldTap = 0;
     dblClickTimeout = 500;
 
-    constructor() {}
-    data() {
-      return {
-        name: "Tabs",
-        components: {},
-        template: this.template(),
-        style: this.style(),
-        render: this.render.bind(this),
-      };
-    }
-
     render() {
       this.slider = $(".Tabs .slider");
       const addBtn = $(".addTab");
