@@ -1,4 +1,4 @@
-import OlumRouter from "olum/dist/router.js";
+import OlumRouter from "olum-router";
 
 import Home from "../views/home.js";
 import Settings from "../views/settings.js";
