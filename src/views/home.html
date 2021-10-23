@@ -4,6 +4,7 @@
     <App-Header />
     <App-Browser />
     <App-Footer />
+    <input />
   </div>
 </template>
 
@@ -13,7 +14,7 @@
   import Header from "../components/layout/header";
   import Footer from "../components/layout/footer";
   import Browser from "../components/browser";
-  export default class Home {
+  class Home{
     constructor() {}
     data() {
       return {
@@ -28,6 +29,8 @@
     render() {
     }
   }
+
+export default Home;
 </script>
 
 <style lang="scss">
