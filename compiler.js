@@ -196,25 +196,51 @@ class Compiler {
     });
     return string;
   }
-
+  
+  scssImporter(file,scss) {
+          // extend css to outside component file - initial test
+          const importRegex =  /(\/*|\/\/)=?.*(@import)\s+((\'|\").*(\'|\"));?/gi;
+      
+          if (file.includes("home")) {
+            const imports = scss.match(importRegex);
+            console.log({imports});
+            
+            if (isFullArr(imports)) {
+              const paths = imports.map(imp => {
+                if (!imp.trim().startsWith("/")) {
+                  scss = scss.replace(imp, ""); // clean component style from unsupported @import
+                  return imp.replace(/\@import|\s|'|"|;/g, "").trim();
+                }
+              }).filter(item=>item !== undefined);
+              console.log({paths});
+              
+              const scssFullPath  = paths.map(_path=>{
+                let _file = file.replace(settings.src, "src");
+                const fileName = path.basename(_file);
+                return _file.replace(fileName, "") + _path;
+              });
+              
+              fs.readFile(scssFullPath[0], "utf8", (err, data) => {
+                if (err) return console.error(colors.red.bold(err));
+                console.log({data});
+              });
+              console.log({scssFullPath});
+              
+            }
+            
+          }
+    
+  }
+  
   css(file, data, shared, compiledShared) {
     return new Promise((resolve, reject) => {
       const styleArr = data.match(this.regex.style.all);
       const style = isFullArr(styleArr) ? styleArr[styleArr.length - 1] : ""; // get last style tag as the order of component file | because you may have style tag inside the class "script tag"
       let scss = style.replace(this.regex.style.tag, "");
       scss = this.stringify(scss, file);
-      
-      // extend css to outside component file - initial test
-      // const importRegex =  /(\/*|\/\/)=?.*(@import)\s+((\'|\").*(\'|\"));?/gi;
-      // if (file.includes("home")) {
-      //   const imports = scss.match(importRegex);
-      //   debugLib({imports});
-      //   if (isFullArr(imports)) {
-      //     const paths = imports.map(imp => (!imp.trim().startsWith("/")) ? imp.replace(/\@import|\s|'|"|;/g, "").trim() : undefined).filter(item=>item !== undefined);
-      //     debugLib({paths});
-      //   }
-      // }
 
+      // this.scssImporter(file,scss); // test
+      
       try {
         // compile sass to css 
         const css = this.hasSASS(style) ? sass.renderSync({
