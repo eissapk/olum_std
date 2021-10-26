@@ -203,6 +203,17 @@ class Compiler {
       const style = isFullArr(styleArr) ? styleArr[styleArr.length - 1] : ""; // get last style tag as the order of component file | because you may have style tag inside the class "script tag"
       let scss = style.replace(this.regex.style.tag, "");
       scss = this.stringify(scss, file);
+      
+      // extend css to outside component file - initial test
+      // const importRegex =  /(\/*|\/\/)=?.*(@import)\s+((\'|\").*(\'|\"));?/gi;
+      // if (file.includes("home")) {
+      //   const imports = scss.match(importRegex);
+      //   debugLib({imports});
+      //   if (isFullArr(imports)) {
+      //     const paths = imports.map(imp => (!imp.trim().startsWith("/")) ? imp.replace(/\@import|\s|'|"|;/g, "").trim() : undefined).filter(item=>item !== undefined);
+      //     debugLib({paths});
+      //   }
+      // }
 
       try {
         // compile sass to css 

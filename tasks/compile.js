@@ -8,11 +8,13 @@ const compile = mode => {
     if (mode === "development") {
       exec("node compiler.js compile dev", (error, stdout, stderr) => {
         if (error) return reject();
+        console.log(stderr);
         resolve();
       });
     } else if (mode === "production") {
       exec("node compiler.js compile", (error, stdout, stderr) => {
         if (error) return reject();
+        console.log(stderr);
         resolve();
       });
     }
