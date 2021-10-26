@@ -15,8 +15,8 @@ const server = () => {
         fallback: `./${settings.dest + settings.fallback}`,
       };
       connect.server(options);
-      logger(taskName, "end");
       resolve();
+      logger(taskName, "end");
     } catch (err) {
       reject(err);
     }

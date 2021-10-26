@@ -20,7 +20,7 @@ const colors = require("colors");
 const settings = require("./package.json").olum;
 
 // helpers
-const isDebugging = true;
+const isDebugging = false;
 const debugLib = arg => (isDebugging ? console.log(arg) : "");
 const quotes = (msg, color = "grey") => `'${colors[color].bold(msg)}'`;
 const log = (type, path, err) => quotes(`${type} : ${path.replace(settings.src, "src")}`, "white") + "\n" + colors.red.bold(err);
@@ -259,7 +259,7 @@ class Compiler {
       const js = script.replace(this.regex.script.tag, "");
       const hasJsClass = this.regex.script.classStartPoint.test(js);
       if (hasJsClass) resolve(js);
-      else reject(log("JS Class", file, "Couldn't find a class or opening curly bracket e.g. class Example '{' is followed with code"));
+      else reject(log("JS Class", file, "Couldn't find a class"));
     });
   }
 

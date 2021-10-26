@@ -1,7 +1,6 @@
 import { exec } from "child_process";
 import logger from "./logger";
 import reload from "./reload";
-import colors from "colors";
 
 const bundle = mode => {
   const taskName = "bundle";
@@ -9,16 +8,18 @@ const bundle = mode => {
     logger(taskName, "start");
     if (mode === "development") {
       exec("webpack --env dev", (error, stdout, stderr) => {
-        // if (stderr) return reject();
-        reload();
-        console.log(colors.red.bold(stdout));
+        if (error) return reject(error);
+        if (stderr.trim() !== "") return reject(stderr);
+        if (stdout !== "webpack compiled successfully\n") console.log(stdout);
         resolve();
+        reload();
         logger(taskName, "end");
       });
     } else if (mode === "production") {
       exec("webpack", (error, stdout, stderr) => {
-        // if (stderr) return reject();
-        console.log(colors.red.bold(stdout));
+        if (error) return reject(error);
+        if (stderr.trim() !== "") return reject(stderr);
+        if (stdout !== "webpack compiled successfully\n") console.log(stdout);
         resolve();
         logger(taskName, "end");
       });
