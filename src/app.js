@@ -8,7 +8,6 @@ import ar from "./locales/ar.js";
 // translations
 new Localize({ en, ar }, ["ar"]);
 console.log("olumDesc".trans());
-
 // new Olum({ prefix: "app" }).$("#app").use(Home);
 new Olum({ prefix: "app" }).$("#app").use(router);
 
