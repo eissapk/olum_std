@@ -1,5 +1,6 @@
 <template>
   <div class="Home">
+    <App-Siko />
     <App-Nav />
     <App-Header />
     <App-Browser />
@@ -13,24 +14,13 @@
   import Header from "../components/layout/header";
   import Footer from "../components/layout/footer";
   import Browser from "../components/browser";
+  import Siko from "../siko";
   class Home {
-    render() {
-    }
+    render() {}
   }
-
   export default Home;
 </script>
 
 <style lang="scss">
-  /* @import "../styles/foo.scss"; */
- // @import "../styles/foo.scss";
-  /* @import "../styles/foo.scss"; */
-  
-  .Home {
-    background-image: linear-gradient(rgba(65, 127, 245, 0.5), rgba(65, 127, 245, 0.5)), url(${bg});
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    background-size: cover;
-    background-position: center;
-  }
+  @import "../styles/home.scss";
 </style>
