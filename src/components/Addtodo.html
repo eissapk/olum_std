@@ -1,0 +1,61 @@
+<template>
+  <div class="AddTodo">
+    <form>
+      <input type="text" placeholder="Write a comment..." />
+      <button type="submit">${icons.add}</button>
+    </form>
+  </div>
+</template>
+
+<script>
+  import { $ } from "olum-helpers";
+  import { api } from "../services/api.js";
+  import icons from "../services/icons.js";
+  export default class AddTodo {
+    render() {
+      const form = $(".AddTodo form");
+      const input = $(".AddTodo input");
+      input.focus();
+
+      form.on("submit", e => {
+        e.preventDefault();
+        if (input.value != "") {
+          const todo = { title: input.value, id: new Date().getTime() };
+          api.add(todo);
+          form.reset();
+        }
+      });
+    }
+  }
+</script>
+
+<style lang="scss">
+  .AddTodo {
+    margin-top: 10px;
+    form {
+      overflow: hidden;
+      input {
+        padding: 0 12px;
+        background: #f2f3f5;
+        border-radius: 18px;
+        border: 0;
+        border: 1px solid #dddfe2;
+        width: calc(100% - 50px);
+        outline: none;
+        float: left;
+        font-weight: 400;
+        font-size: 13px;
+        font-family: Helvetica;
+        color: #1c1e21;
+        height: 40px;
+      }
+      button {
+        height: 40px;
+        width: 40px;
+        float: left;
+        margin-left: 5px;
+        padding: 0;
+      }
+    }
+  }
+</style>

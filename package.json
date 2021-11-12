@@ -1,15 +1,14 @@
 {
-  "name": "olum-std",
-  "version": "0.3.0",
+  "name": "todo-list",
+  "version": "0.1.0",
   "private": true,
-  "description": "The VanillaJS developer’s platform.",
+  "description": "Todo List",
   "main": "index.js",
   "scripts": {
     "dev": "olum-compiler dev",
     "build": "olum-compiler build"
   },
   "dependencies": {
-    "marked": "^3.0.7",
     "olum": "git+https://github.com/olumjs/olum.git",
     "olum-helpers": "git+https://github.com/olumjs/olum-helpers.git",
     "olum-router": "git+https://github.com/olumjs/olum-router.git"
@@ -31,7 +30,7 @@
     "fallback": "/",
     "comments": false,
     "hash": 5,
-    "title": "My Note",
+    "title": "Todo List",
     "polyfill": false,
     "assetAsModule": true,
     "https": false,
@@ -39,9 +38,9 @@
     "template": "./public/index.html",
     "serviceWorker": false,
     "manifest": {
-      "name": "My Note - Progressive Web App",
-      "short_name": "My Note",
-      "description": "Advanced todo app with markdown editor",
+      "name": "Todo List - Progressive Web App",
+      "short_name": "Todo List",
+      "description": "Todo List",
       "background_color": "#ffffff",
       "publicPath": "./",
       "display": "standalone",

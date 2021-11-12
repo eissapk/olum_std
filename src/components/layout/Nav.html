@@ -1,0 +1,35 @@
+<template>
+  <div class="Nav">
+    <a to="/">Home</a>
+    <a to="/about">About</a>
+  </div>
+</template>
+
+<script>
+  export default class Nav {
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Nav {
+    height: 40px;
+    border: 1px solid $border;
+    border-left: none;
+    border-right: none;
+    line-height: 40px;
+    text-align: center;
+    box-sizing: content-box;
+    a {
+      text-decoration: none;
+      color: #606770;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0 20px;
+      &.active {
+        color: $blue;
+      }
+    }
+  }
+</style>

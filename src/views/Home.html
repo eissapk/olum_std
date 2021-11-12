@@ -1,0 +1,28 @@
+<template>
+  <div class="Home">
+    <Nav />
+    <Todos />
+    <AddTodo />
+  </div>
+</template>
+
+<script>
+  import Nav from "../components/layout/Nav.html";
+  import Todos from "../components/Todos.html";
+  import AddTodo from "../components/Addtodo.html";
+  export default class Home {
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Home {
+    max-width: 500px;
+    width: calc(100% - 20px);
+    background-color: white;
+    margin: 10px auto;
+    border-radius: 3px;
+    border: 1px solid $border;
+    padding: 10px;
+  }
+</style>
