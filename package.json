@@ -1,36 +1,28 @@
 {
-  "name": "todo-list",
+  "name": "starter",
   "version": "0.1.0",
   "private": true,
-  "description": "Todo List",
+  "description": "starter",
   "main": "index.js",
   "scripts": {
     "dev": "olum-compiler dev",
     "build": "olum-compiler build"
   },
+  "author": "Eissa Saber",
   "dependencies": {
-    "olum": "git+https://github.com/olumjs/olum.git",
-    "olum-helpers": "git+https://github.com/olumjs/olum-helpers.git",
-    "olum-router": "git+https://github.com/olumjs/olum-router.git"
+    "olum": "latest",
+    "olum-router": "latest"
   },
   "devDependencies": {
-    "olum-compiler": "git+https://github.com/olumjs/olum-compiler.git"
+    "olum-compiler": "latest"
   },
-  "keywords": [
-    "olum",
-    "olumjs",
-    "vanilla",
-    "spa"
-  ],
-  "author": "Eissa Saber",
-  "license": "MIT",
   "olum": {
     "port": 8000,
     "livereload": true,
     "fallback": "/",
     "comments": false,
     "hash": 5,
-    "title": "Todo List",
+    "title": "Starter",
     "polyfill": false,
     "assetAsModule": true,
     "https": false,
@@ -38,9 +30,9 @@
     "template": "./public/index.html",
     "serviceWorker": false,
     "manifest": {
-      "name": "Todo List - Progressive Web App",
-      "short_name": "Todo List",
-      "description": "Todo List",
+      "name": "Starter - Progressive Web App",
+      "short_name": "Starter",
+      "description": "Starter",
       "background_color": "#ffffff",
       "publicPath": "./",
       "display": "standalone",

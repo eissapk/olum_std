@@ -1,12 +1,12 @@
 <template>
   <div class="About">
     <Nav />
-    <p>Made with ❤️ by Olumjs</p>
+    <h2>About Page</h2>
   </div>
 </template>
 
 <script>
-  import Nav from "../components/layout/Nav.html";
+  import Nav from "../components/Nav";
   export default class About {
     render() {}
   }
@@ -14,22 +14,11 @@
 
 <style lang="scss">
   .About {
-    max-width: 500px;
-    width: calc(100% - 20px);
-    background-color: white;
-    margin: 10px auto;
-    border-radius: 3px;
-    border: 1px solid $border;
-    padding: 10px;
-    > p {
-      font: {
-        weight: 400;
-        size: 14px;
-      }
-      margin-top: 10px;
-      line-height: 19px;
-      word-break: break-word;
-      color: #1d2129;
+    width: 100vw;
+    height: 100vh;
+    background-color: #2b2a3e;
+    h2 {
+      color: white;
       text-align: center;
     }
   }

@@ -1,64 +1,11 @@
-@import "./styles/normalize.scss";
-@import "./styles/shared.scss";
-@import "./styles/mixins.scss";
-
-*,
-*::after,
-*::before {
+/* global styling for the whole app */
+* {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
-
-html,
-body {
-  font-family: Helvetica, Arial, sans-serif;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
   letter-spacing: 0.5px;
-  background-color: #e9ebee;
-}
-
-a {
-  text-decoration: none;
-  outline: none;
-  &:active {
-    @include btnAnimation;
-  }
-  
-  &:focus {
-    box-shadow: 0 0 3px 1px rgba($blue, 0.5);
-  }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ul {
-  margin: 0;
-  padding: 0;
-}
-
-ul {
-  list-style-type: none;
-}
-
-svg {
-  pointer-events: none;
-}
-
-button {
-  background: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: $radius;
-  &:active {
-    @include btnAnimation;
-  }
-  &:focus {
-    box-shadow: 0 0 3px 1px rgba($blue, 0.5);
-  }
 }

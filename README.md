@@ -1,4 +1,4 @@
-# todo-list
+# starter
 
 ## Installation
 ```
