@@ -1,8 +1,8 @@
 {
-  "name": "starter",
+  "name": "jira",
   "version": "0.1.0",
   "private": true,
-  "description": "starter",
+  "description": "Jira",
   "main": "index.js",
   "scripts": {
     "dev": "olum-compiler dev",
@@ -10,11 +10,13 @@
   },
   "author": "Eissa Saber",
   "dependencies": {
-    "olum": "latest",
-    "olum-router": "latest"
+    "bootstrap": "^5.1.3",
+    "olum": "0.2.4",
+    "olum-router": "0.1.3",
+    "olum-helpers": "0.1.0"
   },
   "devDependencies": {
-    "olum-compiler": "latest"
+    "olum-compiler": "0.2.6"
   },
   "olum": {
     "port": 8000,
@@ -22,7 +24,7 @@
     "fallback": "/",
     "comments": false,
     "hash": 5,
-    "title": "Starter",
+    "title": "Jira",
     "polyfill": false,
     "assetAsModule": true,
     "https": false,
@@ -30,9 +32,9 @@
     "template": "./public/index.html",
     "serviceWorker": false,
     "manifest": {
-      "name": "Starter - Progressive Web App",
-      "short_name": "Starter",
-      "description": "Starter",
+      "name": "Jira - Progressive Web App",
+      "short_name": "Jira",
+      "description": "Jira",
       "background_color": "#ffffff",
       "publicPath": "./",
       "display": "standalone",

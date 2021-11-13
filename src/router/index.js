@@ -1,9 +1,12 @@
 import OlumRouter from "olum-router";
-import Home from "../views/Home";
-import About from "../views/About";
+import Board from "../views/Board";
+import Settings from "../views/Settings";
 
-const routes = [ { path: "/", comp: Home }, { path: "/about", comp: About } ];
+const routes = [
+  { path: "/board", comp: Board },
+  { path: "/settings", comp: Settings },
+];
 
-const router = new OlumRouter({ routes });
+const router = new OlumRouter({ routes, mode: "history" });
 
 export default router;

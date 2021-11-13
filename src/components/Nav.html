@@ -1,26 +1,334 @@
 <template>
   <div class="Nav">
-    <a to="/">Home</a>
-    <a to="/about">About</a>
+    <!-- left -->
+    <div class="Nav__left">
+      <!-- upper -->
+      <section class="Nav__left__upper">
+        <a to="/" class="Nav__left__upper__logo">${icons.logo}</a>
+        <!-- search -->
+        <button type="button" class="Nav__left__upper__search--btn">
+          ${icons.search}
+          <span class="hint">Search issues</span>
+        </button>
+        <!-- create -->
+        <button type="button" class="Nav__left__upper__create--btn">
+          ${icons.plus}
+          <span class="hint">Create issues</span>
+        </button>
+      </section>
+
+      <!-- lower -->
+      <section class="Nav__left__lower">
+        <!-- user -->
+        <button type="button" class="Nav__left__user--btn">
+          <img src="https://avatars.githubusercontent.com/u/37540234" alt="user" />
+          <span class="hint">Eissa Saber</span>
+        </button>
+        <!-- about -->
+        <button type="button" class="Nav__left__about--btn">
+          ${icons.qMark}
+          <span class="hint">About</span>
+        </button>
+      </section>
+    </div>
+
+    <!-- right -->
+    <div class="Nav__right">
+      <!-- toggle btn -->
+      <button type="button" class="Nav__right__toggle--btn">
+        <span class="leftArrow">${icons.leftArrow}</span>
+        <span class="rightArrow">${icons.rightArrow}</span>
+      </button>
+      <div class="Nav__right__toggle--btn"></div>
+
+      <!-- links -->
+      <ul class="Nav__right__links">
+        <li class="Nav__right__links__details">
+          <span>
+            <img src="https://olumjs.github.io/logo.png" alt="logo" />
+          </span>
+          <span>
+            <h3>Olum Jira Clone</h3>
+            <p>Software project</p>
+          </span>
+        </li>
+        <li class="Nav__right__links__board--btn active" to="/board">${icons.board} Olum Board</li>
+        <li class="Nav__right__links__projectSettings--btn" to="/settings">${icons.settings} Project settings</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
+  import icons from "../services/icons.js";
+  import { $, debug } from "olum-helpers";
+  let isShown = true;
   export default class Nav {
-    render() {}
+    render() {
+      const container = $(".Nav");
+      const rightNav = $(container).get(".Nav__right");
+      const settings = $(".SettingsContent");
+      const board = $(".BoardContent");
+      container.on("click", e => {
+        if (e.target.classList.contains("Nav__right__toggle--btn")) {
+          if (isShown) {
+            isShown = false;
+            rightNav.classList.add("hide");
+            if (settings) settings.style.width = "calc(100% - 85px)";
+            if (board) board.style.width = "calc(100% - 85px)";
+          } else {
+            isShown = true;
+            rightNav.classList.remove("hide");
+            if (settings) settings.style.width = "calc(100% - 304px)";
+            if (board) board.style.width = "calc(100% - 304px)";
+          }
+        }
+      });
+    }
   }
 </script>
 
 <style lang="scss">
   .Nav {
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    a {
-      text-decoration: none;
-      color: #ffffff;
-      &.active {
-        color: #fda45e;
+    display: inline-grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto auto;
+    height: 100vh;
+    width: auto;
+    &__left {
+      grid-row: 1/2;
+      grid-column: 1/2;
+      height: 100%;
+      width: 64px;
+      background: #0747a6;
+      padding: 24px 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      z-index: 1;
+      &__upper {
+        grid-row: 1/2;
+        grid-column: 1/2;
+        &__logo {
+          display: block;
+          width: 32px;
+          height: 32px;
+          margin: 0 auto;
+          svg {
+            color: #deebff;
+          }
+        }
+      }
+
+      &__lower {
+        grid-row: 2/3;
+        grid-column: 1/2;
+        align-self: end;
+      }
+
+      section {
+        button {
+          position: relative;
+          width: 32px;
+          height: 32px;
+          margin: 0 auto;
+          display: block;
+          margin-top: 10px;
+          border-radius: 50%;
+          transition: background 0.1s ease;
+          &:hover {
+            background-color: #1c63ce;
+            .hint {
+              display: block;
+            }
+          }
+          svg {
+            fill: white;
+            width: 20px;
+            height: 20px;
+            margin: 6px;
+          }
+
+          img {
+            width: 25px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 50%;
+          }
+          .hint {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 45px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            color: white;
+            font-size: 15px;
+            white-space: nowrap;
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+            &::before {
+              content: "";
+              position: absolute;
+              left: -14px;
+              top: 7px;
+              border: 7px solid transparent;
+              border-right-color: rgba(0, 0, 0, 0.7);
+            }
+          }
+        }
+      }
+    }
+    &__right {
+      position: relative;
+      grid-row: 1/2;
+      grid-column: 2/3;
+      height: 100%;
+      width: 240px;
+      padding: 0 10px;
+      background-color: #f4f5f7;
+      transition: width 0.2s ease;
+      span.leftArrow {
+        display: inline-block !important;
+      }
+      span.rightArrow {
+        display: none !important;
+      }
+      &.hide {
+        width: 0;
+        span.leftArrow {
+          display: none !important;
+        }
+        span.rightArrow {
+          display: inline-block !important;
+        }
+      }
+
+      div.Nav__right__toggle--btn {
+        position: absolute;
+        right: -10px;
+        top: 0;
+        width: 20px;
+        height: 100vh;
+        cursor: e-resize;
+        &::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 9px;
+          width: 2px;
+          height: 100%;
+          background: #e2e8f0;
+          transition: background 0.2s ease;
+        }
+        &:hover {
+          &::after {
+            background: #1890ff;
+          }
+        }
+      }
+
+      button.Nav__right__toggle--btn {
+        position: absolute;
+        top: 24px;
+        right: -20px;
+        width: 40px;
+        height: 40px;
+        z-index: 1;
+        span {
+          width: 25px;
+          height: 25px;
+          background: white;
+          border-radius: 50%;
+          display: inline-block;
+          margin: 7.5px;
+          box-shadow: 0 0 0 1px rgba(9, 30, 66, 8%), 0 2px 4px 1px rgba(9, 30, 66, 8%);
+          box-sizing: border-box;
+          border: 0 solid #e2e8f0;
+          transition: background 0.2s ease;
+          pointer-events: none;
+          svg {
+            width: 20px;
+            fill: #5e6c84;
+            margin: 2.5px;
+          }
+        }
+        &:hover {
+          span {
+            background: #1890ff;
+            svg {
+              fill: white;
+            }
+          }
+          ~ div.Nav__right__toggle--btn::after {
+            background: #1890ff;
+          }
+        }
+      }
+
+      &__links {
+        padding: 0 6px;
+        &__details {
+          margin: 24px 0 !important;
+          height: auto !important;
+          &:hover {
+            background: transparent !important;
+          }
+          span {
+            float: left;
+          }
+          > span:first-of-type {
+            width: 45px;
+            height: 45px;
+            margin-left: 20px;
+            img {
+              height: 45px;
+              margin: 0 auto;
+              display: block;
+            }
+          }
+          > span:last-of-type {
+            margin-left: 5px;
+            h3 {
+              margin: 0;
+              font-size: 15px;
+              font-weight: normal;
+              color: #333;
+            }
+            p {
+              margin: 0;
+              font-size: 13px;
+              color: #666;
+            }
+            h3,
+            p {
+              line-height: 25px;
+            }
+          }
+        }
+        li {
+          margin-top: 2px;
+          overflow: hidden;
+          height: 40px;
+          line-height: 40px;
+          color: #172b4d;
+          transition: background ease 0.2s;
+          cursor: pointer;
+          border-radius: 2px;
+          svg {
+            width: 20px;
+            margin: 10px;
+            margin: 10px 15px 10px 10px;
+            float: left;
+          }
+          &:hover {
+            background: #ebecf0;
+          }
+          &.active {
+            color: #0747a6;
+            background: #ebecf0;
+          }
+        }
       }
     }
   }

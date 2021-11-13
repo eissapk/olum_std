@@ -1,0 +1,25 @@
+<template>
+  <div class="Settings">
+    <Nav />
+    <SettingsContent />
+</template>
+
+<script>
+  import Nav from "../components/Nav.html";
+  import SettingsContent from "../components/SettingsContent.html";
+  export default class Settings {
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Settings {
+    &__content {
+      float: right;
+      width: calc(100% - 304px);
+      transition: width 0.2s ease;
+      height:100vh;
+      padding: 24px;
+    }
+  }
+</style>
