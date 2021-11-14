@@ -1,0 +1,60 @@
+{
+  "cards": [
+    {
+      "column": {
+        "id": 1,
+        "title": "backlog"
+      },
+      "id": 1,
+      "title": "fix x bug",
+      "desc": "you will be needing y for testing the x bug",
+      "assignees": ["eissapk"],
+      "type": "bug",
+      "priority": "low",
+      "reporter": "thor",
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+    },
+    {
+      "column": {
+        "id": 2,
+        "title": "in progress"
+      },
+      "id": 2,
+      "title": "make x feature",
+      "desc": "you will be needing y for testing the xyz bug",
+      "assignees": ["eissapk"],
+      "type": "task",
+      "priority": "high",
+      "reporter": "thor",
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+    },
+    {
+      "column": {
+        "id": 2,
+        "title": "in progress"
+      },
+      "id": 3,
+      "title": "apply foo task",
+      "desc": "you will be needing y for testing the xyz bug",
+      "assignees": ["eissapk"],
+      "type": "task",
+      "priority": "medium",
+      "reporter": "thor",
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+    },
+    {
+      "column": {
+        "id": 3,
+        "title": "done"
+      },
+      "id": 4,
+      "title": "apply siko task",
+      "desc": "you will be needing y for testing the xyz bug",
+      "assignees": ["eissapk"],
+      "type": "task",
+      "priority": "medium",
+      "reporter": "thor",
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+    }
+  ]
+}

@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "olum-compiler dev",
-    "build": "olum-compiler build"
+    "build": "olum-compiler build",
+    "db": "json-server --watch db.json"
   },
   "author": "Eissa Saber",
   "dependencies": {
@@ -16,6 +17,7 @@
     "olum-helpers": "0.1.0"
   },
   "devDependencies": {
+    "json-server": "^0.17.0",
     "olum-compiler": "0.2.6"
   },
   "olum": {

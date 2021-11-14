@@ -1,15 +1,90 @@
 <template>
-  <div class="Columns">
-    <section class="Columns__column">1</section>
-    <section class="Columns__column">2</section>
-    <section class="Columns__column">3</section>
-    <section class="Columns__column">4</section>
-  </div>
+  <div class="Columns"></div>
 </template>
 
 <script>
+  import bugIcon from "../assets/bug.png";
+  import taskIcon from "../assets/task.png";
+  import lowIcon from "../assets/low.png";
+  import mediumIcon from "../assets/medium.png";
+  import highIcon from "../assets/high.png";
+  import { $, debug, Origin } from "olum-helpers";
   export default class Columns {
-    render() {}
+    render() {
+      this.origin = new Origin();
+      this.displayCards();
+    }
+
+    displayCards() {
+      const container = $(".Columns");
+      this.origin
+        .get("http://localhost:3000/cards")
+        .then(data => {
+          // gather columns in an array 
+          const columnsArr = data.map(item => item.column);
+          // create markup of columns
+          const colMarkup = columnsArr.map(col => {
+            return {
+              content: `
+              <section class="Columns__column">
+                <h4 class="Columns__column__title">${col.title}</h4>
+                <div class="Columns__column__cards"> 
+                  {{cards}}
+                </div>
+              </section>
+              `,
+              id: col.id
+            }
+          });
+          
+          const cols = [];
+          // loop to make structure
+          colMarkup.forEach(col => {
+            const colId = col.id;
+            
+            const cards = data.map(card => {
+              if (card.column.id == colId) {
+                return `
+                  <section class="Columns__column__cards__card">
+                    <h4 class="Columns__column__cards__card__title">${card.title}</h4>
+                    <div class="Columns__column__cards__card__info">
+                      <span class="Columns__column__cards__card__info__assignees">
+                        <img src="https://avatars.githubusercontent.com/u/37540234" alt="assignee" />
+                        <img src="https://avatars.githubusercontent.com/u/37540234" alt="assignee" />
+                      </span>
+                      <span class="Columns__column__cards__card__info__num">${card.type.upper()}-${card.id}</span>
+                      <span class="Columns__column__cards__card__info__priority">
+                        <img src="${card.priority == "low" ?  lowIcon : card.priority == "medium" ? mediumIcon :  card.priority == "high" ? highIcon : ""}" alt="priority" />
+                      </span>
+                      <span class="Columns__column__cards__card__info__type">
+                        <img src="${card.type == "task" ? taskIcon : card.type == "bug" ? bugIcon : ""}" alt="type" />
+                      </span>
+                    </div>
+                  </section>
+                `;
+              }
+            }).join("");
+            
+            // get final column markup within its cards
+            col.content = col.content.replace("{{cards}}", cards);
+            cols.push(col);
+          });
+          
+          const seen = new Set();
+          const filteredArr = cols.filter(el => {
+            const duplicate = seen.has(el.id);
+            seen.add(el.id);
+            return !duplicate;
+          });
+
+          const markup = filteredArr.map(col => col.content).join("");
+
+          // update UI
+          container.innerHTML = markup;
+
+        })
+        .catch(console.error);
+    }
   }
 </script>
 
@@ -18,15 +93,78 @@
     height: 100%;
     white-space: nowrap;
     overflow: auto;
-    height: calc(100% - 10px);
     &__column {
       width: 280px;
-      height: calc(100% - 10px);
       background: #f4f5f7;
       overflow: hidden;
       display: inline-block;
       white-space: nowrap;
       margin: 0 2.5px;
+      min-height: 100px;
+      border-radius: 3px;
+      padding: 5px;
+      box-shadow: 0 0 0 1px rgba(9, 30, 66, 8%), 0 2px 4px 1px rgba(9, 30, 66, 8%);
+      margin-top: 1px;
+      &__title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: normal;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding: 5px 15px;
+      }
+
+      &__cards {
+        &__card {
+          padding: 10px;
+          background: white;
+          border-radius: 3px;
+          margin: 5px 0;
+          overflow: hidden;
+          border: 1px solid #ededed;
+          cursor: pointer;
+          &__title {
+            font-weight: normal;
+            margin: 0 0 12px 0;
+            white-space: normal;
+          }
+
+          &__info {
+            overflow: hidden;
+            &__assignees {
+              float: left;
+              margin-right: 10px;
+              img {
+                height: 30px;
+                box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08);
+                float: left;
+                border-radius: 50%;
+              }
+            }
+
+            &__num {
+              float: left;
+              font-size: 15px;
+              color: #666;
+            }
+
+            &__type {
+              float: right;
+              margin: 0 10px 0 0;
+              img {
+                height: 20px;
+              }
+            }
+
+            &__priority {
+              float: right;
+              img {
+                height: 20px;
+              }
+            }
+          }
+        }
+      }
     }
   }
 </style>
