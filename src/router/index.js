@@ -3,7 +3,7 @@ import Board from "../views/Board";
 import Settings from "../views/Settings";
 
 const routes = [
-  { path: "/board", comp: Board },
+  { path: "/", comp: Board },
   { path: "/settings", comp: Settings },
 ];
 
