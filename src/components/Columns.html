@@ -8,24 +8,39 @@
   import lowIcon from "../assets/low.png";
   import mediumIcon from "../assets/medium.png";
   import highIcon from "../assets/high.png";
+  import icons from "../services/icons.js";
   import { $, debug, Origin } from "olum-helpers";
+  import router from "../router/index.js";
+  import api from "../services/api.js";
   export default class Columns {
     render() {
       this.origin = new Origin();
-      this.displayCards();
+      this.getData();
     }
 
-    displayCards() {
-      const container = $(".Columns");
+    getData() {
+      const url1 = "http://localhost:3000/cards";
+      const url2 = "http://localhost:3000/members";
       this.origin
-        .get("http://localhost:3000/cards")
-        .then(data => {
-          // gather columns in an array 
-          const columnsArr = data.map(item => item.column);
-          // create markup of columns
-          const colMarkup = columnsArr.map(col => {
-            return {
-              content: `
+        .get(url1)
+        .then(cards => {
+          this.origin
+            .get(url2)
+            .then(members => {
+              this.mkCols({ cards, members });
+            })
+            .catch(console.error);
+        })
+        .catch(console.error);
+    }
+
+    mkCols(obj) {
+      // gather columns in an array
+      const columnsArr = obj.cards.map(item => item.column);
+      // create markup of columns
+      const colMarkup = columnsArr.map(col => {
+        return {
+          content: `
               <section class="Columns__column">
                 <h4 class="Columns__column__title">${col.title}</h4>
                 <div class="Columns__column__cards"> 
@@ -33,57 +48,100 @@
                 </div>
               </section>
               `,
-              id: col.id
-            }
-          });
-          
-          const cols = [];
-          // loop to make structure
-          colMarkup.forEach(col => {
-            const colId = col.id;
-            
-            const cards = data.map(card => {
-              if (card.column.id == colId) {
-                return `
-                  <section class="Columns__column__cards__card">
-                    <h4 class="Columns__column__cards__card__title">${card.title}</h4>
-                    <div class="Columns__column__cards__card__info">
-                      <span class="Columns__column__cards__card__info__assignees">
-                        <img src="https://avatars.githubusercontent.com/u/37540234" alt="assignee" />
-                        <img src="https://avatars.githubusercontent.com/u/37540234" alt="assignee" />
-                      </span>
-                      <span class="Columns__column__cards__card__info__num">${card.type.upper()}-${card.id}</span>
-                      <span class="Columns__column__cards__card__info__priority">
-                        <img src="${card.priority == "low" ?  lowIcon : card.priority == "medium" ? mediumIcon :  card.priority == "high" ? highIcon : ""}" alt="priority" />
-                      </span>
-                      <span class="Columns__column__cards__card__info__type">
-                        <img src="${card.type == "task" ? taskIcon : card.type == "bug" ? bugIcon : ""}" alt="type" />
-                      </span>
+          id: col.id,
+        };
+      });
+
+      this.mkCards(colMarkup, obj);
+    }
+
+    mkMemberIMG(card, members) {
+      let markup = card.assignees
+        .map((assignee, index) => {
+          if (members[assignee]) {
+            return `
+          <span class="clickCard" data-cardId="${card.id}" style="margin-left: -${index > 0 ? 10 : "0"}px; ${index > 2 ? "display: none;" : ""}">
+            <img class="clickCard" data-cardId="${card.id}" src="${members[assignee]}" alt="${assignee}" /> 
+            <span class="hint clickCard" data-cardId="${card.id}">${assignee}</span>
+          </span>
+          `;
+          }
+        })
+        .join("");
+
+      if (card.assignees.length > 3) markup += `<span class="more clickCard" data-cardId="${card.id}" style="margin-left:-10px;">${icons.dots}</span>`;
+      return markup;
+    }
+
+    mkPriorityIMG(card) {
+      let icon;
+      if (card.priority == "low") icon = lowIcon;
+      else if (card.priority == "high") icon = mediumIcon;
+      else if (card.priority == "medium") icon = highIcon;
+      return `<img src=${icon} alt=${card.priority} class="clickCard" data-cardId="${card.id}"/><span class="hint clickCard" data-cardId="${card.id}">${card.priority}</span>`;
+    }
+
+    mkTypeIMG(card) {
+      let icon;
+      if (card.type == "task") icon = taskIcon;
+      else if (card.type == "bug") icon = bugIcon;
+      return `<img src=${icon} alt=${card.type} class="clickCard" data-cardId="${card.id}"/><span class="hint clickCard" data-cardId="${card.id}">${card.type}</span>`;
+    }
+
+    mkCards(colMarkup, obj) {
+      const container = $(".Columns");
+      const cols = [];
+
+      // loop to make structure
+      colMarkup.forEach(col => {
+        const colId = col.id;
+        const cards = obj.cards
+          .map(card => {
+            if (card.column.id == colId) {
+              return `
+                  <section class="Columns__column__cards__card clickCard" data-cardId="${card.id}">
+                    <h4 class="Columns__column__cards__card__title clickCard" data-cardId="${card.id}">${card.title}</h4>
+                    <div class="Columns__column__cards__card__info clickCard" data-cardId="${card.id}">
+                      <div class="Columns__column__cards__card__info__assignees clickCard" data-cardId="${card.id}">${this.mkMemberIMG(card, obj.members)}</div>
+                      <div class="Columns__column__cards__card__info__num clickCard" data-cardId="${card.id}">${card.type.upper()}-${card.id}</div>
+                      <div class="Columns__column__cards__card__info__priority clickCard" data-cardId="${card.id}">${this.mkPriorityIMG(card)}</div>
+                      <div class="Columns__column__cards__card__info__type clickCard" data-cardId="${card.id}">${this.mkTypeIMG(card)}</div>
                     </div>
                   </section>
                 `;
-              }
-            }).join("");
-            
-            // get final column markup within its cards
-            col.content = col.content.replace("{{cards}}", cards);
-            cols.push(col);
-          });
-          
-          const seen = new Set();
-          const filteredArr = cols.filter(el => {
-            const duplicate = seen.has(el.id);
-            seen.add(el.id);
-            return !duplicate;
-          });
+            }
+          })
+          .join("");
 
-          const markup = filteredArr.map(col => col.content).join("");
+        // get final column markup within its cards
+        col.content = col.content.replace("{{cards}}", cards);
+        cols.push(col);
+      });
 
-          // update UI
-          container.innerHTML = markup;
+      // remove duplicated columns
+      const seen = new Set();
+      const filteredArr = cols.filter(el => {
+        const duplicate = seen.has(el.id);
+        seen.add(el.id);
+        return !duplicate;
+      });
 
-        })
-        .catch(console.error);
+      // update UI
+      const markup = filteredArr.map(col => col.content).join("");
+      container.innerHTML = markup;
+      this.openCard();
+    }
+
+    openCard() {
+      const container = $(".Columns");
+      container.on("click", e => {
+        if (e.target.classList.contains("clickCard")) {
+          const id = e.target.getAttribute("data-cardId");
+          // debug([e.target, id]);
+          api.currentCardId = id;
+          router.navigate("/card");
+        }
+      });
     }
   }
 </script>
@@ -134,11 +192,65 @@
             &__assignees {
               float: left;
               margin-right: 10px;
-              img {
-                height: 30px;
-                box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08);
+              > span {
+                position: relative;
                 float: left;
-                border-radius: 50%;
+
+                img {
+                  height: 30px;
+                  border: 2px solid white;
+                  float: left;
+                  border-radius: 50%;
+                  box-sizing: content-box;
+                  &:hover {
+                    ~ span.hint {
+                      display: inline-block;
+                      z-index: 999;
+                      top: 50%;
+                      left: 40px;
+                      transform: translateY(-50%);
+                    }
+                  }
+                }
+
+                .hint {
+                  display: none;
+                  position: absolute;
+                  background-color: rgba(0, 0, 0, 0.7);
+                  padding: 5px;
+                  color: white;
+                  font-size: 15px;
+                  white-space: nowrap;
+                  border-radius: 2px;
+                  transition: all 0.3s ease-in-out;
+                  &::before {
+                    content: "";
+                    position: absolute;
+                    left: -14px;
+                    top: 12px;
+                    border: 7px solid transparent;
+                    border-right-color: rgba(0, 0, 0, 0.7);
+                  }
+                }
+
+                &.more {
+                  margin-left: -10px;
+                  width: 30px;
+                  height: 30px;
+                  background: #eee;
+                  border-radius: 50%;
+                  border: 2px solid white;
+                  box-sizing: content-box;
+                  svg {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    fill: #172b4d;
+                    width: 15px;
+                    height: 15px;
+                  }
+                }
               }
             }
 
@@ -150,16 +262,83 @@
 
             &__type {
               float: right;
-              margin: 0 10px 0 0;
+              position: relative;
+              width: 30px;
+              height: 30px;
               img {
                 height: 20px;
+                padding: 5px;
+                box-sizing: content-box;
+                &:hover {
+                  ~ span.hint {
+                    display: inline-block;
+                    z-index: 999;
+                    top: 50%;
+                    right: calc(100% + 5px);
+                    transform: translateY(-50%);
+                  }
+                }
+              }
+
+              .hint {
+                display: none;
+                position: absolute;
+                background-color: rgba(0, 0, 0, 0.7);
+                padding: 5px;
+                color: white;
+                font-size: 15px;
+                white-space: nowrap;
+                border-radius: 2px;
+                transition: all 0.3s ease-in-out;
+                &::before {
+                  content: "";
+                  position: absolute;
+                  left: 100%;
+                  top: 14px;
+                  border: 7px solid transparent;
+                  border-left-color: rgba(0, 0, 0, 0.7);
+                }
               }
             }
 
             &__priority {
               float: right;
+              position: relative;
+              width: 30px;
+              height: 30px;
               img {
                 height: 20px;
+                padding: 5px;
+                box-sizing: content-box;
+                &:hover {
+                  ~ span.hint {
+                    display: inline-block;
+                    z-index: 999;
+                    top: 50%;
+                    right: calc(100% + 5px);
+                    transform: translateY(-50%);
+                  }
+                }
+              }
+
+              .hint {
+                display: none;
+                position: absolute;
+                background-color: rgba(0, 0, 0, 0.7);
+                padding: 5px;
+                color: white;
+                font-size: 15px;
+                white-space: nowrap;
+                border-radius: 2px;
+                transition: all 0.3s ease-in-out;
+                &::before {
+                  content: "";
+                  position: absolute;
+                  left: 100%;
+                  top: 14px;
+                  border: 7px solid transparent;
+                  border-left-color: rgba(0, 0, 0, 0.7);
+                }
               }
             }
           }

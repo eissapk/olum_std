@@ -1,0 +1,28 @@
+<template>
+  <div id="card"></div>
+</template>
+
+<script>
+  import api from "../services/api.js";
+  import { Origin, $ } from "olum-helpers";
+  export default class Card {
+    render() {
+      this.origin = new Origin();
+      this.getData(api.currentCardId);
+    }
+    getData(id) {
+      const container = $("#card");
+      this.origin
+        .get("http://localhost:3000/cards/" + id)
+        .then(data => {
+          container.innerHTML = JSON.stringify(data);
+        })
+        .catch(console.error);
+    }
+  }
+</script>
+
+<style lang="scss">
+  #card {
+  }
+</style>

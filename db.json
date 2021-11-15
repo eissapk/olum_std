@@ -1,4 +1,11 @@
 {
+  "members": {
+    "eissapk": "https://avatars.githubusercontent.com/u/37540234",
+    "thor": "https://pbs.twimg.com/profile_images/725313588781547520/x2bfL_No_400x400.jpg",
+    "ironman": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtJm5QCdvcTf04eFR3cpWk5i4ZFiUBnp81HAg-RuOYuE8ZrTp3DC0CO7lXp_t-lhhDHSQ&usqp=CAU",
+    "spiderman": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5Ruc5hUbkAKon7BVn7G3Gpgom4XsCKQPwDshwzPeTarjx47ojKHtVUPJARv7m7074ARI&usqp=CAU",
+    "batman": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0e8DqnZHWk_Qjf-y8-Z7I3rR3g8fUEVVhZA&usqp=CAU"
+  },
   "cards": [
     {
       "column": {
@@ -8,7 +15,7 @@
       "id": 1,
       "title": "fix x bug",
       "desc": "you will be needing y for testing the x bug",
-      "assignees": ["eissapk"],
+      "assignees": ["eissapk", "thor"],
       "type": "bug",
       "priority": "low",
       "reporter": "thor",
@@ -22,7 +29,7 @@
       "id": 2,
       "title": "make x feature",
       "desc": "you will be needing y for testing the xyz bug",
-      "assignees": ["eissapk"],
+      "assignees": ["thor", "ironman","batman", "thor", "ironman","batman","thor", "ironman","batman"],
       "type": "task",
       "priority": "high",
       "reporter": "thor",
@@ -36,7 +43,7 @@
       "id": 3,
       "title": "apply foo task",
       "desc": "you will be needing y for testing the xyz bug",
-      "assignees": ["eissapk"],
+      "assignees": ["spiderman"],
       "type": "task",
       "priority": "medium",
       "reporter": "thor",
@@ -50,7 +57,7 @@
       "id": 4,
       "title": "apply siko task",
       "desc": "you will be needing y for testing the xyz bug",
-      "assignees": ["eissapk"],
+      "assignees": ["batman"],
       "type": "task",
       "priority": "medium",
       "reporter": "thor",
