@@ -139,7 +139,7 @@
           const id = e.target.getAttribute("data-cardId");
           // debug([e.target, id]);
           api.currentCardId = id;
-          router.navigate("/card");
+          router.navigate("/card/"+id);
         }
       });
     }

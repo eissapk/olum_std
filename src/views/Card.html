@@ -5,10 +5,14 @@
 <script>
   import api from "../services/api.js";
   import { Origin, $ } from "olum-helpers";
+  import router from "../router/index.js";
   export default class Card {
     render() {
+      console.warn("router params from Card component ", router.params);
+      const { id } = router.params; 
       this.origin = new Origin();
-      this.getData(api.currentCardId);
+      // this.getData(api.currentCardId);
+      this.getData(id);
     }
     getData(id) {
       const container = $("#card");

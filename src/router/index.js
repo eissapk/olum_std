@@ -6,7 +6,7 @@ import Card from "../views/Card";
 const routes = [
   { path: "/", comp: Board },
   { path: "/settings", comp: Settings },
-  { path: "/card", comp: Card },
+  { path: "/card/:id", comp: Card },
 ];
 
 const router = new OlumRouter({ routes, mode: "history" });
