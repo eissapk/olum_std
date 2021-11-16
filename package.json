@@ -11,10 +11,9 @@
   },
   "author": "Eissa Saber",
   "dependencies": {
-    "bootstrap": "^5.1.3",
     "olum": "0.2.4",
-    "olum-router": "0.1.3",
-    "olum-helpers": "0.1.0"
+    "olum-helpers": "0.1.0",
+    "olum-router": "^0.2.3"
   },
   "devDependencies": {
     "json-server": "^0.17.0",

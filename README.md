@@ -12,6 +12,10 @@ npm install
 ```
 npm run dev
 ```
+### Run Database
+```
+npm run db
+```
 
 ### Build for production
 ```

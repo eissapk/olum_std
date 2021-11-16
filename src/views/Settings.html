@@ -7,8 +7,13 @@
 <script>
   import Nav from "../components/Nav.html";
   import SettingsContent from "../components/SettingsContent.html";
+  import router from "../router/index.js";
   export default class Settings {
-    render() {}
+    render() {
+      const { foo } = router.params; 
+      console.warn("router params from Card component ", router.params);
+      
+    }
   }
 </script>
 

@@ -10,5 +10,6 @@ const routes = [
 ];
 
 const router = new OlumRouter({ routes, mode: "history" });
+// const router = new OlumRouter({ routes, mode: "hash" });
 
 export default router;

@@ -62,26 +62,32 @@
 <script>
   import icons from "../services/icons.js";
   import { $, debug } from "olum-helpers";
-  let isShown = true;
+  let isShown = JSON.parse(localStorage.getItem("isShown") || true);
   export default class Nav {
     render() {
       const container = $(".Nav");
       const rightNav = $(container).get(".Nav__right");
       const settings = $(".SettingsContent");
       const board = $(".BoardContent");
+      function toggle(isShown) {
+        if (isShown) {
+          rightNav.classList.remove("hide");
+          if (settings) settings.style.width = "calc(100% - 304px)";
+          if (board) board.style.width = "calc(100% - 304px)";
+        } else {
+          rightNav.classList.add("hide");
+          if (settings) settings.style.width = "calc(100% - 85px)";
+          if (board) board.style.width = "calc(100% - 85px)";
+        }
+      }
+      toggle(isShown);
+
       container.on("click", e => {
         if (e.target.classList.contains("Nav__right__toggle--btn")) {
-          if (isShown) {
-            isShown = false;
-            rightNav.classList.add("hide");
-            if (settings) settings.style.width = "calc(100% - 85px)";
-            if (board) board.style.width = "calc(100% - 85px)";
-          } else {
-            isShown = true;
-            rightNav.classList.remove("hide");
-            if (settings) settings.style.width = "calc(100% - 304px)";
-            if (board) board.style.width = "calc(100% - 304px)";
-          }
+          isShown = JSON.parse(localStorage.getItem("isShown") || true);
+          isShown = !isShown; // negate the toggle
+          localStorage.setItem("isShown", isShown);
+          toggle(isShown);
         }
       });
     }
@@ -187,7 +193,7 @@
       width: 240px;
       padding: 0 10px;
       background-color: #f4f5f7;
-      transition: width 0.2s ease;
+      /* transition: width 0.2s ease; */
       span.leftArrow {
         display: inline-block !important;
       }
@@ -229,6 +235,7 @@
       }
 
       button.Nav__right__toggle--btn {
+        outline: none;
         position: absolute;
         top: 24px;
         right: -20px;
