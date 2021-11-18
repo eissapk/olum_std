@@ -1,32 +1,74 @@
 <template>
-  <div id="card"></div>
+  <div class="Card">
+    
+    <div class="Card__header">
+      <section class="Card__header__type">${this.data ? this.data.type : ""}</section>
+      <button type="button" class="Card__header--delBtn">x</button>
+    </div>
+    
+    <div class="Card__inner">
+      
+      <div class="Card__inner__content">
+        <div class="Card__inner__content__title">${this.data ? `<h1>${this.data.title}</h1>` : ""}</div>
+        <div class="Card__inner__content__desc">${this.data ? `<p>${this.data.desc}</p>` : ""}</div>
+        <div class="Card__inner__content__comments">
+          ${
+            this.data && this.data.comments.length ?
+            this.data.comments.map(item => `
+            <div class="Card__inner__content__comments__comment">
+              <section class="Card__inner__content__comments__comment__username">${item.user}</section>
+              <section class="Card__inner__content__comments__comment__content">${item.content}</section>
+            </div>
+              `).join("")
+            : ""
+          }
+        </div>
+      </div>
+      
+      <div class="Card__inner__info">
+        <div class="Card__inner__info__column">${this.data ? this.data.column.title : ""}</div>
+        <div class="Card__inner__info__reporter">${this.data ? this.data.reporter : ""}</div>
+        <div class="Card__inner__info__assignees">
+          ${
+            this.data && this.data.assignees.length ?
+            this.data.assignees.map(item => `<div class="Card__inner__info__assignees__assignee">${item}</div>`).join("")
+            : ""
+          }
+        </div>
+        <div class="Card__inner__info__priority">${this.data ? this.data.priority : ""}</div>
+        <div class="Card__inner__info__time">time</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-  import api from "../services/api.js";
-  import { Origin, $ } from "olum-helpers";
+  import { Origin, $, debug } from "olum-helpers";
   import router from "../router/index.js";
   export default class Card {
     render() {
-      console.warn("router params from Card component ", router.params);
-      const { id } = router.params; 
       this.origin = new Origin();
-      // this.getData(api.currentCardId);
+      const { id } = router.params;
       this.getData(id);
     }
+
     getData(id) {
       const container = $("#card");
       this.origin
         .get("http://localhost:3000/cards/" + id)
-        .then(data => {
-          container.innerHTML = JSON.stringify(data);
-        })
+        .then(this.displayCard.bind(this))
         .catch(console.error);
+    }
+
+    displayCard(data) {
+      this.data = data;
+      debug(data);
+      // update component markup with fetched data
+      $(".Card").innerHTML = this.template();
     }
   }
 </script>
 
 <style lang="scss">
-  #card {
-  }
+  @import "../styles/Card.scss";
 </style>

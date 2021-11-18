@@ -1,0 +1,50 @@
+.Card {
+  &__header {
+    overflow: hidden;
+    &__type {
+      float: left;
+    }
+    &--delBtn {
+      float: right;
+    }
+  }
+
+  &__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, auto);
+
+    &__content {
+      &__title {
+      }
+      &__desc {
+      }
+      &__comments {
+        &__comment {
+        }
+        &__username {
+        }
+        &__content {
+        }
+      }
+    }
+    &__info {
+      &__column {
+      }
+      &__reporter {
+      }
+      &__assignees {
+        &__assignee {
+        }
+      }
+      &__priority {
+      }
+      &__time {
+      }
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, auto);
+      grid-template-rows: 1fr;
+    }
+  }
+}

@@ -11,7 +11,6 @@
   import icons from "../services/icons.js";
   import { $, debug, Origin } from "olum-helpers";
   import router from "../router/index.js";
-  import api from "../services/api.js";
   export default class Columns {
     render() {
       this.origin = new Origin();
@@ -138,7 +137,6 @@
         if (e.target.classList.contains("clickCard")) {
           const id = e.target.getAttribute("data-cardId");
           // debug([e.target, id]);
-          api.currentCardId = id;
           router.navigate("/card/"+id);
         }
       });
