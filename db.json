@@ -23,7 +23,11 @@
         { "user": "eissapk", "content": "can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 " },
         { "user": "thor", "content": "can't produce the issue2" },
         { "user": "spiderman", "content": "can't produce the issue3" }
-      ]
+      ],
+      "time":{
+        "created": "Jun 12, 2021, 4:40:00 PM",
+        "updated": "Nov 19, 2021, 1:41:31 PM"
+      }
     },
     {
       "column": {
@@ -37,7 +41,11 @@
       "type": "task",
       "priority": "high",
       "reporter": "thor",
-      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
+      "time":{
+        "created": "Jun 12, 2021, 4:40:00 PM",
+        "updated": null
+      }
     },
     {
       "column": {
@@ -51,7 +59,11 @@
       "type": "task",
       "priority": "medium",
       "reporter": "thor",
-      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
+      "time":{
+        "created": "Jun 12, 2021, 4:40:00 PM",
+        "updated": "Nov 19, 2021, 1:41:31 PM"
+      }
     },
     {
       "column": {
@@ -65,7 +77,11 @@
       "type": "task",
       "priority": "medium",
       "reporter": "thor",
-      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }]
+      "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
+      "time":{
+        "created": "Jun 12, 2021, 4:40:00 PM",
+        "updated": null
+      }
     }
   ]
 }
