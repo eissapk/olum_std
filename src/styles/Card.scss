@@ -1,6 +1,6 @@
 .Card {
   padding: 10px;
-  margin: 0 auto;
+  margin: 50px auto;
 
   &__header {
     overflow: hidden;
@@ -50,6 +50,8 @@
           font-size: 20px;
           border-radius: 3px;
           padding: 10px;
+          border: 1px solid transparent;
+          outline: none;
 
           &:hover {
             background-color: #ebecf0;
@@ -57,19 +59,19 @@
 
           &:focus,
           &:active {
-            box-shadow: 0 0 0px 2px #666;
             background-color: transparent;
+            border-color: #0052cc;
           }
         }
       }
 
       &__desc {
         margin-top: 20px;
-
+        
         .hint {
           color: #666;
         }
-
+        
         .content {
           min-height: 40px;
           width: 100%;
@@ -79,6 +81,8 @@
           border-radius: 3px;
           padding: 10px;
           word-break: break-word;
+          border: 1px solid transparent;
+          outline: none;
 
           &:hover {
             background-color: #ebecf0;
@@ -86,25 +90,63 @@
 
           &:focus,
           &:active {
-            box-shadow: 0 0 0px 2px #666;
             background-color: transparent;
+            border-color: #0052cc;
           }
         }
       }
 
       &__comments {
         margin-top: 20px;
+        overflow: hidden;
         .hint {
           color: #666;
         }
+        >input {
+          height: 50px;
+          border: 1px solid #ebecf0;
+          border-radius: 3px;
+          margin: 10px 0;
+          padding: 0 10px;
+          outline: none;
+          width: 100%;
+          &:hover {
+            background-color: #ebecf0;
+          }
+
+          &:focus,
+          &:active {
+            background-color: transparent;
+            border-color: #0052cc;
+          }
+          
+        }
 
         &__comment {
-        }
+          overflow: hidden;
+          margin-top: 10px;
+          &:first-of-type {
+            margin-top: 0;
+          }
+          &__username {
+            img {
+              width: 30px;
+              height: 30px;
+              object-fit: contain;
+              border-radius: 50%;
+              float: left;
+            }
+            span {
+              margin-left: 10px;
+              display: inline-block;
+            }
+          }
 
-        &__username {
-        }
-
-        &__content {
+          &__content {
+            color: #42526e;
+            word-break: break-all;
+            margin-top: 5px;
+          }
         }
       }
     }
@@ -138,7 +180,7 @@
       grid-template-rows: 1fr;
     }
   }
-  
+
   @media (min-width: 768px) {
     width: 720px;
   }

@@ -1,50 +1,55 @@
 <template>
   <div class="Card">
-    ${ this.data ? `
+    ${ this.data && this.members ? `
 
-      <div class="Card__header">
-        <section class="Card__header__type">
-          <img src="${this.data.type == 'bug' ? bugIcon : this.data.type == 'task' ? taskIcon : ''}" alt="${this.data.type}">
-          ${this.data.type.upper()}-${this.data.id}
-        </section>
-        <button type="button" class="Card__header--delBtn">${icons.trash}</button>
-      </div>
+    <div class="Card__header">
+      <section class="Card__header__type">
+        <img src="${this.data.type == 'bug' ? bugIcon : this.data.type == 'task' ? taskIcon : ''}" alt="${this.data.type}" />
+        ${this.data.type.upper()}-${this.data.id}
+      </section>
+      <button type="button" class="Card__header--delBtn">${icons.trash}</button>
+    </div>
 
-      <div class="Card__inner">
-        <div class="Card__inner__content">
-          
-          <div class="Card__inner__content__title">
-            <input type="text" value="${this.data.title}" />
-          </div>
-          
-          <div class="Card__inner__content__desc">
-            <p class="hint">Description</p>
-            <div contenteditable="true" class="content">${this.data.desc}</div>
-          </div>
-          
-          <div class="Card__inner__content__comments">
-            <p class="hint">Comments</p>
-            ${this.data.comments.length ? this.data.comments.map(item => `
+    <div class="Card__inner">
+      <div class="Card__inner__content">
+        <div class="Card__inner__content__title">
+          <input type="text" value="${this.data.title}" />
+        </div>
+
+        <div class="Card__inner__content__desc">
+          <p class="hint">Description</p>
+          <div contenteditable="true" class="content">${this.data.desc}</div>
+        </div>
+
+        <div class="Card__inner__content__comments">
+          <p class="hint">Comments</p>
+          <input type="text" placeholder="Add a comment..."/>
+
+          ${this.data.comments.length ? this.data.comments.map(item => `
             <div class="Card__inner__content__comments__comment">
-              <section class="Card__inner__content__comments__comment__username">${item.user}</section>
-              <section class="Card__inner__content__comments__comment__content">${item.content}</section>
+              <div class="Card__inner__content__comments__comment__username">
+                <img src="${this.members[item.user]}" alt="${item.user}">
+                <span>${item.user}</span>
+              </div>
+              <div class="Card__inner__content__comments__comment__content">${item.content}</div>
             </div>
-            `).join("") : "" }
-          </div>
-        </div>
-
-        <div class="Card__inner__info">
-          <div class="Card__inner__info__column">${this.data.column.title}</div>
-          <div class="Card__inner__info__reporter">${this.data.reporter}</div>
-          <div class="Card__inner__info__assignees">
-            ${this.data.assignees.length ? this.data.assignees.map(item => `
-            <div class="Card__inner__info__assignees__assignee">${item}</div>
-            `).join("") : "" }
-          </div>
-          <div class="Card__inner__info__priority">${this.data.priority}</div>
-          <div class="Card__inner__info__time">time</div>
+          `).join("") : "" }
+          
         </div>
       </div>
+
+      <div class="Card__inner__info">
+        <div class="Card__inner__info__column">${this.data.column.title}</div>
+        <div class="Card__inner__info__reporter">${this.data.reporter}</div>
+        <div class="Card__inner__info__assignees">
+          ${this.data.assignees.length ? this.data.assignees.map(item => `
+          <div class="Card__inner__info__assignees__assignee">${item}</div>
+          `).join("") : "" }
+        </div>
+        <div class="Card__inner__info__priority">${this.data.priority}</div>
+        <div class="Card__inner__info__time">time</div>
+      </div>
+    </div>
 
     ` : "Loading your card..." }
   </div>
@@ -69,20 +74,23 @@
     getData(id) {
       this.origin
         .get("http://localhost:3000/cards/" + id)
-        .then(this.displayCard.bind(this))
+        .then(data => {
+          this.origin
+            .get("http://localhost:3000/members")
+            .then(members => {
+              this.displayCard(data, members);
+            })
+            .catch(console.error);
+        })
         .catch(console.error);
     }
 
-    displayCard(data) {
+    displayCard(data, members) {
       this.data = data;
-      debug(data);
+      this.members = members;
+      debug([data, members]);
       // update component markup with fetched data
-      this.updateTemplate();
-    }
-
-    updateTemplate() {
-      const container = $(".Card");
-      if (container) container.innerHTML = this.template(true);
+      $(".Card").innerHTML = this.template(true);
     }
   }
 </script>
