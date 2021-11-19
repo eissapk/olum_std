@@ -1,11 +1,37 @@
 .Card {
+  padding: 10px;
+  margin: 0 auto;
+
   &__header {
     overflow: hidden;
+    overflow: hidden;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 10px;
+
     &__type {
       float: left;
+
+      img {
+        height: 20px;
+        width: 20px;
+        margin: 15px 0;
+        margin-right: 5px;
+        float: left;
+      }
     }
+
     &--delBtn {
       float: right;
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+
+      svg {
+        width: 25px;
+        height: 25px;
+        fill: #42526e;
+      }
     }
   }
 
@@ -13,38 +39,107 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(2, auto);
+    margin-top: 20px;
 
     &__content {
       &__title {
+        input {
+          width: 100%;
+          border: none;
+          color: #333;
+          font-size: 20px;
+          border-radius: 3px;
+          padding: 10px;
+
+          &:hover {
+            background-color: #ebecf0;
+          }
+
+          &:focus,
+          &:active {
+            box-shadow: 0 0 0px 2px #666;
+            background-color: transparent;
+          }
+        }
       }
+
       &__desc {
+        margin-top: 20px;
+
+        .hint {
+          color: #666;
+        }
+
+        .content {
+          min-height: 40px;
+          width: 100%;
+          border: none;
+          color: #333;
+          font-size: 20px;
+          border-radius: 3px;
+          padding: 10px;
+          word-break: break-word;
+
+          &:hover {
+            background-color: #ebecf0;
+          }
+
+          &:focus,
+          &:active {
+            box-shadow: 0 0 0px 2px #666;
+            background-color: transparent;
+          }
+        }
       }
+
       &__comments {
+        margin-top: 20px;
+        .hint {
+          color: #666;
+        }
+
         &__comment {
         }
+
         &__username {
         }
+
         &__content {
         }
       }
     }
+
     &__info {
+      padding-top: 20px;
       &__column {
       }
+
       &__reporter {
       }
+
       &__assignees {
         &__assignee {
         }
       }
+
       &__priority {
       }
+
       &__time {
       }
     }
+
     @media (min-width: 768px) {
-      grid-template-columns: repeat(2, auto);
+      &__info {
+        padding: 0;
+        padding-left: 10px;
+      }
+      grid-template-columns: calc(100% - 200px) 200px;
       grid-template-rows: 1fr;
     }
+  }
+  
+  @media (min-width: 768px) {
+    width: 720px;
   }
 }
