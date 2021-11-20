@@ -1,0 +1,34 @@
+<template>
+  <div class="Loader">
+    <span></span>
+  </div>
+</template>
+
+<script>
+  export default class Loader {
+    render() {}
+  }
+</script>
+
+<style lang="scss">
+  .Loader {
+    span {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: #0747a6;
+      display: block;
+      margin: 0 auto;
+      animation: loader 0.5s linear infinite;
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

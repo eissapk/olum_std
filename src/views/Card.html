@@ -84,13 +84,14 @@
       </div>
     </div>
 
-    ` : hasError ? "Error while fetching data!" : isLoading ? "Loading..." : "" }
+    ` : hasError ? "Got this error while fetching your data!, " + errorMsg : isLoading ? "<Loader />" : "" }
   </div>
 </template>
 
 <script>
   import { Origin, $, debug } from "olum-helpers";
   import router from "../router/index.js";
+  import Loader from "../components/Loader.html";
   import icons from "../services/icons.js";
   import bugIcon from "../assets/bug.png";
   import taskIcon from "../assets/task.png";
@@ -98,6 +99,7 @@
   import mediumIcon from "../assets/medium.png";
   import highIcon from "../assets/high.png";
   let hasError = false;
+  let errorMsg = "";
   let isLoading = true;
   export default class Card {
     render() {
@@ -118,12 +120,14 @@
             .catch(err => {
               console.error(err);
               hasError = true;
+              errorMsg = err;
               this.updateTemp();
             });
         })
         .catch(err => {
           console.error(err);
           hasError = true;
+          errorMsg = err;
           this.updateTemp();
         });
     }
@@ -136,7 +140,7 @@
       isLoading = false;
       this.updateTemp();
     }
-    
+
     updateTemp() {
       $(".Card").innerHTML = this.template(true);
     }

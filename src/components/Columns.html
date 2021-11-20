@@ -12,9 +12,19 @@
   import { $, debug, Origin } from "olum-helpers";
   import router from "../router/index.js";
   export default class Columns {
+    isDown = false;
+    isRunning = false;
+    startX = null;
+    startY = null;
+    currentX = null;
+    currentY = null;
+    walkX = null;
+    walkY = null;
     render() {
       this.origin = new Origin();
       this.getData();
+      this.openCard();
+      this.moveCard();
     }
 
     getData() {
@@ -40,13 +50,13 @@
       const colMarkup = columnsArr.map(col => {
         return {
           content: `
-              <section class="Columns__column">
-                <h4 class="Columns__column__title">${col.title}</h4>
-                <div class="Columns__column__cards"> 
-                  {{cards}}
-                </div>
-              </section>
-              `,
+                <section class="Columns__column">
+                  <h4 class="Columns__column__title">${col.title}</h4>
+                  <div class="Columns__column__cards">
+                    {{cards}}
+                  </div>
+                </section>
+                `,
           id: col.id,
         };
       });
@@ -59,16 +69,17 @@
         .map((assignee, index) => {
           if (members[assignee]) {
             return `
-          <span class="clickCard" data-cardId="${card.id}" style="margin-left: -${index > 0 ? 10 : "0"}px; ${index > 2 ? "display: none;" : ""}">
-            <img class="clickCard" data-cardId="${card.id}" src="${members[assignee]}" alt="${assignee}" /> 
-            <span class="hint clickCard" data-cardId="${card.id}">${assignee}</span>
-          </span>
-          `;
+            <span class="clickCard" data-cardId="${card.id}" style="margin-left: -${index > 0 ? 10 : "0"}px; ${index > 2 ? "display: none;" : ""}">
+              <img class="clickCard" data-cardId="${card.id}" src="${members[assignee]}" alt="${assignee}" />
+              <span class="hint clickCard" data-cardId="${card.id}">${assignee}</span>
+            </span>
+            `;
           }
         })
         .join("");
 
-      if (card.assignees.length > 3) markup += `<span class="more clickCard" data-cardId="${card.id}" style="margin-left:-10px;">${icons.dots}</span>`;
+      if (card.assignees.length > 3)
+        markup += `<span class="more clickCard" data-cardId="${card.id}" style="margin-left:-10px;">${icons.dots}</span>`;
       return markup;
     }
 
@@ -98,16 +109,19 @@
           .map(card => {
             if (card.column.id == colId) {
               return `
-                  <section class="Columns__column__cards__card clickCard" data-cardId="${card.id}">
-                    <h4 class="Columns__column__cards__card__title clickCard" data-cardId="${card.id}">${card.title}</h4>
-                    <div class="Columns__column__cards__card__info clickCard" data-cardId="${card.id}">
-                      <div class="Columns__column__cards__card__info__assignees clickCard" data-cardId="${card.id}">${this.mkMemberIMG(card, obj.members)}</div>
-                      <div class="Columns__column__cards__card__info__num clickCard" data-cardId="${card.id}">${card.type.upper()}-${card.id}</div>
-                      <div class="Columns__column__cards__card__info__priority clickCard" data-cardId="${card.id}">${this.mkPriorityIMG(card)}</div>
-                      <div class="Columns__column__cards__card__info__type clickCard" data-cardId="${card.id}">${this.mkTypeIMG(card)}</div>
-                    </div>
-                  </section>
-                `;
+                    <section class="Columns__column__cards__card clickCard" data-cardId="${card.id}">
+                      <h4 class="Columns__column__cards__card__title clickCard" data-cardId="${card.id}">${card.title}</h4>
+                      <div class="Columns__column__cards__card__info clickCard" data-cardId="${card.id}">
+                        <div class="Columns__column__cards__card__info__assignees clickCard" data-cardId="${card.id}">${this.mkMemberIMG(
+                card,
+                obj.members
+              )}</div>
+                        <div class="Columns__column__cards__card__info__num clickCard" data-cardId="${card.id}">${card.type.upper()}-${card.id}</div>
+                        <div class="Columns__column__cards__card__info__priority clickCard" data-cardId="${card.id}">${this.mkPriorityIMG(card)}</div>
+                        <div class="Columns__column__cards__card__info__type clickCard" data-cardId="${card.id}">${this.mkTypeIMG(card)}</div>
+                      </div>
+                    </section>
+                  `;
             }
           })
           .join("");
@@ -128,18 +142,137 @@
       // update UI
       const markup = filteredArr.map(col => col.content).join("");
       container.innerHTML = markup;
-      this.openCard();
     }
 
     openCard() {
+      // todo fix last draged card with mouse events | note it works well with touch events
       const container = $(".Columns");
       container.on("click", e => {
-        if (e.target.classList.contains("clickCard")) {
+        if (e.target.classList.contains("Columns__column__cards__card")) {
           const id = e.target.getAttribute("data-cardId");
           // debug([e.target, id]);
-          router.navigate("/card/"+id);
+          router.navigate("/card/" + id);
         }
       });
+    }
+
+    moveCard() {
+      const container = $(".Columns");
+      container.on("mousedown", e => this.dragStart(e));
+      container.on("mouseup", e => this.dragEnd(e));
+      container.on("mousemove", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragMove(e) : ""));
+      // touch
+      container.on("touchstart", e => this.dragStart(e));
+      container.on("touchend", e => this.dragEnd(e));
+      container.on("touchmove", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragMove(e) : ""));
+    }
+
+    dragStart(e) {
+      this.columns = $(".Columns__column", true);
+      this.isDown = true;
+      e = e || window.event;
+      const card = e.target;
+      card.style.position = "relative";
+      card.style.zIndex = "999";
+
+      // get initial x, y position
+      if (e.type === "touchstart") {
+        this.startX = Math.round(e.touches[0].clientX);
+        this.startY = Math.round(e.touches[0].clientY);
+      } else if (e.type === "mousedown") {
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+      }
+    }
+
+    dragEnd(e) {
+      this.isDown = false;
+      setStyle(e.target);
+
+      if (typeof this.currentRects != "undefined") {
+        const container = $(this.currentRects.column).get(".Columns__column__cards");
+        if (container) {
+          container.append(this.currentRects.card);
+          this.currentRects.column.classList.remove("active");
+        }
+      }
+
+      function setStyle(elm) {
+        if (elm) {
+          elm.style.position = "initial";
+          elm.style.zIndex = "initial";
+          elm.style.left = "initial";
+          elm.style.top = "initial";
+        }
+      }
+    }
+
+    dragMove(e) {
+      e = e || window.event;
+      this.isRunning = true;
+      const card = e.target;
+      this.currentCardObj = card.getBoundingClientRect();
+
+      if (this.isDown) {
+        // get current (x, y) position
+        if (e.type === "touchmove") {
+          this.currentX = Math.round(e.touches[0].clientX);
+          this.currentY = Math.round(e.touches[0].clientY);
+        } else if (e.type === "mousemove") {
+          this.currentX = e.clientX;
+          this.currentY = e.clientY;
+        }
+
+        // detect how many px moved
+        this.walkX = this.currentX - this.startX;
+        this.walkY = this.currentY - this.startY;
+
+        // update card position
+        card.style.left = this.walkX + "px";
+        card.style.top = this.walkY + "px";
+
+        this.detect(card);
+      }
+    }
+
+    detect(card) {
+      const currentColumn = card.parentElement.parentElement;
+      this.columns.forEach(column => {
+        if (this.isRunning) {
+          if (column && card) {
+            column.classList.remove("active"); // reset
+            currentColumn.classList.remove("active"); // reset
+            const rect = column.getBoundingClientRect();
+            const columnRect = { w: rect.width, h: rect.height, x: rect.x, y: rect.y };
+            const cardRect = { w: this.currentCardObj.width, h: this.currentCardObj.height, x: this.currentCardObj.x, y: this.currentCardObj.y };
+            if (this.collision(cardRect, columnRect)) {
+              this.isRunning = false;
+              this.currentRects = { card, column };
+              column.classList.add("active");
+            }
+          }
+        }
+      });
+    }
+
+    collision(cardRect, columnRect) {
+      const depth = 5; // must not be greater than the space inbetween the columns
+      if (cardRect.y + depth > columnRect.y + columnRect.h) {
+        // top > bottom
+        return false;
+      } else if (cardRect.x + cardRect.w + depth < columnRect.x) {
+        // right < left
+        return false;
+      } else if (cardRect.y + cardRect.h + depth < columnRect.y) {
+        // bottom < top
+        return false;
+      } else if (cardRect.x + depth > columnRect.x + columnRect.w) {
+        // left > right
+        return false;
+      } else {
+        // collision
+        return true;
+      }
     }
   }
 </script>
@@ -154,14 +287,18 @@
     grid-auto-flow: column;
     overflow: auto;
     &__column {
+      user-select: none;
       width: 280px;
       background: #f4f5f7;
       margin: 0 2.5px;
-      min-height: 100px;
+      min-height: 158px;
       border-radius: 3px;
       padding: 5px;
       box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08);
       margin-top: 1px;
+      &.active {
+        background: #ebecf0;
+      }
       &__title {
         margin: 0;
         font-size: 16px;
@@ -184,10 +321,12 @@
             font-weight: normal;
             margin: 0 0 12px 0;
             white-space: normal;
+            pointer-events: none;
           }
 
           &__info {
             overflow: hidden;
+            pointer-events: none;
             &__assignees {
               float: left;
               margin-right: 10px;
