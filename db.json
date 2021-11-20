@@ -13,18 +13,22 @@
         "title": "backlog"
       },
       "id": 1,
-      "title": "fix x bug",
+      "order": 1,
+      "title": "fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug fix x bug ",
       "desc": "you will be needing y for testing the x bug",
       "assignees": ["eissapk", "thor"],
       "type": "bug",
       "priority": "low",
       "reporter": "thor",
       "comments": [
-        { "user": "eissapk", "content": "can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 " },
+        {
+          "user": "eissapk",
+          "content": "can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 can't produce the issue1 "
+        },
         { "user": "thor", "content": "can't produce the issue2" },
         { "user": "spiderman", "content": "can't produce the issue3" }
       ],
-      "time":{
+      "time": {
         "created": "Jun 12, 2021, 4:40:00 PM",
         "updated": "Nov 19, 2021, 1:41:31 PM"
       }
@@ -35,14 +39,15 @@
         "title": "in progress"
       },
       "id": 2,
-      "title": "make x feature",
+      "order": 2,
+      "title": "make x feature make x feature make x feature make x feature make x feature make x feature make x feature make x feature ",
       "desc": "you will be needing y for testing the xyz bug",
-      "assignees": ["thor", "ironman","batman", "thor", "ironman","batman","thor", "ironman","batman"],
+      "assignees": ["thor", "ironman", "batman", "thor", "ironman", "batman", "thor", "ironman", "batman"],
       "type": "task",
       "priority": "high",
       "reporter": "thor",
       "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
-      "time":{
+      "time": {
         "created": "Jun 12, 2021, 4:40:00 PM",
         "updated": null
       }
@@ -53,14 +58,15 @@
         "title": "in progress"
       },
       "id": 3,
-      "title": "apply foo task",
+      "order": 3,
+      "title": "apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task apply foo task ",
       "desc": "you will be needing y for testing the xyz bug",
       "assignees": ["spiderman"],
       "type": "task",
       "priority": "medium",
       "reporter": "thor",
       "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
-      "time":{
+      "time": {
         "created": "Jun 12, 2021, 4:40:00 PM",
         "updated": "Nov 19, 2021, 1:41:31 PM"
       }
@@ -71,6 +77,7 @@
         "title": "done"
       },
       "id": 4,
+      "order": 4,
       "title": "apply siko task",
       "desc": "you will be needing y for testing the xyz bug",
       "assignees": ["batman"],
@@ -78,7 +85,7 @@
       "priority": "medium",
       "reporter": "thor",
       "comments": [{ "user": "eissapk", "content": "can't produce the issue" }],
-      "time":{
+      "time": {
         "created": "Jun 12, 2021, 4:40:00 PM",
         "updated": null
       }

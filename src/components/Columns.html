@@ -183,6 +183,7 @@
         this.startX = e.clientX;
         this.startY = e.clientY;
       }
+      document.body.classList.add("stopScroll");
     }
 
     dragEnd(e) {
@@ -196,6 +197,7 @@
           this.currentRects.column.classList.remove("active");
         }
       }
+      document.body.classList.remove("stopScroll");
 
       function setStyle(elm) {
         if (elm) {
@@ -286,6 +288,16 @@
     grid-gap: 10px;
     grid-auto-flow: column;
     overflow: auto;
+    /* &::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #0747a6;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    } */
     &__column {
       user-select: none;
       width: 280px;
@@ -296,9 +308,12 @@
       padding: 5px;
       box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08);
       margin-top: 1px;
+      /* max-height: calc(100% - 10px); */
+
       &.active {
         background: #ebecf0;
       }
+
       &__title {
         margin: 0;
         font-size: 16px;
@@ -309,6 +324,17 @@
       }
 
       &__cards {
+        /* overflow: auto;
+        &::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: #0747a6;
+        }
+        &::-webkit-scrollbar-track {
+          background: #f5f5f5;
+        } */
         &__card {
           padding: 10px;
           background: white;
