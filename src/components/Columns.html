@@ -23,7 +23,7 @@
     render() {
       this.origin = new Origin();
       this.getData();
-      this.openCard();
+      // this.openCard();
       this.moveCard();
     }
 
@@ -158,12 +158,12 @@
 
     moveCard() {
       const container = $(".Columns");
-      container.on("mousedown", e => this.dragStart(e));
-      container.on("mouseup", e => this.dragEnd(e));
+      container.on("mousedown", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragStart(e) : ""));
+      container.on("mouseup", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragEnd(e) : ""));
       container.on("mousemove", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragMove(e) : ""));
       // touch
-      container.on("touchstart", e => this.dragStart(e));
-      container.on("touchend", e => this.dragEnd(e));
+      container.on("touchstart", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragStart(e) : ""));
+      container.on("touchend", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragEnd(e) : ""));
       container.on("touchmove", e => (e.target.classList.contains("Columns__column__cards__card") ? this.dragMove(e) : ""));
     }
 
@@ -183,7 +183,7 @@
         this.startX = e.clientX;
         this.startY = e.clientY;
       }
-      document.body.classList.add("stopScroll");
+      // document.body.classList.add("stopScroll");
     }
 
     dragEnd(e) {
@@ -191,13 +191,19 @@
       setStyle(e.target);
 
       if (typeof this.currentRects != "undefined") {
-        const container = $(this.currentRects.column).get(".Columns__column__cards");
-        if (container) {
-          container.append(this.currentRects.card);
-          this.currentRects.column.classList.remove("active");
+        if (this.currentRects.status === 1) {
+          const { card, parent, column, status } = this.currentRects;
+          parent.append(card);
+          column.classList.remove("active");
+          console.warn({ card, parent, column, status });
+        } else if (this.currentRects.status === 2) {
+          const { parent, column, card, reference, status } = this.currentRects;
+          console.warn({ parent, column, card, reference, status });
+          parent.insertBefore(card, reference);
+          column.classList.remove("active");
         }
       }
-      document.body.classList.remove("stopScroll");
+      // document.body.classList.remove("stopScroll");
 
       function setStyle(elm) {
         if (elm) {
@@ -249,7 +255,29 @@
             const cardRect = { w: this.currentCardObj.width, h: this.currentCardObj.height, x: this.currentCardObj.x, y: this.currentCardObj.y };
             if (this.collision(cardRect, columnRect)) {
               this.isRunning = false;
-              this.currentRects = { card, column };
+
+              const parent = $(column).get(".Columns__column__cards");
+              const cards = $(column).get(".Columns__column__cards__card", true);
+              let toggle = true;
+              if (cards.length) {
+                cards.forEach(_card => {
+                  if (toggle) {
+                    const _rect = _card.getBoundingClientRect();
+                    const cardObj = { w: _rect.width, h: _rect.height, x: _rect.x, y: _rect.y };
+                    if (this.collision(cardRect, cardObj)) {
+                      toggle = false;
+                      console.warn("collision");
+                      this.currentRects = { parent, column, card, reference: _card, status: 2 };
+                    } else {
+                      toggle = false;
+                      this.currentRects = { card, parent, column, status: 1 };
+                    }
+                  }
+                });
+              } else {
+                this.currentRects = { card, parent, column, status: 1 };
+              }
+
               column.classList.add("active");
             }
           }
@@ -303,12 +331,12 @@
       width: 280px;
       background: #f4f5f7;
       margin: 0 2.5px;
-      min-height: 158px;
+      height: calc(100% - 10px);
       border-radius: 3px;
       padding: 5px;
       box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08);
       margin-top: 1px;
-      /* max-height: calc(100% - 10px); */
+      padding-bottom: 10px;
 
       &.active {
         background: #ebecf0;
@@ -324,7 +352,9 @@
       }
 
       &__cards {
-        /* overflow: auto;
+        /* overflow: auto; */
+        /* max-height: calc(100vh - 160px); */
+        /*
         &::-webkit-scrollbar {
           width: 5px;
           height: 5px;
