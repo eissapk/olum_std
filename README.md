@@ -1,4 +1,4 @@
-# olum-std
+# mynote
 
 ## Installation
 ```
