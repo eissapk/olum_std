@@ -1,22 +1,39 @@
 <template>
   <div class="Home">
-    <Nav />
-    <HelloWorld />
+    
+    <span id="num">${this.num}</span>
+    ${this.isPending ? `
+    <Loader />
+    ` : `
+    <Items />
+    `}
   </div>
 </template>
 
 <script>
-  import HelloWorld from "../components/HelloWorld";
-  import Nav from "../components/Nav";
+  import Loader from "../components/Loader.html";
+  import Items from "../components/Items.html";
+  import { $ } from "olum-helpers";
   export default class Home {
-    render() {}
+    isPending = true;
+    toggle = true;
+    num = 0;
+    render() {
+      $("#num").innerHTML = ++this.num;
+      console.log("Home component");
+      const wrapper = $(".Home");
+      this.isPending = false;
+      if (this.toggle) {
+        this.toggle = false;
+        setTimeout(() => {
+          wrapper.innerHTML = this.template(true);
+        }, 5000);
+      }
+    }
   }
 </script>
 
 <style lang="scss">
   .Home {
-    width: 100vw;
-    height: 100vh;
-    background-color: #2b2a3e;
   }
 </style>

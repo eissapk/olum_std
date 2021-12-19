@@ -1,0 +1,29 @@
+<template>
+  <div id="loader">${this.text}</div>
+</template>
+
+<script>
+  import { $ } from "olum-helpers";
+  export default class Loader {
+    text = "LOADING ";
+    render() {
+      console.log("loader component");
+      const wrapper = $("#loader");
+      setInterval(() => {
+        this.text += ".";
+        if (wrapper) {
+          wrapper.innerHTML = this.text;
+        }
+      }, 1000);
+    }
+  }
+</script>
+
+<style lang="scss">
+  #loader {
+    color: #595959;
+    margin: 20px 10px;
+    font-weight: bold;
+    word-break: break-word;
+  }
+</style>

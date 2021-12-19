@@ -11,6 +11,7 @@
   "author": "Eissa Saber",
   "dependencies": {
     "olum": "latest",
+    "olum-helpers": "^0.1.0",
     "olum-router": "latest"
   },
   "devDependencies": {

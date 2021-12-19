@@ -1,0 +1,40 @@
+<template>
+  <div class="Items">
+    <ul></ul>
+    <Siko />
+  </div>
+</template>
+
+<script>
+  import { $ } from "olum-helpers";
+  import data from "../data.js";
+  import Siko from "../components/Siko.html";
+  export default class Items {
+    render() {
+      console.log("items component");
+      const wrapper = $(".Items ul");
+      if (wrapper) {
+        wrapper.innerHTML = data.map(item => `<li>${item}</li>`).join("");
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  .Items {
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      li {
+        padding: 10px;
+        background-color: #eee;
+        color: #4d4d4d;
+        margin: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 3px 1px rgb(0 0 0 / 10%);
+        text-align: center;
+      }
+    }
+  }
+</style>
