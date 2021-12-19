@@ -1,4 +1,4 @@
-# starter
+# Dynamic template rendering
 
 ## Installation
 ```
